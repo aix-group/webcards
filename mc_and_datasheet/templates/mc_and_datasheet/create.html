@@ -1,0 +1,16 @@
+{% extends 'mc_and_datasheet/base.html' %}
+{% block title %}
+Create New Section
+{% endblock %}
+ 
+{% block content %}
+	<h3>Create a Section</h3>
+	<br>
+	<form method="post" action="">
+		{% csrf_token %}
+        {{form.as_p}}
+
+        <button type="submit", name="save">Create the section</button>
+        
+	</form>
+{% endblock %}

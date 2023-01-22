@@ -2,62 +2,40 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 #from django.template import loader
-from .models import Question, Answer
+from .models import MC_section, Item
 from django.views import generic
 from django.utils import timezone
-from .form import QuestionsForm
+from .forms import CreateNewSection
 
 # Create your views here.
 
-class IndexView(generic.ListView):
-    template_name = 'mc_and_datasheet/index.html'
-    context_object_name = 'latest_question_list'
+def section(response, section_id):
 
-    def get_queryset(self):
-        """
-        Return the last five published questions (not including those set to be
-        published in the future).
-        """
-        return Question.objects.filter(
-            pub_date__lte=timezone.now() # publication date less than or equal to
-        ).order_by('-pub_date')[:5]
+    ls = get_object_or_404(MC_section, pk=section_id)
+    #ls = MC_section.objects.get(id=section_id)
 
-class DetailView(generic.DetailView):
-    model = Question
-    template_name = 'mc_and_datasheet/detail.html'
+    return render( response , "mc_and_datasheet/section.html",{"ls":ls}) # The third attributes are actually variables that you can pass inside the html
 
-    def get_queryset(self):
-        """
-        Excludes any questions that aren't published yet.
-        """
-        return Question.objects.filter(pub_date__lte=timezone.now())
+def home(response):
 
+    return render(response, "mc_and_datasheet/home.html", {})
 
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = 'mc_and_datasheet/results.html'
+def create(response):
+
+    #if response.method == "POST":
+    #    form = CreateNewSection(response.POST)
+#
+    #    if form.is_valid():
+    #        n = form.cleaned_data["name"]
+    #        print('n')
+    #        t = MC_section(name=n)
+    #        t.save()
+#
+    #    return HttpResponseRedirect("mc_and_datasheet/%i"%t.id)
+    #else: # get
+    form = CreateNewSection()
 
 
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    form = QuestionsForm(instance=question)
-
-    context= {
-            'question': question,
-            'error_message' : " you did not select a choice. ", 
-    }
-
-    try:
-        selected_answer = question.answer_set.get(pk=request.POST['answer'])
-    except (KeyError, Answer.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'mc_and_datasheet/detail.html', context)
+    return render(response, "mc_and_datasheet/create.html", {"form":form})
 
 
-    else:
-        selected_answer.votes += 1
-        selected_answer.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('mc_and_datasheet:results', args=(question.id,)))

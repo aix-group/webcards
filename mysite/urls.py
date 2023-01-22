@@ -20,3 +20,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('mc_and_datasheet/', include('mc_and_datasheet.urls'))
 ]
+ 
