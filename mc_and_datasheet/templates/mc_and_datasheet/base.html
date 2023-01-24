@@ -6,6 +6,16 @@
 </head>
 
 <body>
+
+        {% if section_list %}
+        <ul>
+            {% for section in section_list %}
+                <li><a href="{% url 'mc_and_datasheet:section' section.id %}">{{ section.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No sections are available.</p>
+        {% endif %}
         <div id="content", name="content">
 
             {% block content %}

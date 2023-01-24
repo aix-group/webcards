@@ -37,5 +37,9 @@ class Field(models.Model):
     complete = models.BooleanField()
 
     def __str__(self):
-        return "Field question:%s , field answer: %s" %(self.field_question, self.field_answer)
+        return "Field question:%s" %(self.field_question)
 
+#class Answer(models.Model):
+    
+#    field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    

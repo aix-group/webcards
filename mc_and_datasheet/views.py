@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, get_list_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 #from django.template import loader
@@ -12,11 +12,12 @@ from .forms import CreateNewSection
 def section(response, id):
     
     print(id)
-    ls = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
-    print(ls.field_set.all())
-    print(ls) # search django query commands
+    section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
+    section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
+    print(section_instance.field_set.all())
+    print(section_instance) # search django query commands
     # whatever you input as id will be shown and if you say id=id it is the last one
-    #ls = MC_section.objects.get(id=id)
+    #section_instance = MC_section.objects.get(id=id)
     
     #{"save":["save"],"c1":["clicked"]}
     if response.method == "POST":
@@ -24,28 +25,36 @@ def section(response, id):
         print(response.POST)
 
         if response.POST.get("save"):
-            for field in ls.field_set.all():
+            section_answers = []
+            for field in section_instance.field_set.all():
                 if response.POST.get("c" + str(field.id)) == "clicked":
                     field.complete = True
+                    field.field_answers = response.POST.get("a" + str(field.id))
+                    section_answers.append(field.field_answers)
                 else:
                     field.complete = False
                 field.save()
-
+            print(section_answers)
         elif response.POST.get("newfield"):
              
             txt = response.POST.get("newfieldtext")
 
             if len(txt) > 2:
-                ls.field_set.create(field_question = txt, complete=False)
+                section_instance.field_set.create(field_question = txt, complete=False)
             else:
                 print("invalid")
 
-
-    return render(response , "mc_and_datasheet/section.html",{"ls":ls}) # The third attributes are actually variables that you can pass inside the html
+    print(section_instance.field_set.all())
+    return render(response , "mc_and_datasheet/section.html",{"section":section_instance,"section_list":section_list}) # The third attributes are actually variables that you can pass inside the html
 
 def home(response):
-
-    return render(response, "mc_and_datasheet/home.html", {})
+    
+    section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
+    
+    
+    print(type(section_list[0]))
+    
+    return render(response, "mc_and_datasheet/home.html", {"section_list":section_list})
 
 def create(response):
 

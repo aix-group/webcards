@@ -5,12 +5,13 @@ Section
  
 {% block content %}
 	
-    <h1> {{ls.name}} </h1>
+    <h1> {{section.name}} </h1>
     <form method = "post" action = "#">
         {% csrf_token %}
         <ul>
-            {% for field in ls.field_set.all %}
+            {% for field in section.field_set.all %}
             <li><input type="checkbox", value="clicked", name="c{{field.id}}" checked>{{field.field_question}}</li> 
+            <input type="text", name="a{{field.id}}">
 
             {% endfor %}
 
