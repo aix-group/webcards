@@ -2,10 +2,10 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import MC_section
+from .models import MC_section, Field
 
 #class ChoiceInline(admin.TabularInline):
-#    model = Item
+#    model = Field
 #    extra = 5
 
 
@@ -21,3 +21,4 @@ from .models import MC_section
 #    search_fields = ['question_text']
 
 admin.site.register(MC_section)
+admin.site.register(Field)

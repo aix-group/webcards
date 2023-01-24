@@ -6,11 +6,17 @@ Section
 {% block content %}
 	
     <h1> {{ls.name}} </h1>
-    <ul>
-        {% for item in ls.item_set.all %}
-            <li>{{item.text}}</li>
-        
-        {% endfor %}
+    <form method = "post" action = "#">
+        {% csrf_token %}
+        <ul>
+            {% for field in ls.field_set.all %}
+            <li><input type="checkbox", value="clicked", name="c{{field.id}}" checked>{{field.field_question}}</li> 
 
-    </ul>   
+            {% endfor %}
+
+        </ul> 
+        <button type="submit", name="save", value= "save">Save</button> 
+        <input type="text", name="newfieldtext">
+        <button type="submit", name="newfield", value= "newfield">Add field</button> 
+    </form> 
 {% endblock %}

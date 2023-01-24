@@ -27,13 +27,15 @@ class MC_section(models.Model):
     name = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.name
+        return_text = " %s id: %i" %(self.name, self.id)
+        return return_text
     
-class Item(models.Model):
+class Field(models.Model):
     mc_section = models.ForeignKey(MC_section, on_delete=models.CASCADE)
-    text = models.CharField(max_length=500)
+    field_question = models.CharField(max_length=500)
+    field_answer = models.CharField(max_length=500)
     complete = models.BooleanField()
 
     def __str__(self):
-        return self.text
+        return "Field question:%s , field answer: %s" %(self.field_question, self.field_answer)
 
