@@ -1,0 +1,74 @@
+{% extends 'mc_and_datasheet/base.html' %}
+{% block title %}
+RAI_TOOL
+{% endblock %}
+
+ 
+{% block content %}
+
+<title>FEAT-AI</title>
+<style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #333;
+      color: #fff;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 50;
+      text-align: left;
+      left: 200px;
+      position: absolute;
+      padding: 20px;
+      top:1;
+      
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    p {
+      line-height: 1.5;
+      text-align: justify;
+    }
+
+    ul {
+      list-style-type: square;
+      padding-left: 2em;
+    }
+
+    li {
+      padding: .5em;
+    }
+  </style>
+
+<body>
+  <div class="container">
+    <h1> FEAT-AI Web Tool</h1>
+    <p>
+        FEAT-AI is a web tool for creating model cards, datasheets, and data cards. It follows the FEAT (Fairness, Ethics, Accountability, Transparency) principles, which is introduced by Monetary Authority in Singapore, in the use of machine learning models. The tool provides comprehensive information about the model and the dataset it was trained on, including information about the dataset's characteristics, the model's performance, and the methods used to train and evaluate the model.
+
+        The motivation for using this tool is to ensure that machine learning models are used in a responsible and ethical way. By providing detailed information about the dataset and the model, the tool allows users to understand the potential biases and limitations of the model, and to adjust their use of the model accordingly. Additionally, the tool provides information on how to reproduce the results, which is a key aspect of reproducibility and transparency in ML research.
+        
+        One of the key benefits of using this tool is that it allows users to make informed decisions about how to use the model and how to interpret its predictions. Additionally, by providing information about the dataset used to train the model, the tool can help users understand how the model is likely to perform on different types of data.
+                    
+    </p>
+    <p>Here are some of the features of the web tool:</p>
+    <ul>
+      <li>Model Card</li>
+      <li>Datasheet</li>
+      <li>Datacard</li>
+    </ul>
+  </div>
+
+
+</body>
+
+{% endblock %}
+

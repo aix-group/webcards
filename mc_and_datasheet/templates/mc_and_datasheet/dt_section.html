@@ -1,0 +1,92 @@
+{% extends 'mc_and_datasheet/base.html' %}
+
+{% block title %}
+Datasheet Section
+{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'mc_and_datasheet/section.css' %}">
+
+<title>FEAT-AI</title>
+
+
+<body>
+  <div class="navigation-menu">
+    {% for section in section_list %}
+      <a href="{% url 'mc_and_datasheet:dt_section' section.id %}" {% if section.id == current_section_id %}class="active"{% endif %} >{{ section.name }}</a>
+    {% endfor %}
+    <div style="text-align: left; position: absolute; bottom: 1; width: 100%; padding-bottom: 30px;">
+      <a href="{% url 'mc_and_datasheet:datasheet_export' section.id  %}" name="createcard" class="submit-button">Export Card to HTML</a>
+    </div>
+
+    <div style="text-align: left; position: absolute; bottom: 0; width: 100%; padding-bottom: 30px;">
+      <a href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_dt_section=1" name="delete_dt_section" class="delete-button">Delete all data</a>
+    </div>
+
+  </div>
+</body>
+
+
+
+<h1 class="subtitle"> {{section.name}} </h1>
+<form id="section-form" method = "post" action = "">
+  <div>
+    {% csrf_token %}
+    
+      {% for field in section_questions %}
+        <li>{{field.field_question}}</li> 
+          <input type="text", name="a{{field.id}}">
+      {% endfor %}
+   
+    <button type="submit", name="save", value= "save", class="save-button", onclick="saveForm()">Save the Answers</button> 
+    <button type="button", class="clear-button" onclick="clearForm()">Clear the answers</button>
+    <input type="text", name="newfieldtext", placeholder="Add a new question...">
+    <button name="newfield", value= "newfield" class="save-button">Add field</button> 
+  </div>  
+</form>
+
+<script>
+  function saveForm() {
+    const form = document.getElementById('section-form');
+    const formData = new FormData(form);
+    for (const [key, value] of formData.entries()) {
+      localStorage.setItem(key, value);
+    }
+  }
+
+  function clearForm() {
+  localStorage.clear();
+  const form = document.getElementById('section-form');
+  form.reset();
+}
+  
+  window.onload = function() {
+    const form = document.getElementById('section-form');
+    for (let i = 0; i < form.elements.length; i++) {
+      const element = form.elements[i];
+      if (element.type !== 'button') {
+        const value = localStorage.getItem(element.name);
+        if (value) {
+          element.value = value;
+        }
+      }
+    }
+  };
+   
+  
+  // Get the current section ID from the URL
+  var currentSectionId = '{{ section_id }}';
+
+  // Find the link that matches the current section ID and add the 'active' class to it
+  var links = document.querySelectorAll('.navigation-menu a');
+  for (var i = 0; i < links.length; i++) {
+    var link = links[i];
+    if (link.getAttribute('data-section') == currentSectionId) {
+      link.classList.add('active');
+      break;
+    }
+  }
+  
+</script>
+
+{% endblock %}

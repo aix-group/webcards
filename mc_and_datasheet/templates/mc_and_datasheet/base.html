@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html style="margin: 0; padding: 0;">
+  <head>
+    <style>
+
+      body {
+        background: #232526;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        }
+      #navbar {
+        display: flex;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+        justify-content:left;
+        
+      }
+      #navbar li {
+        float: inline-block;
+      }
+      #navbar a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+      #navbar a:hover {
+        background-color: #111;
+      }
+      #right-nav {
+        display: flex;
+        justify-content: right;
+      }
+
+
+      /* Home button styling */
+      .home-button {
+        background-color: #3e8e41; /* Yellow */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+      }
+      .home-button:hover {
+        background-color: #3e8e41
+      }
+
+    </style>
+  </head>
+<body>
+    <ul id="navbar">
+        <li><a href="{% url 'mc_and_datasheet:home' %}" class="home-button" >FEAT-AI</a></li>
+        <li><a href="{% url 'mc_and_datasheet:section' 28 %}">Model Card</a></li>
+        <li><a href="{% url 'mc_and_datasheet:dt_section' 1 %}">Datasheet</a></li>
+        <li><a href="#">Datacard</a></li>
+        
+
+        <div id="right-nav">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </div>
+        
+    </ul>
+
+    <div id="content", name="content">
+
+        {% block content %}
+        {% endblock %}
+        
+    </div>
+
+    
+</body>
+</html>

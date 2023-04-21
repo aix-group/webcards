@@ -1,0 +1,129 @@
+{% extends 'mc_and_datasheet/base.html' %}
+
+{% block title %}
+Section
+{% endblock %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'mc_and_datasheet/section.css' %}">
+
+<title>FEAT-AI</title>
+
+<body style="background-color: #c20606; margin: 0; padding: 0;">
+  <div class="navigation-menu">
+    {% for section in section_list %}
+            <a href="{% url 'mc_and_datasheet:section' section.id %}">{{ section.name }}</a>
+    {% endfor %}
+
+
+    <div style="text-align: left; position: absolute; bottom: 1; width: 100%; padding-bottom: 30px;">
+      <a href="{% url 'mc_and_datasheet:createoutput' section.id  %}" name="createcard" class="submit-button">Export Card to HTML</a>
+    </div>
+
+    <button class="submit-button">Export Card to HTML</button>
+    
+    
+      <div style="text-align: left; position: absolute; bottom: 0; width: 100%; padding-bottom: 30px;">
+        <a href="{% url 'mc_and_datasheet:delete' section.id  %}" name="delete" class="delete-button">Delete all data</a>
+      </div>
+   
+
+  </div>
+</body>
+
+
+
+<h1 class="subtitle"> {{section.name}} </h1>
+<form method = "post" action = "#">
+    {% csrf_token %}
+    
+      {% for field in section.field_set.all %}
+        {{field.field_question}}
+        {% if field.field_question == 'What is the version date?' %}
+          <input type="date" id="appointment-time" name="a{{field.id}}">
+        {% elif field.field_question == 'Split Ratio:' %} 
+          <input type="number" step="any" name="a{{field.id}}">   
+        {% elif section.id == 35 %}
+        
+        {% else %} 
+          <input type="text", name="a{{field.id}}">
+        {% endif %}
+      {% endfor %}
+    
+    {% if section.id == 35 %}  
+      <fieldset>
+        <legend>Available metrics</legend>
+        <div>
+          <label for="accuracy">accuracy</label>
+          <input type="checkbox" id="accuracy" name="metrics" value="accuracy"
+                 checked>
+        </div>
+        <div>
+          <label for="Precision">Precision</label>
+          <input type="checkbox" id="precision" name="metrics" value="precision">  
+        </div>
+        <div>
+          <label for="mean-error">Mean Error</label>
+          <input type="checkbox" id="mean-error" name="metrics"value="mean-error">
+        </div>
+      </fieldset>
+    {% endif %}
+
+    <div></div>
+    <div></div>
+    <button  name="save", value= "save", class="save-button">Save the Answers</button> 
+
+    {% if section.id ==  34 or section.id ==  35  %}
+
+    {% else %}
+      <input type="text", name="newfieldtext", placeholder="Add a new question...">
+      <button  name="newfield", value= "newfield" class="save-button">Add field</button> 
+    {% endif %}
+
+</form>
+
+{% if section.id == 34 or section.id == 35 %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
+        {% if section.id ==  34 %}
+          <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
+          {{ form.as_p }}
+        {% elif section.id ==  35 %}
+          <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
+          {{ form.as_p }}
+        {% endif %}
+    </div>
+    <input type="submit", name="upload", value="Upload">
+  </form>
+  <form>
+    {% csrf_token %}
+    <h3>File List</h3>
+      <ul>
+          {% for file in files %}
+              <li>
+                  <a>{{ file.name }}</a>
+                  <small>uploaded {{ file.uploaded_at }}</small>
+              </li>
+          {% endfor %}
+      </ul>
+  </form>
+
+
+  <script>
+    document.querySelector('.drop-zone').ondragenter = function() {
+      this.style.cursor = 'move';
+    };
+    document.querySelector('.drop-zone').ondragleave = function() {
+      this.style.cursor = 'pointer';
+    };
+
+    
+  </script>
+{% endif %}
+
+{% endblock %}
+
+
+
+
