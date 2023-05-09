@@ -1,0 +1,26 @@
+/* Center the brand name */
+.navbar-brand {
+    margin: 0 auto;
+  }
+  
+  /* Style the active link */
+  .nav-item.active .nav-link {
+    color: #fff;
+    background-color: #007bff;
+  }
+  
+  /* Style the links */
+  .nav-link {
+    color: #000;
+  }
+  
+  .nav-link:hover {
+    color: #fff;
+    background-color: #007bff;
+  }
+  
+  /* Remove the border radius on the right side of the last link */
+  .nav-item:last-child .nav-link {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }

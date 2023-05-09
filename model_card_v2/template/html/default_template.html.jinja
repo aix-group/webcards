@@ -189,25 +189,25 @@
               {% endfor %}
               </ul>{% endif %}
           {% if model_details.entry1 %}
-            <h3>{% for entry in model_details.entry1 %}{{ entry.question1 }}{% endfor %}</h3>
+            <h3>{{ model_details.entry1[0].question1 }}</h3>
               <ul>{% for entry in model_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
               {% endif %}
-          {% if model_details.licenses %}
-            <h3>Licenses</h3>
-              <ul>{% for license in model_details.licenses %}{{ render_license(license) }}{% endfor %}
-              </ul>{% endif %}
-          {% if model_details.licenses %}
-            <h3>Licenses</h3>
-              <ul>{% for license in model_details.licenses %}{{ render_license(license) }}{% endfor %}
-              </ul>{% endif %}
-          {% if model_details.licenses %}
-            <h3>Licenses</h3>
-              <ul>{% for license in model_details.licenses %}{{ render_license(license) }}{% endfor %}
-              </ul>{% endif %}
-          {% if model_details.licenses %}
-            <h3>Licenses</h3>
-              <ul>{% for license in model_details.licenses %}{{ render_license(license) }}{% endfor %}
-              </ul>{% endif %}
+          {% if model_details.entry2 %}
+            <h3>{{ model_details.entry2[0].question2 }}</h3>
+              <ul>{% for entry in model_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+              {% endif %}
+          {% if model_details.entry3 %}
+            <h3>{{ model_details.entry3[0].question3 }}</h3>
+              <ul>{% for entry in model_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+              {% endif %}
+          {% if model_details.entry4 %}
+            <h3>{{ model_details.entry4[0].question4 }}</h3>
+              <ul>{% for entry in model_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+              {% endif %}
+          {% if model_details.entry5 %}
+            <h3>{{ model_details.entry5[0].question5 }}</h3>
+              <ul>{% for entry in model_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+              {% endif %} 
         </div>
       {% endif %}
       {% if model_parameters.model_architecture or model_parameters.input_format or model_parameters.input_format_map or model_parameters.output_format or model_parameters.output_format_map %}
@@ -233,9 +233,7 @@
               {% for kv in model_parameters.output_format_map %}
               <tr><td>{{ kv.key }}</td><td>{{ kv.value }}</td></tr>{% endfor %}</table>{% endif %}
         </div>
-      {% endif %}
-
-
+      {% endif %}      
       {% if considerations and (considerations.users or considerations.use_cases or considerations.limitations or considerations.tradeoffs or considerations.ethical_considerations or considerations.out_of_scope_uses or considerations.human_life or considerations.fraught or considerations.sensitive) %}
       <div class="col card">
         <h2>Considerations</h2>
@@ -278,14 +276,30 @@
                   <div>Risk: {{ risk.name }}</div>
                   <div>Mitigation Strategy: {{ risk.mitigation_strategy }}</div>
                 </li>{% endfor %} </ul>{% endif %}
+          {% if considerations.entry1 %}
+            <h3>{{ considerations.entry1[0].question1 }}</h3>
+              <ul>{% for entry in considerations.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+              {% endif %}
+          {% if considerations.entry2 %}
+            <h3>{{ considerations.entry2[0].question2 }}</h3>
+              <ul>{% for entry in considerations.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+              {% endif %}
+          {% if considerations.entry3 %}
+            <h3>{{ considerations.entry3[0].question3 }}</h3>
+              <ul>{% for entry in considerations.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+              {% endif %}
+          {% if considerations.entry4 %}
+            <h3>{{ considerations.entry4[0].question4 }}</h3>
+              <ul>{% for entry in considerations.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+              {% endif %}
+          {% if considerations.entry5 %}
+            <h3>{{ considerations.entry5[0].question5 }}</h3>
+              <ul>{% for entry in considerations.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+              {% endif %} 
       </div>
       {% endif %}
-    </div>
-
-    <div class="row">
-    {% if factors and ( factors.salient_factors or factors.reported_factors)%}
-
-      <div class="col card">
+    </div>    <div class="row">
+    {% if factors and ( factors.salient_factors or factors.reported_factors)%}      <div class="col card">
         <h2>Factors</h2>
           {% if factors.salient_factors %}
             <h3>Salient Factors</h3>
@@ -295,9 +309,28 @@
             <h3>Reported Factors</h3>
               {{ render_considerations(factors.reported_factors) }}
           {% endif %}
-      </div>
-
-    {% if dataset_details and (dataset_details.meaning_of_output or dataset_details.utilize_output or dataset_details.not_used_data or dataset_details.used_datasets or dataset_details.reason_of_use or dataset_details.preprocessing ) %}
+          {% if factors.entry1 %}
+            <h3>{{ factors.entry1[0].question1 }}</h3>
+              <ul>{% for entry in factors.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+              {% endif %}
+          {% if factors.entry2 %}
+            <h3>{{ factors.entry2[0].question2 }}</h3>
+              <ul>{% for entry in factors.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+              {% endif %}
+          {% if factors.entry3 %}
+            <h3>{{ factors.entry3[0].question3 }}</h3>
+              <ul>{% for entry in factors.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+              {% endif %}
+          {% if factors.entry4 %}
+            <h3>{{ factors.entry4[0].question4 }}</h3>
+              <ul>{% for entry in factors.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+              {% endif %}
+          {% if factors.entry5 %}
+            <h3>{{ factors.entry5[0].question5 }}</h3>
+              <ul>{% for entry in factors.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+              {% endif %} 
+      </div>    
+      {% if dataset_details and (dataset_details.meaning_of_output or dataset_details.utilize_output or dataset_details.not_used_data or dataset_details.used_datasets or dataset_details.reason_of_use or dataset_details.preprocessing ) %}
     
       <div class="col card">
         <h2>Dataset Details</h2>
@@ -324,10 +357,28 @@
             <h3>Preprocessing</h3>
               {{ render_considerations(dataset_details.preprocessing) }}
           {% endif %}
-
+          {% if dataset_details.entry1 %}
+            <h3>{{ dataset_details.entry1[0].question1 }}</h3>
+              <ul>{% for entry in dataset_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+              {% endif %}
+          {% if dataset_details.entry2 %}
+            <h3>{{ dataset_details.entry2[0].question2 }}</h3>
+              <ul>{% for entry in dataset_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+              {% endif %}
+          {% if dataset_details.entry3 %}
+            <h3>{{ dataset_details.entry3[0].question3 }}</h3>
+              <ul>{% for entry in dataset_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+              {% endif %}
+          {% if dataset_details.entry4 %}
+            <h3>{{ dataset_details.entry4[0].question4 }}</h3>
+              <ul>{% for entry in dataset_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+              {% endif %}
+          {% if dataset_details.entry5 %}
+            <h3>{{ dataset_details.entry5[0].question5 }}</h3>
+              <ul>{% for entry in dataset_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+              {% endif %}      
       </div>
-
-    {% if performance_details and (performance_details.scope or performance_details.reliability or performance_details.mistake_frequency or performance_details.likelyhood_of_correction or performance_details.mistakes or performance_details.reported_metrics or performance_details.thresholds or performance_details.how_metrics or performance_details.unitary_results or performance_details.unitary_results ) %}
+      {% if performance_details and (performance_details.scope or performance_details.reliability or performance_details.mistake_frequency or performance_details.likelyhood_of_correction or performance_details.mistakes or performance_details.reported_metrics or performance_details.thresholds or performance_details.how_metrics or performance_details.unitary_results or performance_details.unitary_results ) %}
       <div class="col card">
         <h2>Performance Details</h2>
           {% if performance_details.scope %}
@@ -380,6 +431,26 @@
             <h3>Intersectional Results</h3>
               {{ render_considerations(performance_details.intersectional_results) }}
           {% endif %}
+          {% if performance_details.entry1 %}
+            <h3>{{ performance_details.entry1[0].question1 }}</h3>
+              <ul>{% for entry in performance_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+              {% endif %}
+          {% if performance_details.entry2 %}
+            <h3>{{ performance_details.entry2[0].question2 }}</h3>
+              <ul>{% for entry in performance_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+              {% endif %}
+          {% if performance_details.entry3 %}
+            <h3>{{ performance_details.entry3[0].question3 }}</h3>
+              <ul>{% for entry in performance_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+              {% endif %}
+          {% if performance_details.entry4 %}
+            <h3>{{ performance_details.entry4[0].question4 }}</h3>
+              <ul>{% for entry in performance_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+              {% endif %}
+          {% if performance_details.entry5 %}
+            <h3>{{ performance_details.entry5[0].question5 }}</h3>
+              <ul>{% for entry in performance_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+              {% endif %}
         </div>
       {% endif %}
       </div>
@@ -413,11 +484,122 @@
           {% if recommendations.ideal_characteristics %}
             <h3>Ideal Characteristics </h3>
               {{ render_considerations(recommendations.ideal_characteristics) }}
-          {% endif %}  
+          {% endif %}
+          {% if recommendations.entry1 %}
+            <h3>{{ recommendations.entry1[0].question1 }}</h3>
+              <ul>{% for entry in recommendations.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+              {% endif %}
+          {% if recommendations.entry2 %}
+            <h3>{{ recommendations.entry2[0].question2 }}</h3>
+              <ul>{% for entry in recommendations.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+              {% endif %}
+          {% if recommendations.entry3 %}
+            <h3>{{ recommendations.entry3[0].question3 }}</h3>
+              <ul>{% for entry in recommendations.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+              {% endif %}
+          {% if recommendations.entry4 %}
+            <h3>{{ recommendations.entry4[0].question4 }}</h3>
+              <ul>{% for entry in recommendations.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+              {% endif %}
+          {% if recommendations.entry5 %}
+            <h3>{{ recommendations.entry5[0].question5 }}</h3>
+              <ul>{% for entry in recommendations.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+              {% endif %}
       </div>
       {% endif %} 
     {% endif %} 
        
-    </div>
+    </div>    
+    <div class="row">
+      <div class="col card">   
+      {% if extended_section1.extended1_title %}<h2>{{ extended_section1.extended1_title[0].title }}</h2>{% endif %}     
+        
+        {% if extended_section1.extended1_field1 %}
+        <h3>{{ extended_section1.extended1_field1[0].question1 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field2 %}
+        <h3>{{ extended_section1.extended1_field2[0].question2 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field2 %}<li>{{ entry.entry2 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field3 %}
+        <h3>{{ extended_section1.extended1_field3[0].question3 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field3 %}<li>{{ entry.entry3 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field4 %}
+        <h3>{{ extended_section1.extended1_field4[0].question4 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field4 %}<li>{{ entry.entry4 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field5 %}
+        <h3>{{ extended_section1.extended1_field5[0].question5 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field5 %}<li>{{ entry.entry5 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field6 %}
+        <h3>{{ extended_section1.extended1_field6[0].question6 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field6 %}<li>{{ entry.entry6 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field7 %}
+        <h3>{{ extended_section1.extended1_field7[0].question7 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field7 %}<li>{{ entry.entry7 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field8 %}
+        <h3>{{ extended_section1.extended1_field8[0].question8 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field8 %}<li>{{ entry.entry8 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field9 %}
+        <h3>{{ extended_section1.extended1_field9[0].question9 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field9 %}<li>{{ entry.entry9 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section1.extended1_field10 %}
+        <h3>{{ extended_section1.extended1_field10[0].question10 }}</h3>
+            <ul>{% for entry in extended_section1.extended1_field10 %}<li>{{ entry.entry10 }}</li>{% endfor %}</ul>
+        {% endif %}
+                    
+      </div>
+      <div class="col card">
+      {% if extended_section2.title %}<h2>{{ extended_section2.title[0].title }}</h2>{% endif %}     
+        
+        {% if extended_section2.entry1 %}
+        <h3>{{ extended_section2.entry1[0].question1 }}</h3>
+            <ul>{% for entry in extended_section2.entry1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry2 %}
+        <h3>{{ extended_section2.entry2[0].question2 }}</h3>
+            <ul>{% for entry in extended_section2.entry2 %}<li>{{ entry.entry2 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry3 %}
+        <h3>{{ extended_section2.entry3[0].question3 }}</h3>
+            <ul>{% for entry in extended_section2.entry3 %}<li>{{ entry.entry3 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry4 %}
+        <h3>{{ extended_section2.entry4[0].question4 }}</h3>
+            <ul>{% for entry in extended_section2.entry4 %}<li>{{ entry.entry4 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry5 %}
+        <h3>{{ extended_section2.entry5[0].question5 }}</h3>
+            <ul>{% for entry in extended_section2.entry5 %}<li>{{ entry.entry5 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry6 %}
+        <h3>{{ extended_section2.entry6[0].question6 }}</h3>
+            <ul>{% for entry in extended_section2.entry6 %}<li>{{ entry.entry6 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry7 %}
+        <h3>{{ extended_section2.entry7[0].question7 }}</h3>
+            <ul>{% for entry in extended_section2.entry7 %}<li>{{ entry.entry7 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry8 %}
+        <h3>{{ extended_section2.entry8[0].question8 }}</h3>
+            <ul>{% for entry in extended_section2.entry8 %}<li>{{ entry.entry8 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry9 %}
+        <h3>{{ extended_section2.entry9[0].question9 }}</h3>
+            <ul>{% for entry in extended_section2.entry9 %}<li>{{ entry.entry9 }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if extended_section2.entry10 %}
+        <h3>{{ extended_section2.entry10[0].question10 }}</h3>
+            <ul>{% for entry in extended_section2.entry10 %}<li>{{ entry.entry10 }}</li>{% endfor %}</ul>
+        {% endif %}
+         
+      </div>
 </body>
 </html>

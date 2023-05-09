@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, get_list_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from .models import CardSectionData, MC_section, CardData, dt_section, CardDataDatasheet
+from .models import CardSectionData, MC_section, CardData, dt_section, CardDataDatasheet, Field, dt_Field
 from django.core.cache import cache
 from django.utils import timezone
 from django.contrib import messages
@@ -10,12 +10,104 @@ from .models import File
 import os
 import json
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.db.models import Sum, Max
 
-# Import backend libraries
+
+# Import core libraries
 import model_card_lib_v2 as mclib_v2
 import datasheet as dt
 
+message_text = str("""
+            <!DOCTYPE html>
+            <html>
+            <head>
+            	<title>My Dark Page</title>
+            	<style>
+            		body {
+            			background-color: #282c34;
+            			color: #fff;
+            			font-family: Arial, sans-serif;
+            			font-size: 16px;
+            			line-height: 1.5;
+            			margin: 0;
+            			padding: 0;
+            		}
+
+            		.container {
+            			display: flex;
+            			flex-direction: column;
+            			height: 100vh;
+            			justify-content: center;
+            			align-items: center;
+            		}
+
+            		.warning {
+            			background-color: #d9534f;
+            			border-radius: 4px;
+            			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+            			color: #fff;
+            			padding: 20px;
+            			text-align: center;
+            			width: 50%;
+            		}
+
+            		h1 {
+            			font-size: 36px;
+            			margin-top: 0;
+            		}
+
+            		p {
+            			font-size: 24px;
+            			margin-bottom: 0;
+            		}
+            	</style>
+            </head>
+            <body>
+            	<div class="container">
+            		<div class="warning">
+            			<h1>Warning!</h1>
+            			<p>An error occured. Do not FORGET to save the answers.</p>
+            		</div>
+            	</div>
+            </body>
+            </html>""")
 # Create your views here.
+
+def datacard_section(response, id):
+    context = {}
+    return render(response, "mc_and_datasheet/datacard_section.html", context)
+
+
+
+def index(request):
+    context = {}
+    return render(request, "mc_and_datasheet/index.html", context)
+def about(request):
+    context = {}
+    return render(request, "mc_and_datasheet/about.html", context)
+def contact(request):
+    context = {}
+    return render(request, "mc_and_datasheet/contact.html", context)
+def projects(request):
+    context = {}
+    return render(request, "mc_and_datasheet/projects.html", context)
+def blog_home(request):
+    context = {}
+    return render(request, "mc_and_datasheet/blog-home.html", context)
+def blog_post(request):
+    context = {}
+    return render(request, "mc_and_datasheet/blog-post.html", context)
+def portfolio_overview(request):
+    context = {}
+    return render(request, "mc_and_datasheet/portfolio-overview.html", context)
+def portfolio_item(request):
+    context = {}
+    return render(request, "mc_and_datasheet/portfolio-item.html", context)
+def my_view(request):
+    return render(request, 'mc_and_datasheet/my_template.html')
+
+
 
 def delete(request, id):
 
@@ -23,14 +115,40 @@ def delete(request, id):
     CardSectionData.objects.all().delete()
     if 'delete_section' in request.GET:
         CardData.objects.all().delete()
+        Field.objects.filter(mc_section__id=28, id__gt=36).delete()
+        Field.objects.filter(mc_section__id=30, id__gt=19).delete()
+        Field.objects.filter(mc_section__id=31, id__gt=22).delete()
+        Field.objects.filter(mc_section__id=32, id__gt=25).delete()
+        Field.objects.filter(mc_section__id=33, id__gt=29).delete()
+        Field.objects.filter(mc_section__id=36, id__gt=35).delete()
+
+        # Get all sections with id greater than 36
+        sections_to_delete = MC_section.objects.filter(id__gt=36)
+
+        # Delete the sections
+        num_deleted, _ = sections_to_delete.delete()
+
+        # Reset the click count
+        MC_section.objects.all().update(click_count=0)
+
+        print(f"{num_deleted} section has been deleted.")
+
         File.objects.all().delete()
-        url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+        url = reverse('mc_and_datasheet:section', args=[28]) # You defined an app name so that should go in as well!
 
     if 'delete_dt_section' in request.GET:
         CardDataDatasheet.objects.all().delete()
+        dt_Field.objects.filter(dt_section__id=1, id__gt=3).delete()
+        dt_Field.objects.filter(dt_section__id=2, id__gt=19).delete()
+        dt_Field.objects.filter(dt_section__id=3, id__gt=30).delete()
+        dt_Field.objects.filter(dt_section__id=4, id__gt=33).delete()
+        dt_Field.objects.filter(dt_section__id=5, id__gt=38).delete()
+        dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
+        dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
         url = reverse('mc_and_datasheet:dt_section', args=[id]) # You defined an app name so that should go in as well!
 
     return HttpResponseRedirect(url)
+
 
 def section(response, id):
     
@@ -38,8 +156,38 @@ def section(response, id):
     section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
     #{"save":["save"],"c1":["clicked"]}
 
+    
         
-    if response.method == "POST":
+    if response.method == 'POST':
+        input_text = response.POST.get('input_text')
+        print(input_text)
+        
+        if 'sectionsubmit' in response.POST:
+            
+            print("here")
+            text = response.POST['newsectiontext'] # get the input text from the form
+
+            # Get the current click count
+            click_count = MC_section.objects.aggregate(Sum('click_count'))['click_count__sum']
+            click_count = click_count if click_count is not None else 0
+
+            if len(text) > 1 and click_count < 2: # Only allow creation if the click count is less than 2
+                print(f" this is the new section '{text}'")
+                t = MC_section(name=text, click_count=1)
+                t.save()
+
+                # ID will be automaticly higher than the others
+                newly_added_id = MC_section.objects.all().aggregate(Max('id'))['id__max'] or 0
+
+                url = reverse('mc_and_datasheet:section', args=[newly_added_id]) # You defined an app name so that should go in as well!
+                return HttpResponseRedirect(url)
+
+            elif click_count == 2:
+                print("here")
+
+                error_text = message_text.replace('An error occured. Do not FORGET to save the answers.', 'You can only add two new section. You can delete and add a new.')
+
+                return HttpResponse(error_text, content_type="text/html")
         
         form = FileForm(response.POST, response.FILES)
         if form.is_valid():
@@ -50,7 +198,7 @@ def section(response, id):
             file_instance.uploaded_at = timezone.now()
             #print(file_instance.name)
             #print(file_instance.uploaded_at)
-            #print(file_objects)
+            print('here you stupid')
             file_instance.save()
             form.save()
             return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
@@ -72,8 +220,6 @@ def section(response, id):
 
 
         if response.POST.get("save"):
-
-            
             section_answers = []
             
             for field in section_instance.field_set.all():
@@ -88,7 +234,7 @@ def section(response, id):
                     accuracy = response.POST.getlist('accuracy')
                     precision = response.POST.getlist('precision')
                     mean_error = response.POST.getlist('mean-error')
-                    selected_metrics = {"selected gmetrics":[accuracy,precision,mean_error]}
+                    selected_metrics = {"selected metrics":[accuracy,precision,mean_error]}
                     selected_metrics = json.dumps(selected_metrics)
 
                     #print(selected_metrics)
@@ -131,12 +277,18 @@ def section(response, id):
            # WITH CARDDATA YOU HAVE ALL THE INFORMATION TO CREATE THE MODEL CARD NEXT CREATE A BUTTON TO CREATE THE MODEL CARD 
            # THEN FROM THIS BUTTON A NEW VIEW OPENS WITH OPTIONS ABOUT FORMAT AND SO ON
 
-        elif response.POST.get("newfield"):
+        if response.POST.get("newfield"):
              
             txt = response.POST.get("newfieldtext")
 
+            print(f"The new field :{txt}")
+
+            if not txt:
+                # Check if newfieldtext is in localStorage
+                txt = response.POST.get("newfieldtext")
+
             if len(txt) > 2:
-                section_instance.field_set.create(field_question = txt)
+                section_instance.field_set.create(field_question=txt)
             else:
                 print("invalid")
                 
@@ -147,9 +299,12 @@ def section(response, id):
         
     print(" YOU ARE RETURNED TO SECTION ")
 
+      
+
     context = {"section":section_instance,
     "section_list":section_list,
-    'current_section_id': section_instance.id}
+    'current_section_id': section_instance.id,
+    "form":form}
     #'rbform':radiobutton_form}
 
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
@@ -243,6 +398,7 @@ def datasheet_section(response,id):
     #{"save":["save"],"c1":["clicked"]}
     #print(dtsection_instance.dt_field_set.all()) # this logging.infos all the field question as objects
     if response.method == "POST":
+        print(" I am here you stooopid")
         
         if response.POST.get("save"):
 
@@ -250,7 +406,10 @@ def datasheet_section(response,id):
             
             for field in dtsection_instance.dt_field_set.all():
                 
-                field.field_answers = response.POST.get("a" + str(field.id))
+                field_answers = response.POST.get('a{}'.format(field.id))
+
+                field.field_answers = field_answers
+                print(field.field_answers)
                 section_answers.append(field.field_answers)
                 
                 field.save()
@@ -258,6 +417,7 @@ def datasheet_section(response,id):
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(dtsection_instance,dtsection_instance.dt_field_set.all(),section_answers)
 
+            print(section2beadded)
             if CardDataDatasheet.objects.exists():
                 print(" IT SEEMS CARD DATA IS POPULATED ALREADY NEW SECTION DATA WILL BE ADDED")
                 
@@ -296,60 +456,7 @@ def datasheet_section(response,id):
                "section_list":dtsection_list}
     return render(response , "mc_and_datasheet/dt_section.html",context)# The third attributes are actually variables that you can pass inside the html
 
-message_text = str("""
-            <!DOCTYPE html>
-            <html>
-            <head>
-            	<title>My Dark Page</title>
-            	<style>
-            		body {
-            			background-color: #282c34;
-            			color: #fff;
-            			font-family: Arial, sans-serif;
-            			font-size: 16px;
-            			line-height: 1.5;
-            			margin: 0;
-            			padding: 0;
-            		}
 
-            		.container {
-            			display: flex;
-            			flex-direction: column;
-            			height: 100vh;
-            			justify-content: center;
-            			align-items: center;
-            		}
-
-            		.warning {
-            			background-color: #d9534f;
-            			border-radius: 4px;
-            			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-            			color: #fff;
-            			padding: 20px;
-            			text-align: center;
-            			width: 50%;
-            		}
-
-            		h1 {
-            			font-size: 36px;
-            			margin-top: 0;
-            		}
-
-            		p {
-            			font-size: 24px;
-            			margin-bottom: 0;
-            		}
-            	</style>
-            </head>
-            <body>
-            	<div class="container">
-            		<div class="warning">
-            			<h1>Warning!</h1>
-            			<p>An error occured. Do not FORGET to save the answers.</p>
-            		</div>
-            	</div>
-            </body>
-            </html>""")
 def createoutput(request,id):
 
     if CardData.objects.exists():

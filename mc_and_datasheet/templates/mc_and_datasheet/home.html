@@ -7,6 +7,7 @@ RAI_TOOL
 {% block content %}
 
 <title>FEAT-AI</title>
+<!--
 <style>
     body {
       font-family: 'Open Sans', sans-serif;
@@ -47,26 +48,106 @@ RAI_TOOL
       padding: .5em;
     }
   </style>
-
+{% load static %}
 <body>
-  <div class="container">
-    <h1> FEAT-AI Web Tool</h1>
-    <p>
-        FEAT-AI is a web tool for creating model cards, datasheets, and data cards. It follows the FEAT (Fairness, Ethics, Accountability, Transparency) principles, which is introduced by Monetary Authority in Singapore, in the use of machine learning models. The tool provides comprehensive information about the model and the dataset it was trained on, including information about the dataset's characteristics, the model's performance, and the methods used to train and evaluate the model.
+  <div class="container"> -->
+    
+  <!-- Masthead-->
+  <header class="masthead">
+    <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+        <div class="d-flex justify-content-center">
+            <div class="text-center">
+                <h1 class="mx-auto my-0 text-uppercase">Feat AI</h1>
+                <h2 class="text-white-50 mx-auto mt-2 mb-5">A free, fast and easy to use tool to create model cards, datasheets and datacards for your data science project.</h2>
+                <a class="btn btn-primary" href="#about">Get Started</a>
+            </div>
+        </div>
+    </div>
+  </header>
 
-        The motivation for using this tool is to ensure that machine learning models are used in a responsible and ethical way. By providing detailed information about the dataset and the model, the tool allows users to understand the potential biases and limitations of the model, and to adjust their use of the model accordingly. Additionally, the tool provides information on how to reproduce the results, which is a key aspect of reproducibility and transparency in ML research.
-        
-        One of the key benefits of using this tool is that it allows users to make informed decisions about how to use the model and how to interpret its predictions. Additionally, by providing information about the dataset used to train the model, the tool can help users understand how the model is likely to perform on different types of data.
-                    
-    </p>
-    <p>Here are some of the features of the web tool:</p>
-    <ul>
-      <li>Model Card</li>
-      <li>Datasheet</li>
-      <li>Datacard</li>
-    </ul>
+<!-- About-->
+<section class="about-section text-center" id="about">
+  <div class="container px-4 px-lg-5">
+      <div class="row gx-4 gx-lg-5 justify-content-center">
+          <div class="col-lg-8">
+              <h2 class="text-white mb-4">FEAT-AI Web Tool</h2>
+              <p class="text-white-50" style="text-align: justify;">
+                FEAT-AI is a web tool for creating model cards, datasheets, and data cards. It follows the FEAT (Fairness, Ethics, Accountability, Transparency) principles, which is introduced by Monetary Authority in Singapore, in the use of machine learning models. The tool provides comprehensive information about the model and the dataset it was trained on, including information about the dataset's characteristics, the model's performance, and the methods used to train and evaluate the model.
+
+                The motivation for using this tool is to ensure that machine learning models are used in a responsible and ethical way. By providing detailed information about the dataset and the model, the tool allows users to understand the potential biases and limitations of the model, and to adjust their use of the model accordingly. Additionally, the tool provides information on how to reproduce the results, which is a key aspect of reproducibility and transparency in ML research.
+                
+                One of the key benefits of using this tool is that it allows users to make informed decisions about how to use the model and how to interpret its predictions. Additionally, by providing information about the dataset used to train the model, the tool can help users understand how the model is likely to perform on different types of data.
+                            
+              </p>
+          </div>
+      </div>
+      <img class="img-fluid" src="{% static 'mc_and_datasheet/assets/img/scale.png' %}" alt="..." />
   </div>
+</section>
 
+<!-- Projects-->
+<section class="projects-section bg-light" id="projects">
+  <div class="container px-4 px-lg-5">
+      <!-- Featured Project Row-->
+      <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+          <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="{% static 'mc_and_datasheet/assets/img/model_card_example.png' %}" alt="..." /></div>
+          <div class="col-xl-4 col-lg-5">
+              <div class="featured-text text-center text-lg-left">
+                  <h4>Model Card</h4>
+                  <p class="text-black-50 mb-0" style="text-align: justify;" >Create a standardized report that describes your machine learning model's capabilities, limitations, and intended use.</p>
+              </div>
+          </div>
+      </div>
+      <br>
+      <br>
+      <!-- Project One Row-->
+      <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+          <div class="col-lg-6"><img class="img-fluid" src="{% static 'mc_and_datasheet/assets/img/datasheet_example.png' %}" alt="..." /></div>
+          <div class="col-lg-6">
+              <div class="bg-black text-center h-100 project">
+                  <div class="d-flex h-100">
+                      <div class="project-text w-100 my-auto text-center text-lg-left">
+                          <h4 class="text-white">Datasheet</h4>
+                          <p class="mb-0 text-white-50" style="text-align: justify;">Generate a document that provides information on the data used to train and test your machine learning model, including data sources, quality, and processing.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <br>
+      <br>
+      <!-- Project Two Row-->
+      <div class="row gx-0 justify-content-center">
+          <div class="col-lg-6"><img class="img-fluid" src="{% static 'mc_and_datasheet/assets/img/datacard_example.png' %}" alt="..." /></div>
+          <div class="col-lg-6 order-lg-first">
+              <div class="bg-black text-center h-100 project">
+                  <div class="d-flex h-100">
+                      <div class="project-text w-100 my-auto text-center text-lg-right">
+                          <h4 class="text-white">Datacard</h4>
+                          <p class="mb-0 text-white-50" style="text-align: justify;">Consider also creating a datacard to simplify data management and facilitate sharing and reuse of datasets in machine learning projects.</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<!-- Footer
+<footer class="footer bg-black small text-center text-white-50" style="position: absolute; bottom: 0;">
+  <div class="container px-4 px-lg-5">
+    Copyright &copy; Feat-AI 2023
+  </div>
+</footer>-->
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="{% static 'mc_and_datasheet/js/scripts.js' %}"></script>
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<!-- * *                               SB Forms JS                               * *-->
+<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
 
 </body>
 

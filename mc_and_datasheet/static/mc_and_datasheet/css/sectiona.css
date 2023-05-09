@@ -1,0 +1,87 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #333333 no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+
+  /*
+  background-image: url({% static 'mc_and_datasheet/assets/img/bg-masthead.jpg' %});
+  background-repeat: no-repeat;
+  background-size: cover; */
+}
+
+.checkboxlabel{
+  display:flex;
+  justify-content: space-between;
+  text-align:justify;
+}
+.message{
+  display:flex;
+  justify-content:space-between;
+}
+textarea{
+  width:82%;
+}
+.radiobuttons{
+  display:flex;
+}
+.survey{
+  font-family: 'Raleway', sans-serif;
+  margin-top:40px;
+}
+h1{
+  font-weight:400;
+  font-family: 'Merriweather', serif
+}
+#description{
+  font-family: 'Merriweather', serif
+}
+@media(max-width:400px){
+  .checkboxlabel{
+  display:block;  
+}
+}
+
+#sidebar-wrapper {
+position: fixed;
+top: 75px; /* adjust this value as needed */
+bottom: 0;
+left: 0;
+z-index: 1000;
+overflow-y: auto;
+background-color: #343a40; /* dark background color */
+color: #fff; /* text color */
+padding: 20px;
+}
+
+#main-content {
+margin-left: 250px; /* width of the sidebar */
+}
+
+.list-group-item {
+background-color: #343a40; /* set the default background color */
+color: #ffffff;
+}
+
+.list-group-item:hover {
+background-color: #555b60; /* set the background color when hovered */
+color: #fff;
+}
+.active {
+background-color: #337ab7;
+color: #fff;
+}
+
+.drop-zone {
+border: 2px dotted black;
+height: 130px;
+text-align: center;
+width: 100%;
+}
+
+
+.drop-zone.drag-over {
+border-color: #000;
+}

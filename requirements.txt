@@ -44,7 +44,7 @@ matplotlib==3.7.0
 matplotlib-inline==0.1.6
 # model-card-toolkit @ MUST BE MANUALLY INSTALLED 
 more-itertools==8.10.0
-netifaces==0.11.0
+#netifaces==0.11.0
 numpy==1.24.2
 oauthlib==3.2.0
 olefile==0.46
@@ -75,7 +75,7 @@ python-dateutil==2.8.1
 pytz==2022.1
 pyxdg==0.27
 PyYAML==5.4.1
-reportlab==3.6.8
+#reportlab==3.6.8
 requests==2.25.1
 scikit-learn==1.2.1
 scipy==1.10.0

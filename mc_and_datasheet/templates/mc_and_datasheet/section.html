@@ -5,116 +5,333 @@ Section
 {% endblock %}
 {% block content %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'mc_and_datasheet/section.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'mc_and_datasheet/css/sectiona.css' %}">
+<link rel="stylesheet" href="{% static 'mc_and_datasheet/css/jquery-ui.css' %}">
+<link rel="stylesheet" href="{% static 'mc_and_datasheet/css/bootstrap.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="{% static 'mc_and_datasheet/css/styles_sidebar.css' %}" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+<style>
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #333333 no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+
+  /*
+  background-image: url({% static 'mc_and_datasheet/assets/img/bg-masthead.jpg' %});
+  background-repeat: no-repeat;
+  background-size: cover; */
+}
+
+.checkboxlabel{
+  display:flex;
+  justify-content: space-between;
+  text-align:justify;
+}
+.message{
+  display:flex;
+  justify-content:space-between;
+}
+textarea{
+  width:82%;
+}
+.radiobuttons{
+  display:flex;
+}
+.survey{
+  font-family: 'Raleway', sans-serif;
+  margin-top:40px;
+}
+h1{
+  font-weight:400;
+  font-family: 'Merriweather', serif
+}
+#description{
+  font-family: 'Merriweather', serif
+}
+@media(max-width:400px){
+  .checkboxlabel{
+  display:block;  
+}
+}
+
+#sidebar-wrapper {
+position: fixed;
+top: 75px; /* adjust this value as needed */
+bottom: 0;
+left: 0;
+z-index: 1000;
+overflow-y: auto;
+background-color: #343a40; /* dark background color */
+color: #fff; /* text color */
+padding: 20px;
+}
+
+#main-content {
+margin-left: 250px; /* width of the sidebar */
+}
+
+.list-group-item {
+background-color: #343a40; /* set the default background color */
+color: #ffffff;
+}
+
+.list-group-item:hover {
+background-color: #555b60; /* set the background color when hovered */
+color: #fff;
+}
+.active {
+background-color: #337ab7;
+color: #fff;
+}
+
+.drop-zone {
+border: 2px dotted black;
+height: 130px;
+text-align: center;
+width: 100%;
+}
+
+
+.drop-zone.drag-over {
+border-color: #000;
+}
+
+
+
+
+
+
+</style>
 
 <title>FEAT-AI</title>
 
 
 <body>
-  <div class="navigation-menu">
-    {% for section in section_list %}
-            <a href="{% url 'mc_and_datasheet:section' section.id %}" {% if section.id == current_section_id %}class="active"{% endif %} >{{ section.name }}</a>
-    {% endfor %}
+  <!--Sidebar-->
+  <br>
+  <br>
+  <br>
+  <div class="border-end bg-secondary.bg-gradient text-light float-start" id="sidebar-wrapper">
+    <div class="sidebar-heading border-bottom bg-dark">Sections</div>
+      <div class="list-group list-group-flush bg-white active ">
+        {% for section in section_list %}
+        
+        <a class="list-group-item-dark list-group-item list-group-item-action p-3 {% if section.id == current_section_id %}active{% endif %}" href="{% url 'mc_and_datasheet:section' section.id %}">
+          {{ section.name }}
+        </a>
+        
+        {% endfor %} 
+      </div>
 
-
-    <div style="text-align: left; position: absolute; bottom: 1; width: 100%; padding-bottom: 30px;">
-      <a href="{% url 'mc_and_datasheet:createoutput' section.id  %}" name="createcard" class="submit-button">Export Card to HTML</a>
-    </div> 
-    
-    <div style="text-align: left; position: absolute; bottom: 0; width: 100%; padding-bottom: 30px;">
-      <a href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">Delete all data</a>
+        <br>
+        <br>
+        <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" data-toggle="modal" data-target="#myModal" id="popup-btn">
+          <i class="fas fa-plus-circle me-2"></i> Add Section
+        </button>
+        <div id="popup-container"></div>
+        <br>
+        <a class="list-group-item list-group-item-action list-group-item-dark p-3 bg-success" href="{% url 'mc_and_datasheet:createoutput' section.id  %}" name="createcard" class="submit-button">
+          <i class="fas fa-file-export me-2"></i> Export Card to HTML
+        </a>
+        <br>
+        <a class="list-group-item list-group-item-action list-group-item-dark p-3 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">
+          <i class="fas fa-trash-alt me-2"></i> Reset
+        </a>
+      
     </div>
-   
-
+    </div>
   </div>
-</body>
+
+  
+ <!-- Form Area -->
+ <!-- Modal -->
+ <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color:#333333">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel" style="color:white">Add Section</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" style="color:rgb(0, 0, 0)">&times;</span>
+        </button>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="section-name" style="color:white">Enter the name of the new section:</label>
+          <input type="text" class="form-control" id="section-name" name="newsectiontext">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-secondary" name="sectionsubmit" onclick="location.href=window.location.href + '?cache=' + new Date().getTime()" >Submit</button> 
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
+  <div class="container survey" style= " z-index: 1; " >
+    <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
+    <p id="description" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; " >Description of the Section</p>
+  
+    <form method = 'POST' id="survey-form" class=".bg-secondary.bg-gradient text-white px-10 py-10" style="margin-left: 125px; z-index: 1; ">
 
-<h1 class="subtitle"> {{section.name}} </h1>
-<form id="section-form" method="post" action="">
-    <div>
-    {% csrf_token %}
-       
-      {% for field in section.field_set.all %}
-      
-        {{field.field_question}} 
-    
-        {% if field.field_question == 'What is the version date?' %}
-          <input type="date" id="appointment-time" name="a{{field.id}}">
-        {% elif field.field_question == 'Size of the dataset:' %} 
+   <div class="form-row" style= " z-index: 1; "  >
+    {% for field in section.field_set.all %}
+      <div class="col" style= " z-index: 1; " >
         
-          <input type="number" id="trainset" step="1" min="0" max="99999999" value="700" name="a{{field.id}}">
-        
-        {% elif field.field_question == 'Split Ratio:' %} 
-        
-          <input type="number" id="splitratio" step="0.1" min="0.5" max="1.0" value="0.7" name="a{{field.id}}">   
-        
-        {% elif section.id == 35 %}
-        
-        {% else %} 
-          <input type="text", name="a{{field.id}}">
+        {% if field.field_question != 'What is the version date?' %}
+           {% if field.field_question != 'Size of the dataset:' %}
+            {% if field.field_question != 'Split Ratio:' %}
+            <br>
+            
+            <label id="name-label" style= " z-index: 1; " >{{field.field_question}}</label>
+
+            {% if field.field_question != 'Select the metrics you want to include' %}
+            <div class="input-group" style= " z-index: 1; " >
+              <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{field.id}}" style= " z-index: 1; " ></textarea>
+              <button type="button" class="btn btn-danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+            {% endif %}   
+          {% endif %}
         {% endif %}
+      {% endif %}
       {% endfor %}
-    </div>
+      </div>
+
+      {% for field in section.field_set.all %}
+  
+      {% if field.field_question == 'What is the version date?' %}
+      <br>
+        
+      <label id="name-label">{{field.field_question}}</label>
+        <input type="date" id="appointment-time" name="a{{field.id}}" class="form-control bg-dark text-light">
+        
+      {% elif field.field_question == 'Size of the dataset:' %} 
+      <br>
+      <label id="name-label">{{field.field_question}}</label>
+        <input type="number" id="trainset" step="1" min="0" max="99999999" value="700" name="a{{field.id}}"><br>
     
-    {% if section.id == 35 %}  
+      {% elif field.field_question == 'Split Ratio:' %} 
+      <br>
+      <label id="name-label">{{field.field_question}}</label>   
+        <input type="number" id="splitratio" step="0.1" min="0.5" max="1.0" value="0.7" name="a{{field.id}}"><br>   
+    
+      {% elif section.id == 35 %}
+
+      {% endif %}
+
+      {% if section.id == 35 %}  
+    
+        <div class="container">
+          <fieldset>
+            <legend>Available metrics</legend>
+            <div class="row mb-3">
+
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <input type="number" id="accuracy-field" name="accuracy" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" placeholder="Accuracy">
+                  <div class="input-group-text ms-2 bg-dark">
+                    <input type="checkbox" id="accuracy" name="accuracy" value="accuracy">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <input type="number" id="precision-field" name="precision" class="form-control bg-dark text-light" step="0.01" placeholder="Precision">
+                  <div class="input-group-text ms-2 bg-dark">
+                    <input type="checkbox" id="precision" name="precision" value="precision">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <input type="number" id="mean-error-field" name="mean-error" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" placeholder="Mean Error">
+                  <div class="input-group-text ms-2 bg-dark">
+                    <input type="checkbox" id="mean-error" name="mean-error" value="mean-error">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p> (This area will be expanded) </p>
+            
+            </div>
+          </fieldset>
+        </div>
+      {% endif %}
+      {% endfor %} 
+      <hr style="border-width: 3px;">
+      {% if section.id ==  34 or section.id ==  35  %}
       
-    <fieldset>
-      <legend>Available metrics</legend>
-      <div class="form-group">
-        <label for="accuracy-field">Accuracy:</label>
-        <input type="number" id="accuracy-field" name="accuracy" step="0.01" min="0.1" max="1.0">
-        <label for="accuracy"></label>
-        <input type="checkbox" id="accuracy" name="accuracy" value="accuracy"
-               checked>
-        
-      </div>
-      <div class="form-group">
-        <label for="precision-field">Precision:</label>
-        <input type="number" id="precision-field" name="precision" step="0.01">
-        <label for="Precision"></label>
-        <input type="checkbox" id="precision" name="precision" value="precision">  
-        
-      </div>
-      <div class="form-group">
-        <label for="mean-error-field">Mean Error:</label>
-        <input type="number" id="mean-error-field" name="mean-error" step="0.01">
-        <label for="mean-error"></label>
-        <input type="checkbox" id="mean-error" name="mean-error"value="mean-error">
-      </div>
-    </fieldset>
-    {% endif %}
-
-    <button type="submit", name="save", value= "save", class="save-button", onclick="saveForm()">Save the Answers</button> 
-    <button type="button", class="clear-button" onclick="clearForm()">Clear the answers</button>
-
-    {% if section.id ==  34 or section.id ==  35  %}
-
-    {% else %}
-      <input type="text", name="newfieldtext", placeholder="Add a new question...">
-      <button  type="submit", name="newfield", value= "newfield" class="save-button", onclick="saveForm()">Add field</button> 
-    {% endif %}
-
-</form>
-
-
-{% if section.id == 34 or section.id == 35 %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-        {% if section.id ==  34 %}
-          <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
-          {{ form.as_p }}
-        {% elif section.id ==  35 %}
-          <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
-          {{ form.as_p }}
+      {% else %}
+      <form method="POST" >
+        {% csrf_token %}
+        <div class="form-group">
+          <label id="email-label">Add Question</label>
+          <div class="input-group">
+            
+         <input id="input-text1" name="newfieldtext" type="text" class="form-control bg-secondary text-dar" aria-describedby="emailHelp" placeholder="Add a new question...">
+          <button type="submit" name="newfield" value= "newfield" class="btn btn-primary" onclick="saveForm()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="fas fa-plus" viewBox="0 0 16 16">
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+            </svg>
+          </button>
+          </div>
+          <small id="emailHelp" class="form-text text-muted">You can add a new question if a you have specific desire for the model card.</small>
+        </div>
+        <div>
+          <button type="submit" name="save" value= "save" class="btn btn-outline-secondary" style="float:right" onclick="saveForm()">Save the Answers</button>
+          <button type="button" class="btn btn-outline-secondary"  style="float:right" onclick="clearForm()">Clear the answers</button>
+        </div>
+        <br>
+        <br>
+        <br>
         {% endif %}
-    </div>
-    <input type="submit", name="upload", value="Upload">
-  </form>
-
-
+        
+    </form>  
+      {% if section.id == 34 or section.id == 35 %}
+      
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
+              {% if section.id ==  34 %}
+                <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
+                {{ form.as_p }}
+              {% elif section.id ==  35 %}
+                <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
+                {{ form.as_p }}
+              {% endif %}
+          </div>
+          <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload" value="Upload">
+            <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
+          </button>
+        </form>
+      
+        {% endif %}
 
 
   <script>
@@ -127,19 +344,64 @@ Section
 
     
   </script>
-{% endif %}
+
+
 
 <script>
+
+$(document).ready(function() {
+    // Get a reference to the Save Changes button
+    var saveBtn = document.getElementById("save-btn");
+    
+    // Attach a click event listener to the Save Changes button
+    saveBtn.addEventListener("click", function() {
+        // Get the value of the input field
+        var sectionName = document.getElementById("section-name").value;
+        
+        // Send the value of the input field to your Django view function
+        $.ajax({
+            url: "{% url 'mc_and_datasheet:section' section.id %}",
+            type: "POST",
+            data: {
+                'section_name': sectionName,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                // Handle the response from your view function
+                console.log(response);
+            },
+            error: function(xhr) {
+                // Handle any errors that occur during the request
+                console.log(xhr.statusText);
+            }
+        });
+    });
+});
   
  
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  src="{% static 'mc_and_datasheet/js/jquery-ui.js' %}"
+
   
-  function saveForm() {
-    const form = document.getElementById('section-form');
-    const formData = new FormData(form);
-    for (const [key, value] of formData.entries()) {
-      localStorage.setItem(key, value);
-    }
-  }
+
+var popupBtn = document.getElementById("popup-btn");
+popupBtn.addEventListener("click", function() {
+  var popupContainer = document.getElementById("popup-container");
+  var popupWindow = document.createElement("div");
+  popupWindow.className = "popup-window";
+  popupWindow.innerHTML = "<h2>Popup Window</h2><p>Here is some content for the popup window.</p>";
+  popupContainer.appendChild(popupWindow);
+  var popupBtnRect = popupBtn.getBoundingClientRect();
+  popupWindow.style.top = popupBtnRect.top + "px";
+  popupWindow.style.left = popupBtnRect.right + "px";
+});
+
+  
+
+function saveForm() {
+    const newFieldText = document.getElementById('email').value;
+    localStorage.setItem('newfieldtext', newFieldText);
+}
 
   function clearForm() {
   localStorage.clear();
@@ -173,11 +435,43 @@ Section
       break;
     }
   }
-  
+  // Add click event listener to delete buttons
+  const deleteBtns = document.querySelectorAll('.btn-danger');
+deleteBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const grandparent = btn.parentNode.parentNode;
+    grandparent.parentNode.removeChild(grandparent);
+  });
+});
+
+// get the date picker input element
+const datePicker = document.getElementById('appointment-time');
+
+// get the span element that will display the selected date
+const selectedDate = document.getElementById('selected-date');
+
+// add an event listener to the input element that will update the selected date when a new date is selected
+datePicker.addEventListener('input', () => {
+  selectedDate.textContent = datePicker.value;
+});
+
 </script>
 
+<!-- Footer-->
+<footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; Feat-AI 2023</div></footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="{% static 'mc_and_datasheet/js/scripts.js' %}"></script>
+<script src="{% static 'mc_and_datasheet/js/scripts_sidebar.js' %}"></script>
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<!-- * *                               SB Forms JS                               * *-->
+<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-
-  
 
 {% endblock %}
