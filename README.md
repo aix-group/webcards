@@ -2,7 +2,7 @@
 
 This web tool seeks to accelerate the development of solutions that validate artificial intelligence models and datasets against the fairness, ethics, accountability and transparency (FEAT) principles, to strengthen trust and promote greater adoption of AI solutions.
 
-## Instructions to deploy locally Create a virtual environment and install the dependencies
+## Instructions to deploy locally: Create a virtual environment and install the dependencies
 
 -Create a new virtual environment:
 ```sh
