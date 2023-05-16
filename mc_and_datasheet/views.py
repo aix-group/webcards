@@ -125,6 +125,10 @@ def delete(request, id):
         # Get all sections with id greater than 36
         sections_to_delete = MC_section.objects.filter(id__gt=36)
 
+        # Delete the field values
+        Field.objects.all().update(field_answer="")
+
+
         # Delete the sections
         num_deleted, _ = sections_to_delete.delete()
 
@@ -146,6 +150,8 @@ def delete(request, id):
         dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
         dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
         url = reverse('mc_and_datasheet:dt_section', args=[id]) # You defined an app name so that should go in as well!
+        # Delete the field values
+        dt_Field.objects.all().update(field_answer="")
 
     return HttpResponseRedirect(url)
 
@@ -225,12 +231,13 @@ def section(response, id):
             for field in section_instance.field_set.all():
                 
                 if section_instance.id != 35:
-                    field.field_answers = response.POST.get("a" + str(field.id))
-                    section_answers.append(field.field_answers)
+                    asnwer_instance = response.POST.get("a" + str(field.id))
+                    field.field_answer = asnwer_instance # save to database
+                    section_answers.append(asnwer_instance) # also append the list
+                    field.save()
 
                 else: 
 
-                    
                     accuracy = response.POST.getlist('accuracy')
                     precision = response.POST.getlist('precision')
                     mean_error = response.POST.getlist('mean-error')
@@ -241,11 +248,13 @@ def section(response, id):
                     #field.field_answers = selected_metrics
                     section_answers.append(selected_metrics)
                 
-                field.save()
+                
 
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(section_instance,section_instance.field_set.all(),section_answers)
             #section2beadded = json.loads(section2beadded)
+            
+
 
             #previous_saved_sections = []
             if CardData.objects.exists():
@@ -304,6 +313,7 @@ def section(response, id):
     context = {"section":section_instance,
     "section_list":section_list,
     'current_section_id': section_instance.id,
+    #"field_answers":section_instance.field_answer
     "form":form}
     #'rbform':radiobutton_form}
 
@@ -409,21 +419,11 @@ def datasheet_section(response,id):
             for field in dtsection_instance.dt_field_set.all():
                 # Iterate over the related dt_field objects
 
-                print("a" + str(field.id))
-                # Print the string 'a' concatenated with the field's ID
-
-                field.field_answers = response.POST.get("a" + str(field.id))
-                # Retrieve the value from the POST request using the key "a" + field ID
-                # Assign the value to the field's field_answers attribute
-
-                print(field.field_answers)
-                # Print the value assigned to field.field_answers
-
-                section_answers.append(field.field_answers)
-                # Append the value to the section_answers list
-
+                asnwer_instance = response.POST.get("a" + str(field.id))
+                field.field_answer = asnwer_instance # save to database
+                section_answers.append(asnwer_instance) # also append the list
                 field.save()
-                # Save the field
+
             
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(dtsection_instance,dtsection_instance.dt_field_set.all(),section_answers)

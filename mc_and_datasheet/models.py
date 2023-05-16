@@ -44,6 +44,9 @@ class Field(models.Model):
     
     def __str__(self):
         return "Field question:%s" %(self.field_question)
+    
+    def get_answer(self):
+        return self.field_answer
 
     
 class CardSectionData(models.Model):
@@ -104,6 +107,9 @@ class dt_Field(models.Model):
     
     def __str__(self):
         return "Field question:%s" %(self.field_question)
+    
+    def get_answer(self):
+        return self.field_answer
     
 class CardDataDatasheet(models.Model):
 

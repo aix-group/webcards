@@ -182,7 +182,7 @@ border-color: #000;
     <p id="description" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; " >Description of the Section</p>
   
     <form method = 'POST' id="survey-form" class=".bg-secondary.bg-gradient text-white px-10 py-10" style="margin-left: 125px; z-index: 1; ">
-
+      {% csrf_token %}
    <div class="form-row" style= " z-index: 1; "  >
     {% for field in section.field_set.all %}
       <div class="col" style= " z-index: 1; " >
@@ -196,7 +196,7 @@ border-color: #000;
 
             {% if field.field_question != 'Select the metrics you want to include' %}
             <div class="input-group" style= " z-index: 1; " >
-              <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{field.id}}" style= " z-index: 1; " ></textarea>
+              <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;" >{{ field.get_answer }}</textarea>
               <button type="button" class="btn btn-danger">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
