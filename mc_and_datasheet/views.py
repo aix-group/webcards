@@ -402,18 +402,29 @@ def datasheet_section(response,id):
         
         if response.POST.get("save"):
 
+            print(response.POST)
+
             section_answers = []
             
             for field in dtsection_instance.dt_field_set.all():
-                
-                field_answers = response.POST.get('a{}'.format(field.id))
+                # Iterate over the related dt_field objects
 
-                field.field_answers = field_answers
+                print("a" + str(field.id))
+                # Print the string 'a' concatenated with the field's ID
+
+                field.field_answers = response.POST.get("a" + str(field.id))
+                # Retrieve the value from the POST request using the key "a" + field ID
+                # Assign the value to the field's field_answers attribute
+
                 print(field.field_answers)
+                # Print the value assigned to field.field_answers
+
                 section_answers.append(field.field_answers)
-                
+                # Append the value to the section_answers list
+
                 field.save()
-            # print(section_answers)
+                # Save the field
+            
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(dtsection_instance,dtsection_instance.dt_field_set.all(),section_answers)
 

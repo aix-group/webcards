@@ -188,7 +188,7 @@ Datasheet Section
  <div class="form-row" style= " z-index: 1; "  >
   {% for field in section_questions %}
     <div class="col" style= " z-index: 1; " >
-        <br><label id="name-label" style= " z-index: 1; " >{{field.field_question}}</label>
+        <br><label id="name-label" style= " z-index: 1; " >{{field.field_question}} {{field.id}}</label>
           <div class="input-group" style= " z-index: 1; " >
             
             <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{field.id}}" style= " z-index: 1; " ></textarea>
@@ -205,9 +205,6 @@ Datasheet Section
   </div>
 </div>
     
-</form>
-<form method="POST" >
-  {% csrf_token %}
   <div class="form-group">
     <label id="email-label">Add Question</label>
     <div class="input-group">
@@ -229,7 +226,7 @@ Datasheet Section
   <br>
   <br>
   <br>
-
+  </form>
 
 <script>
   src="https://code.jquery.com/jquery-3.6.0.min.js"
