@@ -124,3 +124,46 @@ class CardDataDatasheet(models.Model):
     def extend_dict(self,extension):
 
         return card_data + extension
+
+########################### DataCard ############################
+
+class dc_section(models.Model):
+
+    name = models.CharField(max_length=300)
+
+    def givename(self):
+        return self.name
+
+    def __str__(self):
+        return_text = " %s id: %i" %(self.name, self.id)
+        return return_text
+    
+class dc_Field(models.Model):
+    dt_section = models.ForeignKey(dt_section, on_delete=models.CASCADE)
+    field_question = models.CharField(max_length=500)
+    field_answer = models.TextField(max_length=1000, blank=True)
+    field_answer_date = models.DateTimeField(default=timezone.now)
+   
+    def givename(self):
+
+        return str(str(self.id) + '_' + self.field_question)
+    
+    def __str__(self):
+        return "Field question:%s" %(self.field_question)
+    
+    def get_answer(self):
+        return self.field_answer
+    
+class CardDataDatacard(models.Model):
+
+    card_data = models.JSONField()
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.card_data}'
+    def get(self):
+        return f'{self.card_data}'
+    
+    def extend_dict(self,extension):
+
+        return card_data + extension
