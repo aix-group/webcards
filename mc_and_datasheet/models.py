@@ -25,6 +25,7 @@ class MC_section(models.Model):
 
     name = models.CharField(max_length=300)
     click_count = models.IntegerField(default=0)
+    section_desc = models.CharField(max_length=500, default='Info about the section')
 
     def givename(self):
         return self.name
@@ -38,6 +39,7 @@ class Field(models.Model):
     field_question = models.CharField(max_length=500)
     field_answer = models.TextField(max_length=1000, blank=True)
     field_answer_date = models.DateTimeField(default=timezone.now)
+    field_helper = models.CharField(max_length=1000, default='Info about the field', blank=True)
    
     def givename(self):
         return str(str(self.id) + '_' + self.field_question)
@@ -87,6 +89,7 @@ class File(models.Model):
 class dt_section(models.Model):
 
     name = models.CharField(max_length=300)
+    section_desc = models.CharField(max_length=500, default='Info about the section')
 
     def givename(self):
         return self.name
@@ -100,6 +103,7 @@ class dt_Field(models.Model):
     field_question = models.CharField(max_length=500)
     field_answer = models.TextField(max_length=1000, blank=True)
     field_answer_date = models.DateTimeField(default=timezone.now)
+    field_helper = models.CharField(max_length=500, default='Info about the field')
    
     def givename(self):
 

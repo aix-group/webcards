@@ -10,6 +10,7 @@ Section
 <link rel="stylesheet" href="{% static 'mc_and_datasheet/css/jquery-ui.css' %}">
 <link rel="stylesheet" href="{% static 'mc_and_datasheet/css/bootstrap.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.4/font/bootstrap-icons.css">
 <link href="{% static 'mc_and_datasheet/css/styles_sidebar.css' %}" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -17,23 +18,33 @@ Section
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+
+<!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<!-- Include Bootstrap Icons CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.4/font/bootstrap-icons.css">
+
+<!-- Include Bootstrap JavaScript (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <style>
 body {
   font-family: 'Open Sans', sans-serif;
-  background: #333333 no-repeat center center fixed;
+  /*background: #333333 no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
-  -o-background-size: cover;
-
-  /*
-  background-image: url({% static 'mc_and_datasheet/assets/img/bg-masthead.jpg' %});
+  -o-background-size: cover;*/
+ 
+  background-image: url({% static 'mc_and_datasheet/assets/img/section.jpg' %});
   background-repeat: no-repeat;
-  background-size: cover; */
+  background-size: cover;
 }
 
+
 .checkboxlabel{
-  display:flex;
+  display:flex; 
   justify-content: space-between;
   text-align:justify;
 }
@@ -106,6 +117,33 @@ width: 100%;
 border-color: #000;
 }
 
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
 </style>
 
 <title>FEAT-AI</title>
@@ -121,7 +159,7 @@ border-color: #000;
       <div class="list-group list-group-flush bg-white active ">
         {% for section in section_list %}
         
-        <a class="list-group-item-dark list-group-item list-group-item-action p-3 {% if section.id == current_section_id %}active{% endif %}" href="{% url 'mc_and_datasheet:section' section.id %}">
+        <a class="list-group-item-dark list-group-item list-group-item-action p-2 {% if section.id == current_section_id %}active{% endif %}" href="{% url 'mc_and_datasheet:section' section.id %}">
           {{ section.name }}
         </a>
         
@@ -130,16 +168,16 @@ border-color: #000;
 
         <br>
         <br>
-        <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" data-toggle="modal" data-target="#myModal" id="popup-btn">
+        <button class="list-group-item list-group-item-action list-group-item-dark p-2 bg-secondary" data-toggle="modal" data-target="#myModal" id="popup-btn">
           <i class="fas fa-plus-circle me-2"></i> Add Section
         </button>
         <div id="popup-container"></div>
         <br>
-        <a class="list-group-item list-group-item-action list-group-item-dark p-3 bg-success" href="{% url 'mc_and_datasheet:createoutput' section.id  %}" name="createcard" class="submit-button">
+        <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-success" href="{% url 'mc_and_datasheet:createoutput' section.id  %}" name="createcard" class="submit-button">
           <i class="fas fa-file-export me-2"></i> Export Card to HTML
         </a>
         <br>
-        <a class="list-group-item list-group-item-action list-group-item-dark p-3 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">
+        <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">
           <i class="fas fa-trash-alt me-2"></i> Reset
         </a>
       
@@ -176,14 +214,13 @@ border-color: #000;
   </div>
 </div>
 
-
+ <!-- Form Area For Questions -->
   <div class="container survey" style= " z-index: 1; " >
-    <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
-    <p id="description" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; " >Description of the Section</p>
-  
-    <form method = 'POST' id="survey-form" class=".bg-secondary.bg-gradient text-white px-10 py-10" style="margin-left: 125px; z-index: 1; ">
-      {% csrf_token %}
+  <form method = 'POST' id="survey-form" class=".bg-secondary.bg-gradient text-white px-10 py-10" style="margin-left: 125px; z-index: 1; ">
+  {% csrf_token %}
    <div class="form-row" style= " z-index: 1; "  >
+    <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
+    <p id="description" class="text-white-50 mx-auto mt-2 mb-2 text-center" style="z-index: 1; text-align: justify; margin-left: 20px; margin-right: 20px;">{{ section.section_desc }}</p>
     {% for field in section.field_set.all %}
       <div class="col" style= " z-index: 1; " >
         
@@ -192,11 +229,27 @@ border-color: #000;
             {% if field.field_question != 'Split Ratio:' %}
             <br>
             
-            <label id="name-label" style= " z-index: 1; " >{{field.field_question}}</label>
-
+            <div class="input-group">
+              {{ field.field_question }}
+              <div class="input-group-append">
+                {% if field.field_helper %}
+                <div class="tooltip-container" style="margin-left: 10px;">
+                  <img src="{% static 'mc_and_datasheet/assets/question-circle-fill.svg' %}" alt="Question Icon" data-toggle="tooltip" data-placement="top" title="{{ field.field_helper|escape }}" style="background-color: transparent;">
+                  <style>
+                    .tooltip-inner {
+                      max-width: 500px; /* Adjust the width as needed */
+                    }
+                  </style>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            
+            
+            
             {% if field.field_question != 'Select the metrics you want to include' %}
-            <div class="input-group" style= " z-index: 1; " >
-              <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;" >{{ field.get_answer }}</textarea>
+            <div class="input-group" style="z-index: 1;">
+              <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;">{{ field.get_answer }}</textarea>
               <button type="button" class="btn btn-danger">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
@@ -217,7 +270,15 @@ border-color: #000;
       {% if field.field_question == 'What is the version date?' %}
       <br>
         
-      <label id="name-label">{{field.field_question}}</label>
+      <div class="tooltip-container" style="margin-left: 10px;">
+        <label id="name-label">{{field.field_question}}</label>
+        <img src="{% static 'mc_and_datasheet/assets/question-circle-fill.svg' %}" alt="Question Icon" data-toggle="tooltip" data-placement="top" title="{{ field.field_helper|escape }}" style="background-color: transparent;">
+        <style>
+          .tooltip-inner {
+            max-width: 500px; /* Adjust the width as needed */
+          }
+        </style>
+      </div>
         <input type="date" id="appointment-time" name="a{{field.id}}" class="form-control bg-dark text-light">
         
       {% elif field.field_question == 'Size of the dataset:' %} 
@@ -280,15 +341,26 @@ border-color: #000;
       {% endfor %} 
       <hr style="border-width: 3px;">
       {% if section.id ==  34 or section.id ==  35  %}
-      
+        <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
+          {% if section.id ==  34 %}
+            <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
+            {{ form.as_p }}
+          {% elif section.id ==  35 %}
+            <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
+            {{ form.as_p }}
+          {% endif %}
+          </div>
+          <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload" value="Upload">
+            <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
+          </button>
       {% else %}
       <form method="POST" >
         {% csrf_token %}
         <div class="form-group">
-          <label id="email-label">Add Question</label>
+          <label id="email-label">Customize</label>
           <div class="input-group">
             
-         <input id="input-text1" name="newfieldtext" type="text" class="form-control bg-secondary text-dar" aria-describedby="emailHelp" placeholder="Add a new question...">
+         <input id="input-text1" name="newfieldtext" type="text" class="form-control bg-secondary text-dar" aria-describedby="emailHelp" placeholder="Type the text of your new question.">
           <button type="submit" name="newfield" value= "newfield" class="btn btn-primary" onclick="saveForm()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="fas fa-plus" viewBox="0 0 16 16">
               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
@@ -296,7 +368,7 @@ border-color: #000;
             </svg>
           </button>
           </div>
-          <small id="emailHelp" class="form-text text-muted">You can add a new question if a you have specific desire for the model card.</small>
+          <small id="emailHelp" class="form-text text-muted-lg" style="color: rgb(110, 110, 110);">You can add a new question if you have a specific desire for the model card.</small>
         </div>
         <div>
           <button type="submit" name="save" value= "save" class="btn btn-outline-secondary" style="float:right" onclick="saveForm()">Save the Answers</button>
@@ -305,27 +377,6 @@ border-color: #000;
         <br>
         <br>
         <br>
-        {% endif %}
-        
-    </form>  
-      {% if section.id == 34 or section.id == 35 %}
-      
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-              {% if section.id ==  34 %}
-                <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
-                {{ form.as_p }}
-              {% elif section.id ==  35 %}
-                <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
-                {{ form.as_p }}
-              {% endif %}
-          </div>
-          <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload" value="Upload">
-            <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
-          </button>
-        </form>
-      
         {% endif %}
 
 
@@ -372,26 +423,15 @@ $(document).ready(function() {
         });
     });
 });
-  
+
+
  
   src="https://code.jquery.com/jquery-3.6.0.min.js"
   src="{% static 'mc_and_datasheet/js/jquery-ui.js' %}"
 
-  
-
-var popupBtn = document.getElementById("popup-btn");
-popupBtn.addEventListener("click", function() {
-  var popupContainer = document.getElementById("popup-container");
-  var popupWindow = document.createElement("div");
-  popupWindow.className = "popup-window";
-  popupWindow.innerHTML = "<h2>Popup Window</h2><p>Here is some content for the popup window.</p>";
-  popupContainer.appendChild(popupWindow);
-  var popupBtnRect = popupBtn.getBoundingClientRect();
-  popupWindow.style.top = popupBtnRect.top + "px";
-  popupWindow.style.left = popupBtnRect.right + "px";
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
 });
-
-  
 
 function saveForm() {
     const newFieldText = document.getElementById('email').value;

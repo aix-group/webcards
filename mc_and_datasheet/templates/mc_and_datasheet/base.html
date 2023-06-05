@@ -101,6 +101,17 @@
             
 
     </style>-->
+
+    <style>
+      .hover-effect:hover {
+        /* Define the styles for the hover state */
+        /* For example, change the background color and text color */
+        background-color: #575757;
+        color: #f3efef;
+      }
+
+
+    </style>
   </head>
 <body>
 
@@ -121,7 +132,8 @@
       -->
       <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav" style="height: 75px; ">
       <div class="container px-4 px-lg-5">
-        <a class="navbar-brand mb-0 h1" href="{% url 'mc_and_datasheet:home' %}">FEAT-AI</a>
+        <a class="navbar-brand mb-2 h1 hover-effect" href="{% url 'mc_and_datasheet:home' %}">FEAT-AI</a>
+
 
           <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               Menu
