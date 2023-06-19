@@ -144,6 +144,9 @@ border-color: #000;
   opacity: 1;
 }
 
+.default-placeholder {
+  color: #888;
+
 </style>
 
 <title>FEAT-AI</title>
@@ -178,7 +181,7 @@ border-color: #000;
         </a>
         <br>
         <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">
-          <i class="fas fa-trash-alt me-2"></i> Reset
+          <i class="fas fa-trash-alt me-2"></i> Default
         </a>
       
     </div>
@@ -244,9 +247,7 @@ border-color: #000;
                 {% endif %}
               </div>
             </div>
-            
-            
-            
+                                    
             {% if field.field_question != 'Select the metrics you want to include' %}
             <div class="input-group" style="z-index: 1;">
               <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;">{{ field.get_answer }}</textarea>
@@ -301,10 +302,10 @@ border-color: #000;
           <fieldset>
             <legend>Available metrics</legend>
             <div class="row mb-3">
-
-              <div class="col-sm-2">
+              <div class="col-sm-3">
                 <div class="input-group">
-                  <input type="number" id="accuracy-field" name="accuracy" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" placeholder="Accuracy">
+                  <li >Accuracy:</li>
+                  <input type="number" id="accuracy-field" name="accuracy" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 100px; margin-left: 18px;">
                   <div class="input-group-text ms-2 bg-dark">
                     <input type="checkbox" id="accuracy" name="accuracy" value="accuracy">
                   </div>
@@ -312,10 +313,10 @@ border-color: #000;
               </div>
             </div>
             <div class="row mb-3">
-
-              <div class="col-sm-2">
+              <div class="col-sm-3">
                 <div class="input-group">
-                  <input type="number" id="precision-field" name="precision" class="form-control bg-dark text-light" step="0.01" placeholder="Precision">
+                  <li>Precision:</li>
+                  <input type="number" id="precision-field" name="precision" class="form-control bg-dark text-light" step="0.01" style="width: 100px; margin-left: 20px;">
                   <div class="input-group-text ms-2 bg-dark">
                     <input type="checkbox" id="precision" name="precision" value="precision">
                   </div>
@@ -323,9 +324,10 @@ border-color: #000;
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-sm-2">
+              <div class="col-sm-3">
                 <div class="input-group">
-                  <input type="number" id="mean-error-field" name="mean-error" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" placeholder="Mean Error">
+                  <li>Mean Error: </li>
+                  <input type="number" id="mean-error-field" name="mean-error" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 95px; margin-left: 10px;">
                   <div class="input-group-text ms-2 bg-dark">
                     <input type="checkbox" id="mean-error" name="mean-error" value="mean-error">
                   </div>
@@ -342,17 +344,13 @@ border-color: #000;
       <hr style="border-width: 3px;">
       {% if section.id ==  34 or section.id ==  35  %}
         <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-          {% if section.id ==  34 %}
-            <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
-            {{ form.as_p }}
-          {% elif section.id ==  35 %}
-            <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
-            {{ form.as_p }}
-          {% endif %}
-          </div>
-          <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload" value="Upload">
-            <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
-          </button>
+          {% if section.id == 34 %}
+         
+          {% elif section.id == 35 %}
+        
+    
+        {% endif %}
+
       {% else %}
       <form method="POST" >
         {% csrf_token %}
@@ -372,13 +370,61 @@ border-color: #000;
         </div>
         <div>
           <button type="submit" name="save" value= "save" class="btn btn-outline-secondary" style="float:right" onclick="saveForm()">Save the Answers</button>
-          <button type="button" class="btn btn-outline-secondary"  style="float:right" onclick="clearForm()">Clear the answers</button>
+          <button type="submit" name="clear" value = "clear" class="btn btn-outline-secondary"  style="float:right" onclick="clearTextarea()">Clear the answers</button>
         </div>
         <br>
         <br>
         <br>
         {% endif %}
+        </form>
 
+
+
+
+        <div style="text-align: left;">
+          {% if section.id == 34 or section.id == 35 %}
+            <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
+              {% if section.id == 34 %}
+                <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
+                  <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload34" value="upload">
+                    <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
+                  </button>
+                </form>
+              {% elif section.id == 35 %}
+                <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
+                <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload34" value="upload">
+                    <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          {% endif %}
+          <br>
+          {% if is_files %}
+            <form>
+              {% csrf_token %}
+              <h3>File List</h3>
+              <ul>
+                {% for file in files %}
+                  <li>
+                    <a>{{ file.name }}</a>
+                    <small>uploaded {{ file.uploaded_at }}</small>
+                  </li>
+                {% endfor %}
+              </ul>
+            </form>
+          {% endif %}
+        </div>
+        
+
+
+  
 
   <script>
     document.querySelector('.drop-zone').ondragenter = function() {
@@ -438,10 +484,12 @@ function saveForm() {
     localStorage.setItem('newfieldtext', newFieldText);
 }
 
-  function clearForm() {
-  localStorage.clear();
-  const form = document.getElementById('section-form');
-  form.reset();
+function clearTextarea() {
+  // Get the textarea element by its ID
+  var textarea = document.getElementById("description");
+
+  // Clear the textarea by setting its value to an empty string
+  textarea.value = "";
 }
   
   window.onload = function() {
@@ -493,7 +541,7 @@ datePicker.addEventListener('input', () => {
 </script>
 
 <!-- Footer-->
-<footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; Feat-AI 2023</div></footer>
+<!--<footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; Feat-AI 2023</div></footer>-->
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->

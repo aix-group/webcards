@@ -5,7 +5,7 @@ from .models import CardSectionData, MC_section, CardData, dt_section, CardDataD
 from django.core.cache import cache
 from django.utils import timezone
 from django.contrib import messages
-from .forms import FileForm, CreateNewSection, RadioButtons
+from .forms import FileForm, CreateNewSection
 from .models import File
 import os
 import json
@@ -107,7 +107,57 @@ def portfolio_item(request):
 def my_view(request):
     return render(request, 'mc_and_datasheet/my_template.html')
 
+def upload_file(response, id):
+    
+    section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
+    section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
+    
+    if response.method == 'POST':
+        form = FileForm(response.POST, response.FILES)
+        if form.is_valid():
+            # Create the file instance
+                file_instance = File() # From models 
+                
+                # Get the file from form in front end
+                file = form.cleaned_data['file']
+                print(file)
 
+                # Save it to backend
+                file_instance.name = file.name
+                file_instance.uploaded_at = timezone.now()
+                #print(file_instance.name)
+                #print(file_instance.uploaded_at)
+                file_instance.save()
+                path = form.save()
+                
+                print(path)
+
+                # Get it from backend to use in front end
+                file_objects = File.objects.all()
+                
+                print('You are returned to Filelist')
+                
+                is_files = True
+                context = {
+                    "section": section_instance,
+                    "section_list": section_list,
+                    "form": form,
+                    "files": file_objects,
+                    "is_files": is_files,
+                }
+
+                return render(response, 'mc_and_datasheet/section.html', context)
+
+    else:
+        form = FileForm()
+        
+    context = {"section":section_instance,
+    "section_list":section_list,
+    'current_section_id': section_instance.id,
+    #"field_answers":section_instance.field_answer
+    "form":form
+    }
+    return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
 def delete(request, id):
 
@@ -165,6 +215,17 @@ def section(response, id):
     
         
     if response.method == 'POST':
+        
+        #form = FileUploadForm(response.POST, response.FILES)
+        #if form.is_valid():
+        #    
+        #    print(f'form ----------- {form}')
+        #    # Process the uploaded file
+        #    file = form.cleaned_data['file']
+        #    # Perform further actions with the file
+        #    # ...
+        #    return render(response, 'success.html')
+        #
         input_text = response.POST.get('input_text')
         print(input_text)
         
@@ -195,28 +256,40 @@ def section(response, id):
 
                 return HttpResponse(error_text, content_type="text/html")
         
-        form = FileForm(response.POST, response.FILES)
-        if form.is_valid():
-            file_instance = File()
-            file_objects = File.objects.all()
-            file = form.cleaned_data['file']
-            file_instance.name = file.name
-            file_instance.uploaded_at = timezone.now()
-            #print(file_instance.name)
-            #print(file_instance.uploaded_at)
-            print('here you stupid')
-            file_instance.save()
-            form.save()
-            return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
         
-        #if response.POST.get("form_view"):
-        #    print(' I am inside the form view')
-        #    return render(response, 'mc_and_datasheet/form_temp.html', {"section":section_instance}) 
+        if response.POST.get("upload34"):
+            form = FileForm() # From forms
+            print('ANANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN')
+            if form.is_valid():
 
-        if response.POST.get("upload"):
-            print(' I am inside the upload ')
-            print(" YOU ARE RETURNED TO FILELIST ")
-            return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
+                print('the form is valid')
+
+                # Create the file instance
+                file_instance = File() # From models 
+                
+                # Get the file from form in front end
+                file = form.cleaned_data['file']
+                print(file)
+
+                # Save it to backend
+                file_instance.name = file.name
+                file_instance.uploaded_at = timezone.now()
+                #print(file_instance.name)
+                #print(file_instance.uploaded_at)
+                file_instance.save()
+                form.save()
+
+                # Get it from backend to use in front end
+                file_objects = File.objects.all()
+                
+                print('You are returned to Filelist')
+                return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
+            
+
+        #if response.POST.get("upload"):
+        #    print(' I am inside the upload ')
+        #    print(" YOU ARE RETURNED TO FILELIST ")
+        #    return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
         
         #if response.POST.get("delete"):
 #
@@ -225,15 +298,31 @@ def section(response, id):
         #    CardSectionData.objects.all().delete()
 
 
+        if response.POST.get('clear'): # send by the 'value'      
+             
+            for field in section_instance.field_set.all():
+                
+                field.field_answer = ""
+                field.save()
+            
+            context = {"section":section_instance,
+            "section_list":section_list,
+            }
+            #'rbform':radiobutton_form}
+
+            return render(response , "mc_and_datasheet/section.html",context)
+            
+            
+            
         if response.POST.get("save"):
             section_answers = []
             
             for field in section_instance.field_set.all():
                 
                 if section_instance.id != 35:
-                    asnwer_instance = response.POST.get("a" + str(field.id))
-                    field.field_answer = asnwer_instance # save to database
-                    section_answers.append(asnwer_instance) # also append the list
+                    answer_instance = response.POST.get("a" + str(field.id))
+                    field.field_answer = answer_instance # save to database
+                    section_answers.append(answer_instance) # also append the list
                     field.save()
 
                 else: 
@@ -253,8 +342,6 @@ def section(response, id):
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(section_instance,section_instance.field_set.all(),section_answers)
             #section2beadded = json.loads(section2beadded)
-            
-
 
             #previous_saved_sections = []
             if CardData.objects.exists():
@@ -302,7 +389,8 @@ def section(response, id):
                 print("invalid")
                 
     else:
-        form = FileForm()
+        form = FileForm()        
+        print(form)
         #radiobutton_form = RadioButtons()
         print(" Method is not Post ")
         
@@ -314,9 +402,8 @@ def section(response, id):
     "section_list":section_list,
     'current_section_id': section_instance.id,
     #"field_answers":section_instance.field_answer
-    "form":form}
-    #'rbform':radiobutton_form}
-
+    "form":form
+    }
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
 def home(response):
@@ -485,28 +572,39 @@ def createoutput(request,id):
         files = File.objects.all()
 
         model_files = []
-        dataseet_files = []
-        graph_file = []
+        dataset_files = []
+        vis_metric_files = []
+        vis_dataset_files = []
 
         for file in files:
+            path, section_id = file.form.save()
             file_name = file.givename()
             if file_name[-3:] == 'pkl':
                 model_files.append(file_name)
             if file_name[-3:] == 'csv':
-                dataseet_files.append(file_name)
+                dataset_files.append(file_name)
             else: 
-                graph_file.append(file_name)
+                if section_id == 35:
+                    # quantitative analysis
+                    vis_metric_files.append(file_name)
+                if section_id == 34:
+                    # dataset file
+                    vis_dataset_files.append(file_name)
 
         try:
             model_file = os.getcwd() + '/' +  model_files[-1]   
-            dataset_file = os.getcwd() + '/' +  dataseet_files[-1] 
+            dataset_file = os.getcwd() + '/' +  dataset_files[-1] 
+            vis_metric_files = os.getcwd() + '/' +  vis_metric_files[-1] 
+            vis_dataset_files = os.getcwd() + '/' +  vis_dataset_files[-1] 
         except:
             model_file = " No model file detected "
             dataset_file = " No dataset file detected "
+            vis_metric_files = " No dataset file detected "
+            vis_dataset_files = " No dataset file detected "
             pass
 
-        print('model file: {} dataset file: {}'.format(model_file,dataset_file))
-        model_card = mclib_v2.create_model_card(dataset_file,model_file,fil_dict)
+        print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
+        model_card = mclib_v2.create_model_card(dataset_file,model_file,vis_metric_files,vis_dataset_files,fil_dict)
 
         # Get the HTML content as a string
         html_content = str(model_card)

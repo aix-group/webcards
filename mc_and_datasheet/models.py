@@ -25,7 +25,7 @@ class MC_section(models.Model):
 
     name = models.CharField(max_length=300)
     click_count = models.IntegerField(default=0)
-    section_desc = models.CharField(max_length=500, default='Info about the section')
+    section_desc = models.CharField(max_length=500, default='')
 
     def givename(self):
         return self.name
