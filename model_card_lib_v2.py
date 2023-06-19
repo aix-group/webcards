@@ -28,7 +28,11 @@ def figure_to_base64str(fig):
 
     return figdata_png
 
-def create_model_card(csv_file,model_file,a_dict): # (as of moment only Dataframe)
+def create_model_card(csv_file = None,
+                      model_file = None,
+                      vis_metric_files = None,
+                      vis_dataset_files = None,
+                      a_dict= None): # (as of moment only Dataframe)
     
     '''
     This function takes a dataset, a model and a split ratio from the user

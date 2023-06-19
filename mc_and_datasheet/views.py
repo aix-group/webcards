@@ -12,7 +12,8 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Sum, Max
-
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 # Import core libraries
 import model_card_lib_v2 as mclib_v2
@@ -108,6 +109,9 @@ def my_view(request):
     return render(request, 'mc_and_datasheet/my_template.html')
 
 def upload_file(response, id):
+
+    fs = FileSystemStorage()
+
     
     section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
     section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
@@ -123,14 +127,18 @@ def upload_file(response, id):
                 print(file)
 
                 # Save it to backend
+                file_instance.file = file 
                 file_instance.name = file.name
                 file_instance.uploaded_at = timezone.now()
+                file_instance.uploaded_section_id = section_instance.id
                 #print(file_instance.name)
                 #print(file_instance.uploaded_at)
                 file_instance.save()
-                path = form.save()
+                #path = form.save()
+
+                #filename = fs.save(file_instance.name, file_instance)
                 
-                print(path)
+                #print(filename)
 
                 # Get it from backend to use in front end
                 file_objects = File.objects.all()
@@ -188,6 +196,17 @@ def delete(request, id):
         print(f"{num_deleted} section has been deleted.")
 
         File.objects.all().delete()
+
+        # Delete all the files as well
+
+        file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads')
+
+        # Check if the directory exists
+        if os.path.exists(file_directory):
+            # Iterate over the files in the directory and delete them
+            for file_name in os.listdir(file_directory):
+                file_path = os.path.join(file_directory, file_name)
+                os.remove(file_path)
         url = reverse('mc_and_datasheet:section', args=[28]) # You defined an app name so that should go in as well!
 
     if 'delete_dt_section' in request.GET:
@@ -216,16 +235,6 @@ def section(response, id):
         
     if response.method == 'POST':
         
-        #form = FileUploadForm(response.POST, response.FILES)
-        #if form.is_valid():
-        #    
-        #    print(f'form ----------- {form}')
-        #    # Process the uploaded file
-        #    file = form.cleaned_data['file']
-        #    # Perform further actions with the file
-        #    # ...
-        #    return render(response, 'success.html')
-        #
         input_text = response.POST.get('input_text')
         print(input_text)
         
@@ -256,47 +265,6 @@ def section(response, id):
 
                 return HttpResponse(error_text, content_type="text/html")
         
-        
-        if response.POST.get("upload34"):
-            form = FileForm() # From forms
-            print('ANANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN')
-            if form.is_valid():
-
-                print('the form is valid')
-
-                # Create the file instance
-                file_instance = File() # From models 
-                
-                # Get the file from form in front end
-                file = form.cleaned_data['file']
-                print(file)
-
-                # Save it to backend
-                file_instance.name = file.name
-                file_instance.uploaded_at = timezone.now()
-                #print(file_instance.name)
-                #print(file_instance.uploaded_at)
-                file_instance.save()
-                form.save()
-
-                # Get it from backend to use in front end
-                file_objects = File.objects.all()
-                
-                print('You are returned to Filelist')
-                return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
-            
-
-        #if response.POST.get("upload"):
-        #    print(' I am inside the upload ')
-        #    print(" YOU ARE RETURNED TO FILELIST ")
-        #    return render(response, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': file_objects})
-        
-        #if response.POST.get("delete"):
-#
-        #    print(' YOU DELETED EVERYTHING ARE YOU OK?????? ')    
-        #    CardData.objects.all().delete()
-        #    CardSectionData.objects.all().delete()
-
 
         if response.POST.get('clear'): # send by the 'value'      
              
@@ -568,17 +536,18 @@ def createoutput(request,id):
         model_card_dict = json.loads(most_recent_entry.get())
 
         fil_dict = {key: value for key, value in model_card_dict.items() if key.startswith("Section_Data")}
-        print(fil_dict)
+        #print(fil_dict)
         files = File.objects.all()
 
         model_files = []
         dataset_files = []
-        vis_metric_files = []
-        vis_dataset_files = []
+        custom_metric_files = []
+        custom_dataset_files = []
 
         for file in files:
-            path, section_id = file.form.save()
-            file_name = file.givename()
+            section_id = file.uploaded_section_id
+
+            file_name = file.name
             if file_name[-3:] == 'pkl':
                 model_files.append(file_name)
             if file_name[-3:] == 'csv':
@@ -586,25 +555,37 @@ def createoutput(request,id):
             else: 
                 if section_id == 35:
                     # quantitative analysis
-                    vis_metric_files.append(file_name)
+                    custom_metric_files.append(file_name)
                 if section_id == 34:
                     # dataset file
-                    vis_dataset_files.append(file_name)
+                    custom_dataset_files.append(file_name)
 
+        print(custom_dataset_files)
+        print(custom_metric_files)
+        
         try:
-            model_file = os.getcwd() + '/' +  model_files[-1]   
-            dataset_file = os.getcwd() + '/' +  dataset_files[-1] 
-            vis_metric_files = os.getcwd() + '/' +  vis_metric_files[-1] 
-            vis_dataset_files = os.getcwd() + '/' +  vis_dataset_files[-1] 
+            model_file = '/media/uploads' + '/' +  model_files[-1]   
+            dataset_file = '/media/uploads' + '/' + dataset_files[-1] 
+            vis_metric_files = '/media/uploads' + '/' + custom_metric_files[-1] 
+            vis_dataset_files = '/media/uploads' + '/' + custom_dataset_files[-1] 
         except:
             model_file = " No model file detected "
             dataset_file = " No dataset file detected "
-            vis_metric_files = " No dataset file detected "
-            vis_dataset_files = " No dataset file detected "
+            vis_metric_files = " No vis_metric_files detected "
+            vis_dataset_files = " No vis_dataset_files detected "
             pass
 
+
+        vis_dataset_files = '/media/uploads' + '/' + custom_dataset_files[-1] 
+
+
         print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
-        model_card = mclib_v2.create_model_card(dataset_file,model_file,vis_metric_files,vis_dataset_files,fil_dict)
+        model_card = mclib_v2.create_model_card(csv_file = dataset_file,
+                                                model_file = model_file,
+                                                vis_metric_files = vis_metric_files,
+                                                vis_dataset_files = vis_dataset_files,
+                                                a_dict=fil_dict)
+                                                
 
         # Get the HTML content as a string
         html_content = str(model_card)

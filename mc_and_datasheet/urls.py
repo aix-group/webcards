@@ -14,7 +14,7 @@ urlpatterns = [
     path('index/',views.index , name='index'),
     path('about/',views.about , name='about'),
     path('contact/',views.contact , name='contact'),
-    path('upload_file/<int:id>',views.upload_file , name='upload_file'),
+    path(r'^upload_file/<int:id>/$',views.upload_file , name='upload_file'),
     path('datacard_section/<int:id>', views.datacard_section, name='datacard_section'),
     path('blog-home/',views.blog_home , name='blog-home'),
     path('blog-post/',views.blog_post , name='blog-post'),
@@ -27,10 +27,11 @@ urlpatterns = [
     path('datasheet_export/<int:id>',views.datasheet_export , name='datasheet_export'),
     path('my-page/', views.my_view, name='my-page'),
 
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

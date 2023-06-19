@@ -78,6 +78,8 @@ class File(models.Model):
     name = models.CharField(max_length=255)
     uploaded_at = models.DateTimeField(default=timezone.now)
 
+    uploaded_section_id = models.IntegerField(default=0)
+
     def givename(self):
         return str(self.name)
 
