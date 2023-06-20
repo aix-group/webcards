@@ -1,4 +1,4 @@
-# A web application tool for FEAT principles
+# A web application for FEAT principles
 
 This web tool seeks to accelerate the development of solutions that validate artificial intelligence models and datasets against the fairness, ethics, accountability and transparency (FEAT) principles, to strengthen trust and promote greater adoption of AI solutions.
 
