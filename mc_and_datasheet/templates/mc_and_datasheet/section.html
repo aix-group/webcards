@@ -146,7 +146,7 @@ border-color: #000;
 
 .default-placeholder {
   color: #888;
-
+}
 </style>
 
 <title>FEAT-AI</title>
@@ -291,6 +291,10 @@ border-color: #000;
       <br>
       <label id="name-label">{{field.field_question}}</label>   
         <input type="number" id="splitratio" step="0.1" min="0.5" max="1.0" value="0.7" name="a{{field.id}}"><br>   
+      <br>
+
+
+      <small style="font-size: 80%;">This section will be expanded </small>
     
       {% elif section.id == 35 %}
 
@@ -298,58 +302,76 @@ border-color: #000;
 
       {% if section.id == 35 %}  
     
-        <div class="container">
-          <fieldset>
-            <legend>Available metrics</legend>
-            <div class="row mb-3">
-              <div class="col-sm-3">
-                <div class="input-group">
-                  <li >Accuracy:</li>
-                  <input type="number" id="accuracy-field" name="accuracy" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 100px; margin-left: 18px;">
-                  <div class="input-group-text ms-2 bg-dark">
-                    <input type="checkbox" id="accuracy" name="accuracy" value="accuracy">
-                  </div>
+      <div class="container">
+        <fieldset>
+          <br>
+          <!-- <legend>Available metrics: </legend> -->
+          <div class="row mb-3">
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label for="accuracy-field">Accuracy:</label>
+                <input type="number" id="accuracy-field" name="accuracy" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 100px; margin-left: 18px;">
+                <div class="input-group-text ms-2 bg-dark">
+                  <input type="checkbox" id="accuracy" name="accuracy" value="accuracy">
                 </div>
               </div>
             </div>
-            <div class="row mb-3">
-              <div class="col-sm-3">
-                <div class="input-group">
-                  <li>Precision:</li>
-                  <input type="number" id="precision-field" name="precision" class="form-control bg-dark text-light" step="0.01" style="width: 100px; margin-left: 20px;">
-                  <div class="input-group-text ms-2 bg-dark">
-                    <input type="checkbox" id="precision" name="precision" value="precision">
-                  </div>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label for="precision-field">Precision:</label>
+                <input type="number" id="precision-field" name="precision" class="form-control bg-dark text-light" step="0.01" style="width: 100px; margin-left: 20px;">
+                <div class="input-group-text ms-2 bg-dark">
+                  <input type="checkbox" id="precision" name="precision" value="precision">
                 </div>
               </div>
             </div>
-            <div class="row mb-3">
-              <div class="col-sm-3">
-                <div class="input-group">
-                  <li>Mean Error: </li>
-                  <input type="number" id="mean-error-field" name="mean-error" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 95px; margin-left: 10px;">
-                  <div class="input-group-text ms-2 bg-dark">
-                    <input type="checkbox" id="mean-error" name="mean-error" value="mean-error">
-                  </div>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label for="mean-error-field">Brier Score:</label>
+                <input type="number" id="mean-error-field" name="mean-error" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 95px; margin-left: 10px;">
+                <div class="input-group-text ms-2 bg-dark">
+                  <input type="checkbox" id="mean-error" name="mean-error" value="mean-error">
                 </div>
               </div>
             </div>
-            <p> (This area will be expanded) </p>
-            
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label for="recall-field">Recall:</label>
+                <input type="number" id="recall-field" name="recall" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 100px; margin-left: 32px;">
+                <div class="input-group-text ms-2 bg-dark">
+                  <input type="checkbox" id="recall" name="recall" value="recall">
+                </div>
+              </div>
             </div>
-          </fieldset>
-        </div>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label for="f1-score-field">F1 Score:</label>
+                <input type="number" id="f1-score-field" name="f1-score" class="form-control bg-dark text-light" step="0.01" style="width: 100px; margin-left: 20px;">
+                <div class="input-group-text ms-2 bg-dark">
+                  <input type="checkbox" id="f1-score" name="f1-score" value="f1-score">
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <label for="specificity-field">AUC Score :</label>
+                <input type="number" id="specificity-field" name="specificity" class="form-control bg-dark text-light" step="0.01" min="0.1" max="1.0" style="width: 95px; margin-left: 10px;">
+                <div class="input-group-text ms-2 bg-dark">
+                  <input type="checkbox" id="specificity" name="specificity" value="specificity">
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <small style="font-size: 80%;">This section will be expanded </small>
+      </div>
       {% endif %}
       {% endfor %} 
+  <!-- </form> -->
       <hr style="border-width: 3px;">
       {% if section.id ==  34 or section.id ==  35  %}
-        <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-          {% if section.id == 34 %}
-         
-          {% elif section.id == 35 %}
-        
-    
-        {% endif %}
 
       {% else %}
       <form method="POST" >
@@ -368,6 +390,7 @@ border-color: #000;
           </div>
           <small id="emailHelp" class="form-text text-muted-lg" style="color: rgb(110, 110, 110);">You can add a new question if you have a specific desire for the model card.</small>
         </div>
+        {% endif %}
         <div>
           <button type="submit" name="save" value= "save" class="btn btn-outline-secondary" style="float:right" onclick="saveForm()">Save the Answers</button>
           <button type="submit" name="clear" value = "clear" class="btn btn-outline-secondary"  style="float:right" onclick="clearTextarea()">Clear the answers</button>
@@ -375,16 +398,13 @@ border-color: #000;
         <br>
         <br>
         <br>
-        {% endif %}
+        
         </form>
-
-
-
 
         <div style="text-align: left;">
           {% if section.id == 34 or section.id == 35 %}
-            <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
               {% if section.id == 34 %}
+              <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
                 <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
                   <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
                   {% csrf_token %}
@@ -393,7 +413,9 @@ border-color: #000;
                     <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
                   </button>
                 </form>
+              </div>
               {% elif section.id == 35 %}
+              <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
                 <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
                 <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
                   {% csrf_token %}
@@ -402,29 +424,29 @@ border-color: #000;
                     <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
                   </button>
                 </form>
-              {% endif %}
             </div>
+            {% endif %}
           {% endif %}
           <br>
           {% if is_files %}
             <form>
               {% csrf_token %}
-              <h3>File List</h3>
+
               <ul>
                 {% for file in files %}
-                  <li>
-                    <a>{{ file.name }}</a>
-                    <small>uploaded {{ file.uploaded_at }}</small>
+                {% if file.uploaded_section_id == section.id %}
+                  <li>                
+                        <a>{{ file.name }}</a>
+                        
+                        <small style="font-size: 80%;">uploaded {{ file.uploaded_at }}</small>
                   </li>
+                {% endif %}
                 {% endfor %}
               </ul>
+             
             </form>
           {% endif %}
         </div>
-        
-
-
-  
 
   <script>
     document.querySelector('.drop-zone').ondragenter = function() {

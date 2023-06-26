@@ -19,60 +19,6 @@ from django.conf import settings
 import model_card_lib_v2 as mclib_v2
 import datasheet as dt
 
-message_text = str("""
-            <!DOCTYPE html>
-            <html>
-            <head>
-            	<title>My Dark Page</title>
-            	<style>
-            		body {
-            			background-color: #282c34;
-            			color: #fff;
-            			font-family: Arial, sans-serif;
-            			font-size: 16px;
-            			line-height: 1.5;
-            			margin: 0;
-            			padding: 0;
-            		}
-
-            		.container {
-            			display: flex;
-            			flex-direction: column;
-            			height: 100vh;
-            			justify-content: center;
-            			align-items: center;
-            		}
-
-            		.warning {
-            			background-color: #d9534f;
-            			border-radius: 4px;
-            			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-            			color: #fff;
-            			padding: 20px;
-            			text-align: center;
-            			width: 50%;
-            		}
-
-            		h1 {
-            			font-size: 36px;
-            			margin-top: 0;
-            		}
-
-            		p {
-            			font-size: 24px;
-            			margin-bottom: 0;
-            		}
-            	</style>
-            </head>
-            <body>
-            	<div class="container">
-            		<div class="warning">
-            			<h1>Warning!</h1>
-            			<p>An error occured. Do not FORGET to save the answers.</p>
-            		</div>
-            	</div>
-            </body>
-            </html>""")
 # Create your views here.
 
 def datacard_section(response, id):
@@ -152,6 +98,7 @@ def upload_file(response, id):
                     "form": form,
                     "files": file_objects,
                     "is_files": is_files,
+                    "file_instance": file_instance
                 }
 
                 return render(response, 'mc_and_datasheet/section.html', context)
@@ -235,10 +182,17 @@ def section(response, id):
         
     if response.method == 'POST':
         
+        form = FileForm()
+        file_exists = File.objects.exists()
+        # Get it from backend to use in front end
+        file_objects = File.objects.all()
+        
         input_text = response.POST.get('input_text')
         print(input_text)
         
         if 'sectionsubmit' in response.POST:
+            
+             
             
             print("here")
             text = response.POST['newsectiontext'] # get the input text from the form
@@ -260,6 +214,10 @@ def section(response, id):
 
             elif click_count == 2:
                 print("here")
+                
+                # Read the HTML content from the file
+                with open("mc_and_datasheet\error_text.html", "r") as file:
+                    message_text = file.read()
 
                 error_text = message_text.replace('An error occured. Do not FORGET to save the answers.', 'You can only add two new section. You can delete and add a new.')
 
@@ -365,11 +323,17 @@ def section(response, id):
     print(" YOU ARE RETURNED TO SECTION ")
 
       
-
+    file_exists = File.objects.exists()
+    # Get it from backend to use in front end
+    file_objects = File.objects.all()
+    
+    print(f'{file_exists}')
+    
     context = {"section":section_instance,
     "section_list":section_list,
     'current_section_id': section_instance.id,
-    #"field_answers":section_instance.field_answer
+    "files": file_objects,
+    "is_files": file_exists,
     "form":form
     }
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
@@ -543,6 +507,7 @@ def createoutput(request,id):
         dataset_files = []
         custom_metric_files = []
         custom_dataset_files = []
+    
 
         for file in files:
             section_id = file.uploaded_section_id
@@ -560,25 +525,35 @@ def createoutput(request,id):
                     # dataset file
                     custom_dataset_files.append(file_name)
 
-        print(custom_dataset_files)
-        print(custom_metric_files)
+        print(f'Custom Datasets : {custom_dataset_files}')
+        print(f'Custom metric : {custom_metric_files}')
+        
         
         try:
-            model_file = '/media/uploads' + '/' +  model_files[-1]   
-            dataset_file = '/media/uploads' + '/' + dataset_files[-1] 
-            vis_metric_files = '/media/uploads' + '/' + custom_metric_files[-1] 
-            vis_dataset_files = '/media/uploads' + '/' + custom_dataset_files[-1] 
-        except:
-            model_file = " No model file detected "
-            dataset_file = " No dataset file detected "
-            vis_metric_files = " No vis_metric_files detected "
-            vis_dataset_files = " No vis_dataset_files detected "
-            pass
+            if len(model_files) > 0:
+                model_file = 'media/uploads' + '/' + model_files[-1]
+            else:
+                model_file = None
 
+            if len(dataset_files) > 0:
+                dataset_file = 'media/uploads' + '/' + dataset_files[-1]
+            else:
+                dataset_file = None
 
-        vis_dataset_files = '/media/uploads' + '/' + custom_dataset_files[-1] 
+            if len(custom_metric_files) > 0:
+                vis_metric_files = 'media/uploads' + '/' + custom_metric_files[-1]
+            else:
+                vis_metric_files = None
 
+            if len(custom_dataset_files) > 0:
+                vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1]
+            else:
+                vis_dataset_files = None
 
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        #vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1] 
         print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
         model_card = mclib_v2.create_model_card(csv_file = dataset_file,
                                                 model_file = model_file,
@@ -595,9 +570,11 @@ def createoutput(request,id):
         response["Content-Disposition"] = "attachment; filename=filename.html"
 
     else:
-        error_text = message_text
+        # Read the HTML content from the file
+        with open("mc_and_datasheet\error_text.html", "r") as file:
+            message_text = file.read()
         
-        response = HttpResponse(error_text, content_type="text/html")
+        response = HttpResponse(message_text, content_type="text/html")
         
     
     #print(model_card)

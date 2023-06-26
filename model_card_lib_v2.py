@@ -13,6 +13,14 @@ import io
 import base64
 import pandas as pd
 import logging
+
+from PIL import Image
+#import fitz  # For handling PDF files
+import matplotlib.pyplot as plt  # For handling SVG files
+from io import BytesIO
+#import pywmf  # For handling WMF files
+
+
 logging.basicConfig(filename='app.log', filemode='w', level=logging.INFO)
 
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
@@ -47,36 +55,39 @@ def create_model_card(csv_file = None,
     #data_type = str(type(df)) # Determine the datatype 
     #split_ratio_per = [int(float(get_answer(a_dict,41))*100),int(1-float(get_answer(a_dict,41))*100)] # Percentages in list
 
-    # Read the CSV file
-    if not isinstance(csv_file, str):
+    is_dataset_file = False
+    is_model_file = False
+    is_both_file = False
+    print(a_dict)
+
+    # Check if the files are given
+    if model_file and csv_file is not None:
+        
+        print('CSV file found')
         df =  pd.read_csv(csv_file)
         X = df.iloc[:,:-1] # Input nodes
         y = np.ravel(df.iloc[:,-1:]) # Output nodes
 
-        # Create train and test set
+        # Create train and test set 
+        ## TODO : add validation set as well
         X_train, X_test, y_train, y_test = train_test_split (X, y, 
-                                                        train_size=float(get_answer(a_dict,44)),
+                                                        train_size=float(get_answer(a_dict,41)),
                                                         shuffle=True)
         train_size_X = X_train.shape   
         test_size_X = X_test.shape
 
         is_dataset_file = True
-
-    #Unpickle the model
-    if not isinstance(model_file, str):
+        
+        print('Model file found')
+        
         with open(model_file,'rb') as file:
             model = pickle.load(file)
         # Fit the data
         model.fit(X_train, y_train)
 
         is_model_file = True
-    
-    print(a_dict)
-
-
-               
-    # Extract the metrics ( extendable )
-    if not isinstance(model_file, str) or not isinstance(csv_file, str):
+        
+        
         y_pred = model.predict(X_test) # Predict using test set
 
         precision_score = sklearn.metrics.precision_score(y_test,y_pred) # take the precision 
@@ -224,35 +235,11 @@ def create_model_card(csv_file = None,
 
 
     ## DATASET
-    if 'is_dataset_file' not in locals():
-
-        split_ratio = get_answer(a_dict,44)
-        if len(split_ratio) > 2:
-            split_ratio = float(split_ratio)
-            dataset_size = int(get_answer(a_dict,41))
-            train_size_X = dataset_size*split_ratio
-            test_size_X = dataset_size*float((1-split_ratio))
-
-            fig, ax = plt.subplots()
-            width = 0.75
-            ax.bar(0, train_size_X , width, label='training set')
-            ax.bar(1, test_size_X, width, label='testing set')
-            ax.set_xticks(np.arange(2))
-            ax.set_xticklabels(['training set', 'testing set'])
-            ax.set_ylabel('Set Size')
-            ax.set_xlabel('Sets')
-            ax.set_title('Split ratio: %s' %(str(get_answer(a_dict,44))))
-            set_size_barchart = figure_to_base64str(fig)
-            plt.close()
-
-            model_card.model_parameters.data.append(mctlib.Dataset())
-            model_card.model_parameters.data[0].graphics.collection = [
-            mctlib.Graphic(name='Validation Set Size', image=set_size_barchart),
-            ]
-
-    # Set Size Bar Chart
-
-    if 'is_dataset_file' in locals():
+    # integer to track dataset graph number
+    dataset_graph_number = 0    
+    
+    if is_dataset_file:
+        print('rendering the visualization for dataset taken from the csv file')
         fig, ax = plt.subplots()
         width = 0.75
         ax.bar(0, train_size_X , width, label='training set')
@@ -271,15 +258,77 @@ def create_model_card(csv_file = None,
         Title: get_answer(a_dict,38)
         Label: get_answer(a_dict,39)
         Description get_answer(a_dict,40)
-        Split_ratio : get_answer(a_dict,41)   
-
+        Dataset_size : get_answer(a_dict,41) 
+        Split_ratio : get_answer(a_dict,44)   
 
         """
 
-        model_card.model_parameters.data.append(mctlib.Dataset())
-        model_card.model_parameters.data[0].graphics.collection = [
-        mctlib.Graphic(name='Validation Set Size', image=set_size_barchart),
-        ]
+        model_card.model_parameters.data = (mctlib.Dataset(
+            name = get_answer(a_dict,38),
+            description = get_answer(a_dict,40),
+        ))        
+        if vis_dataset_files is not None:
+            graph_dataset = read_image_as_base64(vis_dataset_files)
+            print('rendering the visualization for dataset taken from the image file')
+            
+            model_card.model_parameters.data[dataset_graph_number].graphics.collection = [
+            mctlib.Graphic(image=set_size_barchart),
+            mctlib.Graphic(image=graph_dataset),
+            ]
+            #increment dataset_graph_number
+            dataset_graph_number += 1
+        else:
+            model_card.model_parameters.data[dataset_graph_number].graphics.collection = [
+            mctlib.Graphic(image=set_size_barchart),
+            ]
+            #increment dataset_graph_number
+            dataset_graph_number += 1
+                                                
+    else:
+        split_ratio = get_answer(a_dict,44)
+        if len(split_ratio) > 2:
+            print('rendering the visualization for dataset taken from user input')
+            split_ratio = float(split_ratio)
+            dataset_size = int(get_answer(a_dict,41))
+            train_size_X = dataset_size*split_ratio
+            test_size_X = dataset_size*float((1-split_ratio))
+
+            fig, ax = plt.subplots()
+            width = 0.75
+            ax.bar(0, train_size_X , width, label='training set')
+            ax.bar(1, test_size_X, width, label='testing set')
+            ax.set_xticks(np.arange(2))
+            ax.set_xticklabels(['training set', 'testing set'])
+            ax.set_ylabel('Set Size')
+            ax.set_xlabel('Sets')
+            ax.set_title('Split ratio: %s' %(str(get_answer(a_dict,44))))
+            set_size_barchart = figure_to_base64str(fig)
+            plt.close()
+
+            model_card.model_parameters.data.append(mctlib.Dataset(
+            name = get_answer(a_dict,38),
+            description = get_answer(a_dict,40),
+            ))         
+                    
+            if vis_dataset_files is not None:
+                graph_dataset = read_image_as_base64(vis_dataset_files)
+
+                print('rendering the visualization for dataset taken from the image file')
+
+                
+                model_card.model_parameters.data[dataset_graph_number].graphics.collection = [
+                mctlib.Graphic(image=set_size_barchart),
+                mctlib.Graphic(image=graph_dataset),
+                ]
+
+                #increment dataset_graph_number
+                dataset_graph_number += 1
+            else:
+                model_card.model_parameters.data[dataset_graph_number].graphics.collection = [
+                mctlib.Graphic(image=set_size_barchart),
+                ]
+                #increment dataset_graph_number
+                dataset_graph_number += 1
 
     ##QUANTITATIVE ANALYSIS 
 
@@ -294,6 +343,14 @@ def create_model_card(csv_file = None,
         mctlib.PerformanceMetric(type='Accuracy', value=accuracy, slice = None),
         mctlib.PerformanceMetric(type='Precision', value=Precision, slice = None),
         mctlib.PerformanceMetric(type='Mean error', value=Mean_error, slice = None),
+        ]
+    if vis_metric_files is not None:
+        
+        graph_metrics = read_image_as_base64(vis_metric_files)
+        model_card.quantitative_analysis.graphics.description = (
+        'ROC curve and confusion matrix')
+        model_card.quantitative_analysis.graphics.collection = [
+        mctlib.Graphic(image=graph_metrics),
         ]
 
     ## CAVEATS AND RECOMMENDATIONS
@@ -394,32 +451,32 @@ def create_model_card(csv_file = None,
 
     # Section 1
      #Section Title
-    model_card.extended_section1.extended1_title = [mctlib.Extended1Title(title='ANAN')]
-     #Section fields
-    model_card.extended_section1.extended1_field1 = [mctlib.Extended1Field1(entry1= " extended2 field1 entry1", question1 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field2 = [mctlib.Extended1Field2(entry2= " extended2 field1 entry1", question2 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field3 = [mctlib.Extended1Field3(entry3= " extended2 field1 entry1", question3 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field4 = [mctlib.Extended1Field4(entry4= " extended2 field1 entry1", question4 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field5 = [mctlib.Extended1Field5(entry5= " extended2 field1 entry1", question5 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field6 = [mctlib.Extended1Field6(entry6= " extended2 field1 entry1", question6 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field7 = [mctlib.Extended1Field7(entry7= " extended2 field1 entry1", question7 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field8 = [mctlib.Extended1Field8(entry8= " extended2 field1 entry1", question8 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field9 = [mctlib.Extended1Field9(entry9= " extended2 field1 entry1", question9 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field10 = [mctlib.Extended1Field10(entry10= " extended2 field1 entry1", question10 = " extended2 field1 question1")]
-    # Section 2
-     #Section Title
-    model_card.extended_section2.title = [mctlib.Extended2Title(title='ANAN')]
-     #Section fields
-    model_card.extended_section2.entry1 = [mctlib.Extended2Field1(entry1= " extended2 field1 entry1", question1 = " extended2 field1 question1")]
-    model_card.extended_section2.entry2 = [mctlib.Extended2Field2(entry2= " extended2 field1 entry1", question2 = " extended2 field1 question1")]
-    model_card.extended_section2.entry3 = [mctlib.Extended2Field3(entry3= " extended2 field1 entry1", question3 = " extended2 field1 question1")]
-    model_card.extended_section2.entry4 = [mctlib.Extended2Field4(entry4= " extended2 field1 entry1", question4 = " extended2 field1 question1")]
-    model_card.extended_section2.entry5 = [mctlib.Extended2Field5(entry5= " extended2 field1 entry1", question5 = " extended2 field1 question1")]
-    model_card.extended_section2.entry6 = [mctlib.Extended2Field6(entry6= " extended2 field1 entry1", question6 = " extended2 field1 question1")]
-    model_card.extended_section2.entry7 = [mctlib.Extended2Field7(entry7= " extended2 field1 entry1", question7 = " extended2 field1 question1")]
-    model_card.extended_section2.entry8 = [mctlib.Extended2Field8(entry8= " extended2 field1 entry1", question8 = " extended2 field1 question1")]
-    model_card.extended_section2.entry9 = [mctlib.Extended2Field9(entry9= " extended2 field1 entry1", question9 = " extended2 field1 question1")]
-    model_card.extended_section2.entry10 = [mctlib.Extended2Field10(entry10= " extended2 field1 entry1", question10 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_title = [mctlib.Extended1Title(title='ANAN')]
+    # #Section fields
+    #model_card.extended_section1.extended1_field1 = [mctlib.Extended1Field1(entry1= " extended2 field1 entry1", question1 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field2 = [mctlib.Extended1Field2(entry2= " extended2 field1 entry1", question2 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field3 = [mctlib.Extended1Field3(entry3= " extended2 field1 entry1", question3 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field4 = [mctlib.Extended1Field4(entry4= " extended2 field1 entry1", question4 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field5 = [mctlib.Extended1Field5(entry5= " extended2 field1 entry1", question5 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field6 = [mctlib.Extended1Field6(entry6= " extended2 field1 entry1", question6 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field7 = [mctlib.Extended1Field7(entry7= " extended2 field1 entry1", question7 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field8 = [mctlib.Extended1Field8(entry8= " extended2 field1 entry1", question8 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field9 = [mctlib.Extended1Field9(entry9= " extended2 field1 entry1", question9 = " extended2 field1 question1")]
+    #model_card.extended_section1.extended1_field10 = [mctlib.Extended1Field10(entry10= " extended2 field1 entry1", question10 = " extended2 field1 question1")]
+    ## Section 2
+    # #Section Title
+    #model_card.extended_section2.title = [mctlib.Extended2Title(title='ANAN')]
+    # #Section fields
+    #model_card.extended_section2.entry1 = [mctlib.Extended2Field1(entry1= " extended2 field1 entry1", question1 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry2 = [mctlib.Extended2Field2(entry2= " extended2 field1 entry1", question2 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry3 = [mctlib.Extended2Field3(entry3= " extended2 field1 entry1", question3 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry4 = [mctlib.Extended2Field4(entry4= " extended2 field1 entry1", question4 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry5 = [mctlib.Extended2Field5(entry5= " extended2 field1 entry1", question5 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry6 = [mctlib.Extended2Field6(entry6= " extended2 field1 entry1", question6 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry7 = [mctlib.Extended2Field7(entry7= " extended2 field1 entry1", question7 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry8 = [mctlib.Extended2Field8(entry8= " extended2 field1 entry1", question8 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry9 = [mctlib.Extended2Field9(entry9= " extended2 field1 entry1", question9 = " extended2 field1 question1")]
+    #model_card.extended_section2.entry10 = [mctlib.Extended2Field10(entry10= " extended2 field1 entry1", question10 = " extended2 field1 question1")]
     
     mct.update_model_card(model_card)
     
@@ -603,3 +660,9 @@ def check_user_input(input):
 #    return ''
 
 
+
+def read_image_as_base64(image_path):
+    with open(image_path, 'rb') as image_file:
+        image_data = image_file.read()
+        base64str = base64.b64encode(image_data).decode('utf-8')
+        return base64str
