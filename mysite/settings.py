@@ -31,6 +31,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Set the session engine (default is Django's database-backed sessions)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
 
 # Application definition
 

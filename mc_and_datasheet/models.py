@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.utils import timezone
+from django.contrib.sessions.models import Session
 # Create your models here. 
 '''
 That small bit of model code gives Django a lot of information. With it, Django is able to:
@@ -22,8 +23,9 @@ The three-step guide to making model changes:
 
 ###################################### USER INPUT ########################################
 class UserInput(models.Model):
-    session_id = models.CharField(max_length=50, unique=True)
+    session_uuid = models.CharField(max_length=50, unique=True)
     input_data = models.JSONField()
+    session_key = models.ForeignKey(Session, on_delete=models.CASCADE)
 
 
 ########################## MODEL CARD ########################################
@@ -32,6 +34,8 @@ class MC_section(models.Model):
     name = models.CharField(max_length=300)
     click_count = models.IntegerField(default=0)
     section_desc = models.CharField(max_length=500, default='')
+
+    mc_section_session = models.CharField(max_length=50, default='')
 
     def givename(self):
         return self.name
@@ -46,6 +50,7 @@ class Field(models.Model):
     field_answer = models.TextField(max_length=1000, blank=True)
     field_answer_date = models.DateTimeField(default=timezone.now)
     field_helper = models.CharField(max_length=1000, default='Info about the field', blank=True)
+    field_session = models.CharField(max_length=50, default='')
    
     def givename(self):
         return str(str(self.id) + '_' + self.field_question)
@@ -68,6 +73,8 @@ class CardData(models.Model):
 
     card_data = models.JSONField()
     created_at = models.DateTimeField(default=timezone.now)
+    carddata_session = models.CharField(max_length=50, default='')
+
     
     def __str__(self):
         return f'{self.card_data}'

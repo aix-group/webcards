@@ -199,7 +199,7 @@ Section
       <div class="form-row" style= " z-index: 1; "  >
          <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
          <p id="description" class="text-white-50 mx-auto mt-2 mb-2 text-center" style="z-index: 1; text-align: justify; margin-left: 20px; margin-right: 20px;">{{ section.section_desc }}</p>
-         {% for field in section.field_set.all %}
+         {% for field in field_set %}
          <div class="col" style= " z-index: 1; " >
             {% if field.field_question != 'Select the metrics you want to include:' %}
             {% if field.field_question != 'What is the version date?' %}

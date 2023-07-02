@@ -15,6 +15,7 @@ from django.views.decorators.http import require_http_methods
 from django.db.models import Sum, Max
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.db.models import Q
 
 # Import core libraries
 import model_card_lib_v2 as mclib_v2
@@ -57,13 +58,21 @@ def generate_session_id():
 
     
 def home(request):
-    session_id = request.session.get('session_id')
-    if not session_id:
-        session_id = generate_session_id()
-        request.session['session_id'] = session_id
 
-        print(f"New Session ID for the user: {session_id}")
-    print(f"Session ID for the user: {session_id}")
+    # Session key based on uuid library
+    session_uuid = request.session.get('session_uuid')
+    if not session_uuid:
+        session_uuid = generate_session_id()
+        request.session['session_uuid'] = session_uuid
+
+        print(f"New Session ID for the user: {session_uuid}")
+    print(f"Session ID for the user: {session_uuid}")
+
+    # Get the session key
+    session_key = request.session.session_key
+
+    # Print the session key
+    print(f"Session key: {session_key}")
     
     return render(request, "mc_and_datasheet/home.html")
 
@@ -131,29 +140,31 @@ def upload_file(response, id):
 
 def delete(request, id):
 
+    session_key = request.session.session_key
+
     print('Info: everything is deleted. ')    
     CardSectionData.objects.all().delete()
     if 'delete_section' in request.GET:
         CardData.objects.all().delete()
-        Field.objects.filter(mc_section__id=28, id__gt=36).delete()
-        Field.objects.filter(mc_section__id=30, id__gt=19).delete()
-        Field.objects.filter(mc_section__id=31, id__gt=22).delete()
-        Field.objects.filter(mc_section__id=32, id__gt=25).delete()
-        Field.objects.filter(mc_section__id=33, id__gt=29).delete()
-        Field.objects.filter(mc_section__id=36, id__gt=35).delete()
+        Field.objects.filter(mc_section__id=28, id__gt=36, field_session=session_key ).delete()
+        Field.objects.filter(mc_section__id=30, id__gt=19, field_session=session_key ).delete()
+        Field.objects.filter(mc_section__id=31, id__gt=22, field_session=session_key).delete()
+        Field.objects.filter(mc_section__id=32, id__gt=25, field_session=session_key).delete()
+        Field.objects.filter(mc_section__id=33, id__gt=29, field_session=session_key).delete()
+        Field.objects.filter(mc_section__id=36, id__gt=35, field_session=session_key).delete()
 
         # Get all sections with id greater than 36
-        sections_to_delete = MC_section.objects.filter(id__gt=36)
+        sections_to_delete = MC_section.objects.filter(id__gt=36, mc_section_session=session_key)
 
         # Delete the field values
-        Field.objects.all().update(field_answer="")
+        Field.objects.filter(field_session=session_key).all().update(field_answer="")
 
 
         # Delete the sections
         num_deleted, _ = sections_to_delete.delete()
 
         # Reset the click count
-        MC_section.objects.all().update(click_count=0)
+        MC_section.objects.filter(session_key=session_key).update(click_count=0)
 
         print(f"{num_deleted} section has been deleted.")
 
@@ -189,10 +200,20 @@ def delete(request, id):
 
 def section(response, id):
 
-    session_id = response.session.get('session_id')
+    session_id = response.session.session_key
     
-    section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
-    section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
+    print('Session ID in Section:', session_id)
+    section_instance = get_object_or_404(
+    MC_section.objects.filter(
+        Q(mc_section_session=response.session.session_key) | Q(mc_section_session='')
+    ),
+    id=id
+    )
+    section_list = get_list_or_404(
+        MC_section.objects.filter(
+        Q(mc_section_session=response.session.session_key) | Q(mc_section_session='')
+    )
+    )
     #{"save":["save"],"c1":["clicked"]}
 
     
@@ -243,7 +264,9 @@ def section(response, id):
 
         if response.POST.get('clear'): # send by the 'value'      
              
-            for field in section_instance.field_set.all():
+            for field in section_instance.field_set.filter(
+        Q(field_session = session_id) | Q(field_session='')
+        ).all():
                 
                 field.field_answer = ""
                 field.save()
@@ -260,7 +283,9 @@ def section(response, id):
         if response.POST.get("save"):
             section_answers = []
             
-            for field in section_instance.field_set.all():
+            for field in section_instance.field_set.filter(
+        Q(field_session = session_id) | Q(field_session='')
+        ).all():
                 
                 if field.field_question != "Select the metrics you want to include:":
                     answer_instance = response.POST.get("a" + str(field.id))
@@ -304,15 +329,15 @@ def section(response, id):
                 s2a_dict = json.loads(section2beadded)
                 combined_dict = {**psc_dict, **s2a_dict}
                 combined_json_string = json.dumps(combined_dict) 
-                CardData.objects.create(
-                card_data = combined_json_string,
-                created_at = timezone.now()) 
+                CardData.objects.create(carddata_session =  response.session.session_key,
+                                        card_data = combined_json_string,
+                                        created_at = timezone.now()) 
             else:
                 print(" IT SEEMS CARD DATA IS EMPTY POPULATING NOW")
                 #print(section2beadded)
-                CardData.objects.create(
-                card_data = section2beadded,
-                created_at = timezone.now())
+                CardData.objects.create(carddata_session = response.session.session_key,
+                                        card_data = section2beadded,
+                                        created_at = timezone.now())
                 
             context = {"section":section_instance,
             "section_list":section_list,
@@ -334,7 +359,8 @@ def section(response, id):
                 txt = response.POST.get("newfieldtext")
 
             if len(txt) > 2:             
-                section_instance.field_set.create(field_question=txt)
+                section_instance.field_set.create(field_session = response.session.session_key,
+                                                  field_question=txt)
             else:
                 print("invalid")
                 
@@ -352,13 +378,17 @@ def section(response, id):
     file_objects = File.objects.all()
     
     print(f'{file_exists}')
+    field_set = section_instance.field_set.filter(
+        Q(field_session = session_id) | Q(field_session='')
+        ).all()
     
     context = {"section":section_instance,
-    "section_list":section_list,
-    'current_section_id': section_instance.id,
-    "files": file_objects,
-    "is_files": file_exists,
-    "form":form
+               "field_set":field_set,
+               "section_list":section_list,
+               'current_section_id': section_instance.id,
+               "files": file_objects,
+               "is_files": file_exists,
+               "form":form
     }
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
@@ -425,6 +455,9 @@ def retrievedata(section_name, field_questions, field_answers):
 
         t_return = T
 
+    # Delete existing CardSectionData object with the same key
+    CardSectionData.objects.filter(key=name).delete()
+    
     return t_return # json string
         
 def file_list(request,id):
