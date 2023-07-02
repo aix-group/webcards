@@ -9,6 +9,7 @@ from .forms import FileForm, CreateNewSection
 from .models import File
 import os
 import json
+import uuid
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Sum, Max
@@ -24,9 +25,6 @@ import datasheet as dt
 def datacard_section(response, id):
     context = {}
     return render(response, "mc_and_datasheet/datacard_section.html", context)
-
-
-
 def index(request):
     context = {}
     return render(request, "mc_and_datasheet/index.html", context)
@@ -53,6 +51,23 @@ def portfolio_item(request):
     return render(request, "mc_and_datasheet/portfolio-item.html", context)
 def my_view(request):
     return render(request, 'mc_and_datasheet/my_template.html')
+
+def generate_session_id():
+    return str(uuid.uuid4())
+
+    
+def home(request):
+    session_id = request.session.get('session_id')
+    if not session_id:
+        session_id = generate_session_id()
+        request.session['session_id'] = session_id
+
+        print(f"New Session ID for the user: {session_id}")
+    print(f"Session ID for the user: {session_id}")
+    
+    return render(request, "mc_and_datasheet/home.html")
+
+
 
 def upload_file(response, id):
 
@@ -173,6 +188,8 @@ def delete(request, id):
 
 
 def section(response, id):
+
+    session_id = response.session.get('session_id')
     
     section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
     section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
@@ -245,20 +262,20 @@ def section(response, id):
             
             for field in section_instance.field_set.all():
                 
-                if section_instance.id != 35:
+                if field.field_question != "Select the metrics you want to include:":
                     answer_instance = response.POST.get("a" + str(field.id))
                     field.field_answer = answer_instance # save to database
                     section_answers.append(answer_instance) # also append the list
+
+                    print(answer_instance)
                     field.save()
 
-                else: 
-
+                else: # This is the 'select the metrics you want to include' field
                     accuracy = response.POST.getlist('accuracy')
                     precision = response.POST.getlist('precision')
                     mean_error = response.POST.getlist('mean-error')
                     selected_metrics = {"selected metrics":[accuracy,precision,mean_error]}
                     selected_metrics = json.dumps(selected_metrics)
-
                     #print(selected_metrics)
                     #field.field_answers = selected_metrics
                     section_answers.append(selected_metrics)
@@ -267,7 +284,14 @@ def section(response, id):
 
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(section_instance,section_instance.field_set.all(),section_answers)
-            #section2beadded = json.loads(section2beadded)
+            section2beadded = json.loads(section2beadded)
+
+            # add session_id to the section2beadded in the beginning
+            section2beadded['session_id'] = session_id
+
+            # dump it back to json string
+            section2beadded = json.dumps(section2beadded)
+
 
             #previous_saved_sections = []
             if CardData.objects.exists():
@@ -309,7 +333,7 @@ def section(response, id):
                 # Check if newfieldtext is in localStorage
                 txt = response.POST.get("newfieldtext")
 
-            if len(txt) > 2:
+            if len(txt) > 2:             
                 section_instance.field_set.create(field_question=txt)
             else:
                 print("invalid")
@@ -338,10 +362,6 @@ def section(response, id):
     }
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
-def home(response):
-    
-    return render(response, "mc_and_datasheet/home.html")
-
 def create(response): 
 
     if response.method == "POST":
@@ -363,9 +383,9 @@ def retrievedata(section_name, field_questions, field_answers):
     name = section_name.givename()
 
     section_answer = []
-
-    for i, entry in enumerate(field_answers):
         
+    for i, entry in enumerate(field_answers):
+
         question = field_questions[i].givename()
 
         section_answer.append({question:entry})
@@ -374,8 +394,8 @@ def retrievedata(section_name, field_questions, field_answers):
                     "Section_Data_%s"%(section_name.id):section_answer}
     section_json = json.dumps(section_dict)
 
-    section_data, created = CardSectionData.objects.get_or_create(  key=name,   
-                                                                    value=section_json)
+    section_data, created = CardSectionData.objects.get_or_create(key=name,   
+                                                                  value=section_json)
     
     if created:
         print("A new instance was created.")

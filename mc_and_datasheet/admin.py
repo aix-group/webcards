@@ -3,7 +3,7 @@ from .models import CardSectionData, MC_section, CardData, dt_section, CardDataD
 
 # Register your models here.
 
-from .models import MC_section, Field,CardSectionData,CardData, File, dt_Field,dt_section
+from .models import MC_section, Field,CardSectionData,CardData, File, dt_Field,dt_section,UserInput
 
 
 class FieldInline(admin.TabularInline):
@@ -44,4 +44,4 @@ admin.site.register(CardSectionData)
 admin.site.register(File)
 admin.site.register(dt_Field)
 admin.site.register(CardDataDatasheet)
-admin.site.register(CardData)
+admin.site.register(UserInput)

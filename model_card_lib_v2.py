@@ -308,7 +308,9 @@ def create_model_card(csv_file = None,
             model_card.model_parameters.data.append(mctlib.Dataset(
             name = get_answer(a_dict,38),
             description = get_answer(a_dict,40),
-            ))         
+            ))  
+            
+            model_card.model_parameters.data[dataset_graph_number].graphics.description = 'Description of the dataset'   
                     
             if vis_dataset_files is not None:
                 graph_dataset = read_image_as_base64(vis_dataset_files)
@@ -348,9 +350,9 @@ def create_model_card(csv_file = None,
         
         graph_metrics = read_image_as_base64(vis_metric_files)
         model_card.quantitative_analysis.graphics.description = (
-        'ROC curve and confusion matrix')
+        'Description of the graph')
         model_card.quantitative_analysis.graphics.collection = [
-        mctlib.Graphic(image=graph_metrics),
+        mctlib.Graphic(name = 'Graph name', image=graph_metrics),
         ]
 
     ## CAVEATS AND RECOMMENDATIONS

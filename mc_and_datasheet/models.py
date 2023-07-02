@@ -20,6 +20,12 @@ The three-step guide to making model changes:
 
 '''
 
+###################################### USER INPUT ########################################
+class UserInput(models.Model):
+    session_id = models.CharField(max_length=50, unique=True)
+    input_data = models.JSONField()
+
+
 ########################## MODEL CARD ########################################
 class MC_section(models.Model):
 
