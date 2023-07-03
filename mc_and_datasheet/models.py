@@ -84,14 +84,23 @@ class CardData(models.Model):
     def extend_dict(self,extension):
 
         return card_data + extension
-     
 
 class File(models.Model):
+
     file = models.FileField(upload_to='uploads/')
     name = models.CharField(max_length=255)
     uploaded_at = models.DateTimeField(default=timezone.now)
+    file_session = models.CharField(max_length=50, default='', null=True)
 
     uploaded_section_id = models.IntegerField(default=0)
+    
+    def save(self, *args, **kwargs):
+        # Skip saving the file by removing the 'file' attribute temporarily
+        file = self.file
+        self.file = None
+        super().save(*args, **kwargs)
+        # Restore the 'file' attribute after saving the file information
+        self.file = file
 
     def givename(self):
         return str(self.name)

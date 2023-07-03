@@ -79,9 +79,8 @@ def home(request):
 
 
 def upload_file(response, id):
-
-    fs = FileSystemStorage()
-
+    
+    session_key = response.session.session_key
     
     section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
     section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
@@ -90,31 +89,31 @@ def upload_file(response, id):
         form = FileForm(response.POST, response.FILES)
         if form.is_valid():
             # Create the file instance
-                file_instance = File() # From models 
+                file_instance = File(file_session=session_key)# From models 
                 
                 # Get the file from form in front end
                 file = form.cleaned_data['file']
                 print(file)
 
-                # Save it to backend
-                file_instance.file = file 
-                file_instance.name = file.name
-                file_instance.uploaded_at = timezone.now()
-                file_instance.uploaded_section_id = section_instance.id
-                #print(file_instance.name)
-                #print(file_instance.uploaded_at)
+                # Create the file instance
+                file_instance = File(file=file, name=file.name, uploaded_at=timezone.now(), uploaded_section_id=section_instance.id, file_session=session_key)
+                
+                print('Info: file instance: ', file_instance.name)
+                # Specify the upload path relative to the media root
+                file_path = f'uploads/{session_key}/{file_instance.name}'
+
+                print('Info: file path: ', file_path)
+                # Save the file
+                
+                fs = FileSystemStorage()
+                fs.save(file_path, file)
+
+                # Save the file instance
                 file_instance.save()
-                #path = form.save()
-
-                #filename = fs.save(file_instance.name, file_instance)
-                
-                #print(filename)
-
+            
                 # Get it from backend to use in front end
-                file_objects = File.objects.all()
-                
-                print('You are returned to Filelist')
-                
+                file_objects = File.objects.filter(file_session = session_key).all()
+                    
                 is_files = True
                 context = {
                     "section": section_instance,
@@ -164,7 +163,7 @@ def delete(request, id):
         num_deleted, _ = sections_to_delete.delete()
 
         # Reset the click count
-        MC_section.objects.filter(session_key=session_key).update(click_count=0)
+        MC_section.objects.filter(mc_section_session=session_key).update(click_count=0)
 
         print(f"{num_deleted} section has been deleted.")
 
