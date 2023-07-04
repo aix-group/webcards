@@ -89,46 +89,35 @@ def upload_file(response, id):
         form = FileForm(response.POST, response.FILES)
         if form.is_valid():
             # Create the file instance
-                file_instance = File(file_session=session_key)# From models 
-                
-                # Get the file from form in front end
-                file = form.cleaned_data['file']
-                print(file)
-
-                # Create the file instance
-                file_instance = File(file=file, name=file.name, uploaded_at=timezone.now(), uploaded_section_id=section_instance.id, file_session=session_key)
-                
-                print('Info: file instance: ', file_instance.name)
-                # Specify the upload path relative to the media root
-                file_path = f'uploads/{session_key}/{file_instance.name}'
-
-                print('Info: file path: ', file_path)
-                # Save the file
-                
-                fs = FileSystemStorage()
-                fs.save(file_path, file)
-
-                # Save the file instance
-                file_instance.save()
+            file_instance = File(file_session=session_key)# From models 
             
-                # Get it from backend to use in front end
-                file_objects = File.objects.filter(file_session = session_key).all()
-                    
-                is_files = True
-                context = {
-                    "section": section_instance,
-                    "section_list": section_list,
-                    "form": form,
-                    "files": file_objects,
-                    "is_files": is_files,
-                    "file_instance": file_instance
-                }
-
-                return render(response, 'mc_and_datasheet/section.html', context)
+            # Get the file from form in front end
+            file = form.cleaned_data['file']
+            print(file)
+            # Create the file instance
+            file_instance = File(file=file, name=file.name, uploaded_at=timezone.now(), uploaded_section_id=section_instance.id, file_session=session_key)
+            
+            print('Info: file instance: ', file_instance.name)
+            # Specify the upload path relative to the media root
+            file_path = f'uploads/{session_key}/{file_instance.name}'
+            print('Info: file path: ', file_path)
+            # Save the file
+            
+            fs = FileSystemStorage()
+            fs.save(file_path, file)
+            # Save the file instance
+            file_instance.save()            
+            
+            #return render(response, 'mc_and_datasheet/section.html', context)
+            
+            url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+            return HttpResponseRedirect(url)
 
     else:
         form = FileForm()
-        
+    
+    
+    # PROBABLY PROGRAM NEVER COMES HERE
     context = {"section":section_instance,
     "section_list":section_list,
     'current_section_id': section_instance.id,
@@ -171,7 +160,7 @@ def delete(request, id):
 
         # Delete all the files as well
 
-        file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads')
+        file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads', session_key)
 
         # Check if the directory exists
         if os.path.exists(file_directory):
@@ -179,6 +168,7 @@ def delete(request, id):
             for file_name in os.listdir(file_directory):
                 file_path = os.path.join(file_directory, file_name)
                 os.remove(file_path)
+                
         url = reverse('mc_and_datasheet:section', args=[28]) # You defined an app name so that should go in as well!
 
     if 'delete_dt_section' in request.GET:
@@ -199,9 +189,9 @@ def delete(request, id):
 
 def section(response, id):
 
-    session_id = response.session.session_key
+    session_key = response.session.session_key
     
-    print('Session ID in Section:', session_id)
+    print('Session ID in Section:', session_key)
     section_instance = get_object_or_404(
     MC_section.objects.filter(
         Q(mc_section_session=response.session.session_key) | Q(mc_section_session='')
@@ -214,22 +204,18 @@ def section(response, id):
     )
     )
     #{"save":["save"],"c1":["clicked"]}
-
-    
-        
+       
     if response.method == 'POST':
         
         form = FileForm()
-        file_exists = File.objects.exists()
+        file_objects = File.objects.filter(file_session = session_key).exists()
         # Get it from backend to use in front end
-        file_objects = File.objects.all()
+        file_objects = File.objects.filter(file_session = session_key).all()
         
         input_text = response.POST.get('input_text')
         print(input_text)
         
-        if 'sectionsubmit' in response.POST:
-            
-             
+        if 'sectionsubmit' in response.POST:             
             
             print("here")
             text = response.POST['newsectiontext'] # get the input text from the form
@@ -239,18 +225,18 @@ def section(response, id):
             click_count = click_count if click_count is not None else 0
 
             if len(text) > 1 and click_count < 2: # Only allow creation if the click count is less than 2
-                print(f" this is the new section '{text}'")
                 t = MC_section(name=text, click_count=1)
                 t.save()
 
                 # ID will be automaticly higher than the others
-                newly_added_id = MC_section.objects.all().aggregate(Max('id'))['id__max'] or 0
+                newly_added_id = MC_section.objects.filter(
+                Q(mc_section_session = session_key) | Q(field_session=''))
+                all().aggregate(Max('id'))['id__max'] or 0
 
                 url = reverse('mc_and_datasheet:section', args=[newly_added_id]) # You defined an app name so that should go in as well!
                 return HttpResponseRedirect(url)
 
             elif click_count == 2:
-                print("here")
                 
                 # Read the HTML content from the file
                 with open("mc_and_datasheet\error_text.html", "r") as file:
@@ -263,36 +249,28 @@ def section(response, id):
 
         if response.POST.get('clear'): # send by the 'value'      
              
-            for field in section_instance.field_set.filter(
-        Q(field_session = session_id) | Q(field_session='')
-        ).all():
+            for field in section_instance.field_set.all():
                 
                 field.field_answer = ""
                 field.save()
-            
-            context = {"section":section_instance,
-            "section_list":section_list,
-            }
-            #'rbform':radiobutton_form}
 
-            return render(response , "mc_and_datasheet/section.html",context)
+            url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+            return redirect(url)
             
             
             
         if response.POST.get("save"):
             section_answers = []
             
-            for field in section_instance.field_set.filter(
-        Q(field_session = session_id) | Q(field_session='')
-        ).all():
+            for field in section_instance.field_set.all():
                 
                 if field.field_question != "Select the metrics you want to include:":
                     answer_instance = response.POST.get("a" + str(field.id))
-                    field.field_answer = answer_instance # save to database
+                    #field.field_answer = answer_instance # save to database
                     section_answers.append(answer_instance) # also append the list
 
                     print(answer_instance)
-                    field.save()
+                    #field.save()
 
                 else: # This is the 'select the metrics you want to include' field
                     accuracy = response.POST.getlist('accuracy')
@@ -300,7 +278,7 @@ def section(response, id):
                     mean_error = response.POST.getlist('mean-error')
                     selected_metrics = {"selected metrics":[accuracy,precision,mean_error]}
                     selected_metrics = json.dumps(selected_metrics)
-                    #print(selected_metrics)
+                    print(selected_metrics)
                     #field.field_answers = selected_metrics
                     section_answers.append(selected_metrics)
                 
@@ -311,7 +289,7 @@ def section(response, id):
             section2beadded = json.loads(section2beadded)
 
             # add session_id to the section2beadded in the beginning
-            section2beadded['session_id'] = session_id
+            section2beadded['session_id'] = session_key
 
             # dump it back to json string
             section2beadded = json.dumps(section2beadded)
@@ -337,13 +315,9 @@ def section(response, id):
                 CardData.objects.create(carddata_session = response.session.session_key,
                                         card_data = section2beadded,
                                         created_at = timezone.now())
-                
-            context = {"section":section_instance,
-            "section_list":section_list,
-            }
-            #'rbform':radiobutton_form}
 
-            return render(response , "mc_and_datasheet/section.html",context)
+            url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+            return redirect(url)
            # WITH CARDDATA YOU HAVE ALL THE INFORMATION TO CREATE THE MODEL CARD NEXT CREATE A BUTTON TO CREATE THE MODEL CARD 
            # THEN FROM THIS BUTTON A NEW VIEW OPENS WITH OPTIONS ABOUT FORMAT AND SO ON
 
@@ -374,15 +348,40 @@ def section(response, id):
       
     file_exists = File.objects.exists()
     # Get it from backend to use in front end
-    file_objects = File.objects.all()
+    file_objects = File.objects.filter(file_session = session_key).all()
     
     print(f'{file_exists}')
     field_set = section_instance.field_set.filter(
-        Q(field_session = session_id) | Q(field_session='')
+        Q(field_session = session_key) | Q(field_session='')
         ).all()
     
+    # Handle the user answers automaticly shown in the fields
+    try:
+        most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
+        most_recent_entry_data = most_recent_entry.card_data
+        
+        # convert the json string to dictionary
+        most_recent_entry_data = json.loads(most_recent_entry_data)
+    
+        # Second security layer that no user can access other users data
+        if most_recent_entry_data["session_id"] == session_key:
+            print('The session key is the same')
+            try:
+                field_dicts = most_recent_entry_data[f'Section_Data_{section_instance.id}']
+                field_values = [''.join(dict.values()) for dict in field_dicts]
+            except:
+                length = len(field_set)
+                field_values = ["" for _ in range(length)]
+    except:
+        length = len(field_set)
+        field_values = ["" for _ in range(length)]
+        
+
+    print(f'The field values are {field_values}')
+    print(type(field_set))
     context = {"section":section_instance,
                "field_set":field_set,
+               "field_values":field_values,
                "section_list":section_list,
                'current_section_id': section_instance.id,
                "files": file_objects,
@@ -540,9 +539,11 @@ def datasheet_section(response,id):
 
 
 def createoutput(request,id):
+    
+    session_key = request.session.session_key
 
     if CardData.objects.exists():
-        most_recent_entry = CardData.objects.latest('created_at')
+        most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
         message_text = ""
 
         # Code to create model card
@@ -553,7 +554,7 @@ def createoutput(request,id):
 
         fil_dict = {key: value for key, value in model_card_dict.items() if key.startswith("Section_Data")}
         #print(fil_dict)
-        files = File.objects.all()
+        files = File.objects.filter(file_session = session_key ).all()
 
         model_files = []
         dataset_files = []
@@ -581,29 +582,25 @@ def createoutput(request,id):
         print(f'Custom metric : {custom_metric_files}')
         
         
-        try:
-            if len(model_files) > 0:
-                model_file = 'media/uploads' + '/' + model_files[-1]
-            else:
-                model_file = None
-
-            if len(dataset_files) > 0:
-                dataset_file = 'media/uploads' + '/' + dataset_files[-1]
-            else:
-                dataset_file = None
-
-            if len(custom_metric_files) > 0:
-                vis_metric_files = 'media/uploads' + '/' + custom_metric_files[-1]
-            else:
-                vis_metric_files = None
-
-            if len(custom_dataset_files) > 0:
-                vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1]
-            else:
-                vis_dataset_files = None
-
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        #try:
+        if len(model_files) > 0:
+            model_file = 'media/uploads' + f'/{session_key}/' + model_files[-1]
+        else:
+            model_file = None
+        if len(dataset_files) > 0:
+            dataset_file = 'media/uploads' + f'/{session_key}/' + dataset_files[-1]
+        else:
+            dataset_file = None
+        if len(custom_metric_files) > 0:
+            vis_metric_files = 'media/uploads' + f'/{session_key}/' + custom_metric_files[-1]
+        else:
+            vis_metric_files = None
+        if len(custom_dataset_files) > 0:
+            vis_dataset_files = 'media/uploads' + f'/{session_key}/' + custom_dataset_files[-1]
+        else:
+            vis_dataset_files = None
+       # except Exception as e:
+           # print(f"An error occurred: {e}")
 
         #vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1] 
         print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
@@ -622,6 +619,7 @@ def createoutput(request,id):
         response["Content-Disposition"] = "attachment; filename=filename.html"
 
     else:
+        # User has not filled the form
         # Read the HTML content from the file
         with open("mc_and_datasheet\error_text.html", "r") as file:
             message_text = file.read()

@@ -199,8 +199,10 @@ Section
       <div class="form-row" style= " z-index: 1; "  >
          <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
          <p id="description" class="text-white-50 mx-auto mt-2 mb-2 text-center" style="z-index: 1; text-align: justify; margin-left: 20px; margin-right: 20px;">{{ section.section_desc }}</p>
+         {% for value in field_values %}
          {% for field in field_set %}
-         <div class="col" style= " z-index: 1; " >
+         {% if forloop.counter0 == forloop.parentloop.counter0 %}
+            <div class="col" style= " z-index: 1; " >
             {% if field.field_question != 'Select the metrics you want to include:' %}
             {% if field.field_question != 'What is the version date?' %}
             {% if field.field_question != 'Size of the dataset:' %}
@@ -223,7 +225,7 @@ Section
             </div>
             {# different for quantitative anaylsis #}
             <div class="input-group" style="z-index: 1;">
-               <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;">{{ field.get_answer }}</textarea>
+               <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;">{{ value }}</textarea>
                <button type="button" class="btn btn-danger">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
@@ -232,10 +234,12 @@ Section
                </button>
             </div>
          </div>
-         {% endif %}   
+         {% endif %}  
+         {% endif %}  
          {% endif %}
          {% endif %}
          {% endif %}
+         {% endfor %}
          {% endfor %}
       </div>
       {% for field in section.field_set.all %}

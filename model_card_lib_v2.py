@@ -98,15 +98,17 @@ def create_model_card(csv_file = None,
 
         is_both_file = True
     else:
+        
+        # User wanted to manually input the metrics
 
         dict_str = get_answer(a_dict,31)
 
         if len(dict_str)>2: 
             dict_metric = json.loads(dict_str)
             dict_metric = list(dict_metric.values())
-            precision_score = float(dict_metric[0][1][0])
-            accuracy_score = float(dict_metric[0][0][0])
-            mean_error_Score = float(dict_metric[0][2][0])
+            precision_score = float(dict_metric[0][1][0]) if dict_metric[0][1][0] else None
+            accuracy_score = float(dict_metric[0][0][0]) if dict_metric[0][0][0] else None
+            mean_error_score = float(dict_metric[0][2][0]) if dict_metric[0][2][0] else None
 
     # Make the HTML file
     model_card_output_path = os.getcwd() 
@@ -205,30 +207,32 @@ def create_model_card(csv_file = None,
 
     print("the metric answer is here {} ".format(metric_answer))
 
+    ## TODO How are these metrics calculated does not work because logic is disabled. Implement a new logic for this.
     if get_answer(a_dict,31):
     
         if "accuracy" in metric_answer:
-            accuracy = "Values are predicted through predict method of the model."
+            accuracy_exp = "Values are predicted through predict method of the model."
             print(' Accuracy is selected')
         else:
             accuracy = None
         if "precision" in metric_answer:
-            precision = " Precision calculated using sklearn metrics precision score method with the predicted values."
+            precision_exp = " Precision calculated using sklearn metrics precision score method with the predicted values."
             print(' Precision is selected')
         else:
             precision = None
         if "mean-error" in metric_answer:
-            mean_error = " Error_rate calculated using sklearn metrics mean squared error method with the predicted values."
+            mean_error_exp = " Error_rate calculated using sklearn metrics mean squared error method with the predicted values."
             print(' Mean Error is selected')
         else:
             mean_error = None
         
+        ## TODO activate this ones the logic is implemented.
         # This is will be automatic filled if the metric is chosen for reporting
-        model_card.performance_details.how_metrics = [mctlib.HowMetrics(accuracy = accuracy,
-                                                                        precision = precision,
-                                                                        error_rate = mean_error)
-                                                        ]
-    
+        #model_card.performance_details.how_metrics = [mctlib.HowMetrics(accuracy = accuracy_exp,
+        #                                                                precision = precision_exp,
+        #                                                                error_rate = mean_error_exp)
+        #                                                ]
+    #
         model_card.performance_details.unitary_results  = one_entry(mctlib.UnitaryResults, get_answer(a_dict,28))
     
         model_card.performance_details.intersectional_results = one_entry(mctlib.IntersectionalResults, get_answer(a_dict,29))
@@ -333,19 +337,20 @@ def create_model_card(csv_file = None,
                 dataset_graph_number += 1
 
     ##QUANTITATIVE ANALYSIS 
-
-    if  'accuracy_score'  in locals():
+    accuracy = None
+    precision = None
+    mean_error = None
+    if 'accuracy_score' in locals() and accuracy_score is not None:
         accuracy = bytes(str(round(accuracy_score, 4)), 'utf-8')
-    if  'precision_score'  in locals():
-        Precision = bytes(str(round(precision_score, 4)), 'utf-8')
-    if  'mean_error_Score' in locals():
-        Mean_error = bytes(str(round(mean_error_Score, 4)), 'utf-8')
-
-        model_card.quantitative_analysis.performance_metrics = [
-        mctlib.PerformanceMetric(type='Accuracy', value=accuracy, slice = None),
-        mctlib.PerformanceMetric(type='Precision', value=Precision, slice = None),
-        mctlib.PerformanceMetric(type='Mean error', value=Mean_error, slice = None),
-        ]
+    if 'precision_score' in locals() and precision_score is not None:
+        precision = bytes(str(round(precision_score, 4)), 'utf-8')
+    if 'mean_error_score' in locals() and mean_error_score is not None:
+        mean_error = bytes(str(round(mean_error_score, 4)), 'utf-8')
+    model_card.quantitative_analysis.performance_metrics = [
+    mctlib.PerformanceMetric(type='Accuracy', value=accuracy, slice = None),
+    mctlib.PerformanceMetric(type='Precision', value=precision, slice = None),
+    mctlib.PerformanceMetric(type='Mean error', value=mean_error, slice = None),
+    ]
     if vis_metric_files is not None:
         
         graph_metrics = read_image_as_base64(vis_metric_files)
@@ -623,7 +628,12 @@ def customized_fields(ind,dict_a):
     except:
         extracted_numbers = None
         return extracted_numbers
-            
+
+def read_image_as_base64(image_path):
+    with open(image_path, 'rb') as image_file:
+        image_data = image_file.read()
+        base64str = base64.b64encode(image_data).decode('utf-8')
+        return base64str           
 # UNNECESSARY FUNCTIONS DELETE BEFORE LAST RELEASE
 def get_info(df,ID):
     index = df.index[df['ID'] == ID].tolist()[0]
@@ -663,8 +673,3 @@ def check_user_input(input):
 
 
 
-def read_image_as_base64(image_path):
-    with open(image_path, 'rb') as image_file:
-        image_data = image_file.read()
-        base64str = base64.b64encode(image_data).decode('utf-8')
-        return base64str
