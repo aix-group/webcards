@@ -29,8 +29,6 @@ SECRET_KEY = 'django-insecure-ra_#t4d_^d$w^4fb7)p!aa++cs9e(bezjql4jt1cek2=^8y7b_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 # Set the session engine (default is Django's database-backed sessions)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -109,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.249.136','192.168.137.181','192.168.0.127']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.249.136','192.168.137.181','192.168.0.127','.vercel.app']
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
