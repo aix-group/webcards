@@ -142,19 +142,18 @@ def delete(request, id):
         Field.objects.filter(mc_section__id=36, id__gt=35, field_session=session_key).delete()
 
         # Get all sections with id greater than 36
-        sections_to_delete = MC_section.objects.filter(id__gt=36, mc_section_session=session_key)
+        MC_section.objects.filter(id__gt=36, mc_section_session=session_key).delete()
+        
+        # Delete the sections
+        #num_deleted, _ = sections_to_delete.delete()
 
         # Delete the field values
         Field.objects.filter(field_session=session_key).all().update(field_answer="")
 
-
-        # Delete the sections
-        num_deleted, _ = sections_to_delete.delete()
-
         # Reset the click count
         MC_section.objects.filter(mc_section_session=session_key).update(click_count=0)
 
-        print(f"{num_deleted} section has been deleted.")
+        #print(f"{num_deleted} section has been deleted.")
 
         File.objects.all().delete()
 
@@ -217,34 +216,36 @@ def section(response, id):
         
         if 'sectionsubmit' in response.POST:             
             
-            print("here")
             text = response.POST['newsectiontext'] # get the input text from the form
 
             # Get the current click count
-            click_count = MC_section.objects.aggregate(Sum('click_count'))['click_count__sum']
+            click_count = MC_section.objects.filter(Q(mc_section_session=response.session.session_key) | Q(mc_section_session='')).aggregate(Sum('click_count'))['click_count__sum']
             click_count = click_count if click_count is not None else 0
 
             if len(text) > 1 and click_count < 2: # Only allow creation if the click count is less than 2
-                t = MC_section(name=text, click_count=1)
-                t.save()
+                
+                section_desc = "Here you can populate your newly created section with various headers. You can then present the corresponding descriptions. You can start by adding a new header below. Be aware that any text written in the question fields are presented as header for the description."
+                new_section = MC_section(name=text, click_count=1, section_desc = section_desc, mc_section_session = session_key )
+                new_section.save()
 
                 # ID will be automaticly higher than the others
                 newly_added_id = MC_section.objects.filter(
-                Q(mc_section_session = session_key) | Q(field_session=''))
-                all().aggregate(Max('id'))['id__max'] or 0
+                Q(mc_section_session = session_key) | Q(mc_section_session='')).aggregate(Max('id'))['id__max'] or 0
 
                 url = reverse('mc_and_datasheet:section', args=[newly_added_id]) # You defined an app name so that should go in as well!
                 return HttpResponseRedirect(url)
 
             elif click_count == 2:
                 
+                print(' User wants more than 2 additional section ')
+                
                 # Read the HTML content from the file
                 with open("mc_and_datasheet\error_text.html", "r") as file:
                     message_text = file.read()
 
-                error_text = message_text.replace('An error occured. Do not FORGET to save the answers.', 'You can only add two new section. You can delete and add a new.')
-
-                return HttpResponse(error_text, content_type="text/html")
+                section_error = message_text.replace('An error occurred. Do not FORGET to save the answers.', 'You can only add two new section. You can delete and add a new.')
+                
+                return HttpResponse(section_error, content_type="text/html")
         
 
         if response.POST.get('clear'): # send by the 'value'      
@@ -552,7 +553,15 @@ def createoutput(request,id):
 
         model_card_dict = json.loads(most_recent_entry.get())
 
-        fil_dict = {key: value for key, value in model_card_dict.items() if key.startswith("Section_Data")}
+        fil_dict = {}
+        section_names = []
+
+        for key, value in model_card_dict.items():
+            if key.startswith("Section_Data"):
+                fil_dict[key] = value
+            else:
+                section_names.append(value)
+                
         #print(fil_dict)
         files = File.objects.filter(file_session = session_key ).all()
 
@@ -608,7 +617,8 @@ def createoutput(request,id):
                                                 model_file = model_file,
                                                 vis_metric_files = vis_metric_files,
                                                 vis_dataset_files = vis_dataset_files,
-                                                a_dict=fil_dict)
+                                                a_dict=fil_dict,
+                                                section_names = section_names)
                                                 
 
         # Get the HTML content as a string
