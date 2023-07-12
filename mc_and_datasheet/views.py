@@ -560,7 +560,7 @@ def createoutput(request,id):
             if key.startswith("Section_Data"):
                 fil_dict[key] = value
             else:
-                section_names.append(value)
+                section_names.append(f'{key[-2:]}_' + value)
                 
         #print(fil_dict)
         files = File.objects.filter(file_session = session_key ).all()

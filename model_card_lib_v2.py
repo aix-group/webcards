@@ -358,10 +358,14 @@ def create_model_card(csv_file = None,
         
         graph_metrics = read_image_as_base64(vis_metric_files)
         model_card.quantitative_analysis.graphics.description = (
-        'Description of the graph')
+        get_answer(a_dict,58))
         model_card.quantitative_analysis.graphics.collection = [
         mctlib.Graphic(name = 'Graph name', image=graph_metrics),
         ]
+
+        # Unused model card path field used for description of the performance metrics
+        model_card.model_details.path = get_answer(a_dict,57)
+   
 
     ## CAVEATS AND RECOMMENDATIONS
     model_card.recommendations.further_testing = one_entry(mctlib.FurtherTesting, get_answer(a_dict,32))
@@ -455,39 +459,87 @@ def create_model_card(csv_file = None,
         model_card.recommendations.entry4 = one_entry(mctlib.RecommendationsExt4,get_both(a_dict,r_ids[3])[1], get_both(a_dict,r_ids[3])[0])
         model_card.recommendations.entry5 = one_entry(mctlib.RecommendationsExt5,get_both(a_dict,r_ids[4])[1], get_both(a_dict,r_ids[4])[0])
 
-    
-
     # Extended Sections
-
-    # Section 1
-    # Section Title
-    model_card.extended_section1.extended1_title = [mctlib.Extended1Title(title='ANAN')]
-    #Section fields
-    model_card.extended_section1.extended1_field1 = [mctlib.Extended1Field1(entry1= " extended2 field1 entry1", question1 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field2 = [mctlib.Extended1Field2(entry2= " extended2 field1 entry1", question2 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field3 = [mctlib.Extended1Field3(entry3= " extended2 field1 entry1", question3 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field4 = [mctlib.Extended1Field4(entry4= " extended2 field1 entry1", question4 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field5 = [mctlib.Extended1Field5(entry5= " extended2 field1 entry1", question5 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field6 = [mctlib.Extended1Field6(entry6= " extended2 field1 entry1", question6 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field7 = [mctlib.Extended1Field7(entry7= " extended2 field1 entry1", question7 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field8 = [mctlib.Extended1Field8(entry8= " extended2 field1 entry1", question8 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field9 = [mctlib.Extended1Field9(entry9= " extended2 field1 entry1", question9 = " extended2 field1 question1")]
-    model_card.extended_section1.extended1_field10 = [mctlib.Extended1Field10(entry10= " extended2 field1 entry1", question10 = " extended2 field1 question1")]
-    ## Section 2
-    ##Section Title
-    model_card.extended_section2.extended2_title = [mctlib.Extended2Title(title='ANAN')]
-    ##Section fields
-    model_card.extended_section2.extended2_field1 = [mctlib.Extended2Field1(entry1= " extended2 field1 entry1", question1 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field2 = [mctlib.Extended2Field2(entry2= " extended2 field1 entry1", question2 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field3 = [mctlib.Extended2Field3(entry3= " extended2 field1 entry1", question3 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field4 = [mctlib.Extended2Field4(entry4= " extended2 field1 entry1", question4 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field5 = [mctlib.Extended2Field5(entry5= " extended2 field1 entry1", question5 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field6 = [mctlib.Extended2Field6(entry6= " extended2 field1 entry1", question6 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field7 = [mctlib.Extended2Field7(entry7= " extended2 field1 entry1", question7 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field8 = [mctlib.Extended2Field8(entry8= " extended2 field1 entry1", question8 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field9 = [mctlib.Extended2Field9(entry9= " extended2 field1 entry1", question9 = " extended2 field1 question1")]
-    model_card.extended_section2.extended2_field10 = [mctlib.Extended2Field10(entry10= " extended2 field1 entry1", question10 = " extended2 field1 question1")]
     
+    sorted_sections = get_section_name(section_names)
+    print(sorted_sections)
+
+    ## Section 1
+    ## Section Title
+    section_name_1 = sorted_sections[0][3:]
+    section_id_1 = sorted_sections[0][:2]
+    model_card.extended_section1.extended1_title = [mctlib.Extended1Title(title=section_name_1)]
+
+    ## Section fields
+    for key, value in a_dict.items():
+        # check if key has the section id 1 in it
+        if key.split('_')[2] == str(section_id_1):
+            section_list_1 = a_dict[key]
+
+    print(section_list_1)
+    for i in range(10):
+        if i < len(section_list_1):
+            question = str(list(section_list_1[i].keys())[0]).split('_')[1]
+            answer = list(section_list_1[i].values())[0]
+            if i == 0:
+                model_card.extended_section1.extended1_field1 = [mctlib.Extended1Field1(entry1= answer, question1 = question)]
+            elif i == 1:
+                model_card.extended_section1.extended1_field2 = [mctlib.Extended1Field2(entry2= answer, question2 = question)]
+            elif i == 2:
+                model_card.extended_section1.extended1_field3 = [mctlib.Extended1Field3(entry3= answer, question3 = question)]
+            elif i == 3:
+                model_card.extended_section1.extended1_field4 = [mctlib.Extended1Field4(entry4= answer, question4 = question)]
+            elif i == 4:
+                model_card.extended_section1.extended1_field5 = [mctlib.Extended1Field5(entry5= answer, question5 = question)]
+            elif i == 5:
+                model_card.extended_section1.extended1_field6 = [mctlib.Extended1Field6(entry6= answer, question6 = question)]
+            elif i == 6:
+                model_card.extended_section1.extended1_field7 = [mctlib.Extended1Field7(entry7= answer, question7 = question)]
+            elif i == 7:
+                model_card.extended_section1.extended1_field8 = [mctlib.Extended1Field8(entry8= answer, question8 = question)]
+            elif i == 8:
+                model_card.extended_section1.extended1_field9 = [mctlib.Extended1Field9(entry9= answer, question9 = question)]
+            elif i == 9:
+                model_card.extended_section1.extended1_field10 = [mctlib.Extended1Field10(entry10= answer, question10 = question)]
+
+    ## Section 2
+    ## Section Title
+    section_name_2 = sorted_sections[1][3:]
+    section_id_2 = sorted_sections[1][:3]
+    model_card.extended_section2.extended2_title = [mctlib.Extended2Title(title=section_name_2)]
+
+    ## Section fields
+    for key, value in a_dict.items():
+        # check if key has the section id 2 in it
+        if key.split('_')[2] == str(section_id_1):
+            section_list_2 = a_dict[key]
+
+    for i in range(10):
+        if i < len(section_list_2):
+            question = str(list(section_list_2[i].keys())[0]).split('_')[1]
+            answer = list(section_list_2[i].values())[0]
+            if i == 0:
+                model_card.extended_section2.extended2_field1 = [mctlib.Extended2Field1(entry1= answer, question1 = question)]
+            elif i == 1:
+                model_card.extended_section2.extended2_field2 = [mctlib.Extended2Field2(entry2= answer, question2 = question)]
+            elif i == 2:
+                model_card.extended_section2.extended2_field3 = [mctlib.Extended2Field3(entry3= answer, question3 = question)]
+            elif i == 3:
+                model_card.extended_section2.extended2_field4 = [mctlib.Extended2Field4(entry4= answer, question4 = question)]
+            elif i == 4:
+                model_card.extended_section2.extended2_field5 = [mctlib.Extended2Field5(entry5= answer, question5 = question)]
+            elif i == 5:
+                model_card.extended_section2.extended2_field6 = [mctlib.Extended2Field6(entry6= answer, question6 = question)]
+            elif i == 6:
+                model_card.extended_section2.extended2_field7 = [mctlib.Extended2Field7(entry7= answer, question7 = question)]
+            elif i == 7:
+                model_card.extended_section2.extended2_field8 = [mctlib.Extended2Field8(entry8= answer, question8 = question)]
+            elif i == 8:
+                model_card.extended_section2.extended2_field9 = [mctlib.Extended2Field9(entry9= answer, question9 = question)]
+            elif i == 9:
+                model_card.extended_section2.extended2_field10 = [mctlib.Extended2Field10(entry10= answer, question10 = question)]
+
+
     mct.update_model_card(model_card)
     
     # Return the model card document as an HTML page
@@ -585,6 +637,23 @@ def get_answer(my_dict, id_to_get):
     if boolean == False:
         return ""
 
+def get_section_name(name_list):
+    id_dict = {}
+    for name in name_list:
+        try: 
+            id = int(name.split('_')[0])  # split the string by "_" and get the first part
+        except ValueError:
+            continue  # skip the non-integer IDs
+        
+        if id > 42: # New section
+            id_dict[id] = name  # add the whole name (including ID) to the dict
+          
+    # Sort the id dict keys from smallest to largest and get their corresponding values
+    sorted_sections = [id_dict[key] for key in sorted(id_dict.keys())]
+    
+    return sorted_sections
+    
+
 def get_both(my_dict, id_to_get):
     boolean = False
     for entry in my_dict.values():
@@ -636,7 +705,8 @@ def read_image_as_base64(image_path):
     with open(image_path, 'rb') as image_file:
         image_data = image_file.read()
         base64str = base64.b64encode(image_data).decode('utf-8')
-        return base64str           
+        return base64str  
+             
 # UNNECESSARY FUNCTIONS DELETE BEFORE LAST RELEASE
 def get_info(df,ID):
     index = df.index[df['ID'] == ID].tolist()[0]

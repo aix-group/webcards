@@ -225,7 +225,7 @@ Section
             </div>
             {# different for quantitative anaylsis #}
             <div class="input-group" style="z-index: 1;">
-               <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;">{{ value }}</textarea>
+               <textarea id="description_answer_{{forloop.counter0}}" class="form-control bg-dark text-light description-answer" type="text" name="a{{ field.id }}" style="z-index: 1;">{{ value }}</textarea>
                <button type="button" class="btn btn-danger">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
@@ -362,7 +362,7 @@ Section
       {% endif %}
       <div>
          <button type="submit" name="save" value= "save" class="btn btn-outline-secondary" style="float:right" onclick="saveForm()">Save the Answers</button>
-         <button type="submit" name="clear" value = "clear" class="btn btn-outline-secondary"  style="float:right" onclick="clearTextarea()">Clear the answers</button>
+         <button type="button" name="clear" value = "clear" class="btn btn-outline-secondary"  style="float:right" id="clearBtn">Clear the answers</button>
       </div>
       <br>
       <br>
@@ -422,6 +422,13 @@ Section
       
    </script>
    <script>
+      document.getElementById('clearBtn').addEventListener('click', function() {
+         var textareas = document.getElementsByClassName('description-answer');
+         for (var i = 0; i < textareas.length; i++) {
+             textareas[i].value = "";
+         }
+     });
+     
       $(document).ready(function() {
           // Get a reference to the Save Changes button
           var saveBtn = document.getElementById("save-btn");
@@ -467,6 +474,9 @@ Section
       
       function clearTextarea() {
         // Get the textarea element by its ID
+
+        
+
         var textarea = document.getElementById("description");
       
         // Clear the textarea by setting its value to an empty string
@@ -520,6 +530,7 @@ Section
       });
       
    </script>
+   </body>   
    <!-- Footer-->
    <!--<footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Copyright &copy; Feat-AI 2023</div></footer>-->
    <!-- Bootstrap core JS-->
@@ -531,7 +542,7 @@ Section
    <!-- * *                               SB Forms JS                               * *-->
    <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-   <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+   <!-- <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script> -->
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
