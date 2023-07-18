@@ -35,7 +35,7 @@ conda activate featai
 -Installation:
 ```sh
 
-git clone https://github.com/mcmi-group/rai_webapp.git
+git clone https://github.com/mcmi-group/feat_ai.git
 
 cd rai_webapp
 
