@@ -60,13 +60,18 @@ def create_model_card(csv_file = None,
     is_model_file = False
     is_both_file = False
     
-    print(a_dict)
-    print(section_names)
+    print(f'Location of the dataset file: {csv_file}')
+    
+    #save a_dict to disk as answer.json
+    with open('answer.json', 'w') as f:
+        json.dump(a_dict, f)   
+    
+   
 
     # Check if the files are given
     if model_file and csv_file is not None:
         
-        print('CSV file found')
+        
         df =  pd.read_csv(csv_file)
         X = df.iloc[:,:-1] # Input nodes
         y = np.ravel(df.iloc[:,-1:]) # Output nodes
@@ -74,18 +79,20 @@ def create_model_card(csv_file = None,
         # Create train and test set 
         ## TODO : add validation set as well
         X_train, X_test, y_train, y_test = train_test_split (X, y, 
-                                                        train_size=float(get_answer(a_dict,41)),
+                                                        train_size=float(get_answer(a_dict,44)),
                                                         shuffle=True)
         train_size_X = X_train.shape   
         test_size_X = X_test.shape
 
         is_dataset_file = True
         
-        print('Model file found')
+        print('CSV file has been received')
+        print('Model file has been received')
         
         with open(model_file,'rb') as file:
             model = pickle.load(file)
         # Fit the data
+        
         model.fit(X_train, y_train)
 
         is_model_file = True
@@ -141,7 +148,7 @@ def create_model_card(csv_file = None,
         citation = get_answer(a_dict,9).split(',')[1]
         model_card.model_details.citations = two_entry(mctlib.Citation,style,citation)
     except IndexError:
-        print('Citation not correct or entry not found')
+        print('Citation not correct or entry not found. Please enter in the format: "style, citation"')
 
     # Version
     try:
@@ -149,7 +156,7 @@ def create_model_card(csv_file = None,
         model_card.model_details.version.name = str(version)
         model_card.model_details.version.date = get_answer(a_dict,36)
     except IndexError:
-        print('Version not correct or entry not found')
+        print('Version not correct or entry not found ')
 
     # License
     model_card.model_details.feedbacks = two_entry(mctlib.Feedback,get_answer(a_dict,10),get_answer(a_dict,10))
@@ -161,7 +168,7 @@ def create_model_card(csv_file = None,
 
     model_card.considerations.sensitive = one_entry(mctlib.Sensitive, get_answer(a_dict,15))
 
-    print(one_entry(mctlib.Sensitive, get_answer(a_dict,15)))
+    #print(one_entry(mctlib.Sensitive, get_answer(a_dict,15)))
 
     model_card.considerations.human_life = one_entry(mctlib.HumanLife, get_answer(a_dict,16))
     
@@ -208,7 +215,7 @@ def create_model_card(csv_file = None,
 
     metric_answer = get_answer(a_dict,31)
 
-    print("the metric answer is here {} ".format(metric_answer))
+    #print("the metric answer is here {} ".format(metric_answer))
 
     ## TODO How are these metrics calculated does not work because logic is disabled. Implement a new logic for this.
     if get_answer(a_dict,31):
@@ -269,11 +276,10 @@ def create_model_card(csv_file = None,
         Split_ratio : get_answer(a_dict,44)   
 
         """
-
-        model_card.model_parameters.data = (mctlib.Dataset(
+        model_card.model_parameters.data.append(mctlib.Dataset(
             name = get_answer(a_dict,38),
             description = get_answer(a_dict,40),
-        ))        
+            ))
         if vis_dataset_files is not None:
             graph_dataset = read_image_as_base64(vis_dataset_files)
             print('rendering the visualization for dataset taken from the image file')
@@ -462,7 +468,7 @@ def create_model_card(csv_file = None,
     # Extended Sections
     
     sorted_sections = get_section_name(section_names)
-    print(sorted_sections)
+    #print(sorted_sections)
 
     ## Section 1
     ## Section Title
@@ -481,7 +487,7 @@ def create_model_card(csv_file = None,
         if key.split('_')[2] == str(section_id_1):
             section_list_1 = a_dict[key]
 
-    print(section_list_1)
+    #print(section_list_1)
     for i in range(10):
         if i < len(section_list_1):
             question = str(list(section_list_1[i].keys())[0]).split('_')[1]
@@ -555,7 +561,7 @@ def create_model_card(csv_file = None,
 
     html = mct.export_format()
 
-    print("JSON and HTML files are created.")
+    #print("JSON and HTML files are created.")
     
 
     return html
@@ -752,6 +758,4 @@ def check_user_input(input):
 #        except AttributeError:
 #            pass
 #    return ''
-
-
 

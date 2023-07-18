@@ -7,7 +7,7 @@ import json
 import pandas as pd
 import pickle
 import os
-test_input = '/test_input'
+test_input = './test_input/'
 
 class SectionViewTest(TestCase):
 
@@ -17,30 +17,25 @@ class SectionViewTest(TestCase):
         # setup the other necessary variables here
 
     def test_model_card_creation(self):
-        print('Testing model card creation')
+        print('Testing model card creation....')
         
         # open test json file and convert to dict
         with open(test_input + 'answer.json', 'r') as f:
             test_dict = json.load(f)
-        
+            
         with open(test_input + 'section_names.json', 'r') as f:
             section_names = json.load(f)
         
         # open the csv file and store it as df
-        test_df = pd.read_csv(test_input + 'blood.csv')
+        test_df = test_input + 'blood.csv'
         
         # open LogisticRegression.pkl file and store it as model
-        with open(test_input + 'model.pkl', 'rb') as f:
-            test_model = pickle.load(f)
-            
+        test_model = test_input + 'LogisticRegression.pkl'
+           
         # open example pngs
-        with open(test_input + 'cifar10_class_distribution.png', 'rb') as f:
-        
-            dataset_png = f.read()        
-            
-        with open(test_input + 'W&B_Chart_05_06_2023_11_08_11.png', 'rb') as f:
-        
-            metric_png = f.read()      
+        dataset_png = test_input + 'cifar10_class_distribution.png'
+        metric_png = test_input + 'W&B_Chart_05_06_2023_11_08_11.png'
+          
         
         # create model card
         
