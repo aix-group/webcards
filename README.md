@@ -3,7 +3,7 @@
 This web tool accelerates the development of solutions that validate artificial intelligence models and datasets against the Fairness, Ethics, Accountability, and Transparency (FEAT) principles. By strengthening trust and promoting the adoption of AI solutions, we aim to contribute to the responsible use of AI.
 
 ## Overview
-Built with the Django framework, this web application leverages Google's [Model Card Toolkit](https://github.com/tensorflow/model-card-toolkit.git) as a basis for creating model cards. We have created a customized library which can be found [here](https://github.com/mcmi-group/featai_lib.git).
+Built with the Django framework, this web application leverages Google's [Model Card Toolkit](https://github.com/tensorflow/model-card-toolkit.git) as a basis for creating model cards. A customized library is created which can be found [here](https://github.com/mcmi-group/featai_lib.git).
 
 The application allows users to input data and subsequently generates a model card as an HTML file. Users can upload datasets, model and graph files, which are then processed and incorporated into the model card. The uploaded files are temporarily stored in the `media/uploads` directory and are associated with a session key that's stored in the browser's cookies. Users have the option to delete these files, otherwise, they will be automatically removed after one hour.
 
