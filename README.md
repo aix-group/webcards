@@ -23,7 +23,7 @@ pip install django
 
 pip install -r requirements.txt
 
-pip install --upgrade model_card_toolkit-2.0.0.dev0-py3-none-any.whl
+pip install --upgrade utils/model_card_toolkit-2.0.0.dev0-py3-none-any.whl
 
 ```
 
