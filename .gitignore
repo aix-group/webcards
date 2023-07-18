@@ -8,6 +8,7 @@ _MACOXS/
 # C extensions
 *.so
 
+data
 # Distribution / packaging
 .Python
 env/
