@@ -618,7 +618,7 @@ def createoutput(request,id):
 
         #vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1] 
         print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
-        model_card = mclib_v2.create_model_card(csv_file = dataset_file,
+        model_card, _ = mclib_v2.create_model_card(csv_file = dataset_file,
                                                 model_file = model_file,
                                                 vis_metric_files = vis_metric_files,
                                                 vis_dataset_files = vis_dataset_files,

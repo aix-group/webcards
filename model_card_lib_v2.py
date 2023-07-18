@@ -560,11 +560,14 @@ def create_model_card(csv_file = None,
     # Return the model card document as an HTML page
 
     html = mct.export_format()
+    
+    if html is not None:
+        html_is_exported = True
 
     #print("JSON and HTML files are created.")
     
 
-    return html
+    return html, html_is_exported
     
 def one_entry(object,entry,question=None):
     if entry:

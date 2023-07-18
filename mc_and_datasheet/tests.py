@@ -39,7 +39,7 @@ class SectionViewTest(TestCase):
         
         # create model card
         
-        html = create_model_card(a_dict=test_dict, 
+        _ , is_successfull = create_model_card(a_dict=test_dict, 
                                  csv_file= test_df, 
                                  model_file= test_model, 
                                  vis_dataset_files=dataset_png, 
@@ -47,7 +47,7 @@ class SectionViewTest(TestCase):
                                  section_names=section_names)   
         
         # Now you can check that the file exists
-        self.assertTrue(os.path.exists('model_cards\model_card.html'))
+        self.assertTrue(is_successfull)
         
         os.remove('model_cards\model_card.html')
 
