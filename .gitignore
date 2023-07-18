@@ -8,7 +8,7 @@ _MACOXS/
 # C extensions
 *.so
 
-data/*
+data
 media/uploads/*
 
 # Distribution / packaging
