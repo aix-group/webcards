@@ -49,7 +49,7 @@ class SectionViewTest(TestCase):
         # Now you can check that the file exists
         self.assertTrue(is_successfull)
         
-        os.remove('model_cards\model_card.html')
+        
 
        
 
