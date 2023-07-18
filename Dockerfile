@@ -22,8 +22,10 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 RUN pip install --upgrade utils/model_card_toolkit-2.0.0.dev0-py3-none-any.whl
 
 # Run migrations
-RUN python manage.py makemigrations 
-RUN python manage.py migrate --fake
+# RUN python manage.py makemigrations 
+# RUN python manage.py migrate --fake
+
+RUN unzip db.sqlite3.zip
 
 # port where the Django app runs  
 EXPOSE 8000 
