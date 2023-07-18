@@ -561,6 +561,11 @@ def createoutput(request,id):
                 fil_dict[key] = value
             else:
                 section_names.append(f'{key[-2:]}_' + value)
+        
+        # save the section names to the current folder
+        with open("section_names.json", "w") as outfile:
+            json.dump(section_names, outfile)
+        
                 
         #print(fil_dict)
         files = File.objects.filter(file_session = session_key ).all()

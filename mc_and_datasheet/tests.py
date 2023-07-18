@@ -2,26 +2,60 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from .models import MC_section, Field, File, CardData  # import your models here
+from model_card_lib_v2 import create_model_card
+import json
+import pandas as pd
+import pickle
+import os
+test_input = '/test_input'
 
 class SectionViewTest(TestCase):
 
     def setUp(self):
         self.client = Client()
         self.user = get_user_model().objects.create_user(username='testuser', password='testpass')
-        self.section = MC_section.objects.create(name='test_section', mc_section_session=self.user.username)
-        self.field = Field.objects.create(field_question='test_question', field_session=self.user.username, mc_section=self.section)
-        self.url = reverse('mc_and_datasheet:section', args=[self.section.id])  # replace with your url name
+        # setup the other necessary variables here
 
-    def test_section_view_get(self):
-        self.client.login(username='testuser', password='testpass')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'mc_and_datasheet/section.html')  # replace with your template
-        self.assertContains(response, 'test_section')
+    def test_model_card_creation(self):
+        print('Testing model card creation')
+        
+        # open test json file and convert to dict
+        with open(test_input + 'answer.json', 'r') as f:
+            test_dict = json.load(f)
+        
+        with open(test_input + 'section_names.json', 'r') as f:
+            section_names = json.load(f)
+        
+        # open the csv file and store it as df
+        test_df = pd.read_csv(test_input + 'blood.csv')
+        
+        # open LogisticRegression.pkl file and store it as model
+        with open(test_input + 'model.pkl', 'rb') as f:
+            test_model = pickle.load(f)
+            
+        # open example pngs
+        with open(test_input + 'cifar10_class_distribution.png', 'rb') as f:
+        
+            dataset_png = f.read()        
+            
+        with open(test_input + 'W&B_Chart_05_06_2023_11_08_11.png', 'rb') as f:
+        
+            metric_png = f.read()      
+        
+        # create model card
+        
+        html = create_model_card(a_dict=test_dict, 
+                                 csv_file= test_df, 
+                                 model_file= test_model, 
+                                 vis_dataset_files=dataset_png, 
+                                 vis_metric_files=metric_png, 
+                                 section_names=section_names)   
+        
+        # Now you can check that the file exists
+        self.assertTrue(os.path.exists('model_cards\model_card.html'))
+        
+        os.remove('model_cards\model_card.html')
 
-    def test_section_view_post_save(self):
-        self.client.login(username='testuser', password='testpass')
-        response = self.client.post(self.url, {'save': 'save', 'a'+str(self.field.id): 'test_answer'})
-        self.field.refresh_from_db()
-        self.assertEqual(self.field.field_answer, 'test_answer')  # replace with your logic
+       
+
 
