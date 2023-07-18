@@ -7,3 +7,8 @@ on:
        branches: [main]
     pull_request:
         branches: [main]
+
+jobs:
+  execute_tests:
+    name: Install requirements and execute tests
+    runs-on: ubuntu-latest
