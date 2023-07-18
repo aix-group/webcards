@@ -167,6 +167,7 @@ def delete(request, id):
             for file_name in os.listdir(file_directory):
                 file_path = os.path.join(file_directory, file_name)
                 os.remove(file_path)
+            os.remove(file_directory)
                 
         url = reverse('mc_and_datasheet:section', args=[28]) # You defined an app name so that should go in as well!
 
