@@ -7,7 +7,7 @@ The web application tool developed using Django framework. As a baseline to crea
 
 
 The tool takes several inputs from the user then export the model card as html file. User has the chance to upload dataset, model and graph files to be utilized in the model card creation process. The uploaded files are then stored in the ```media/uploads``` folder with session key. This 
-session key is stored in the cookies of the used browser. User has the chance the delete the files. Otherwise files will be deleted after one hour.
+session key is stored in the cookies of the used browser. User has the chance the delete the updated files. Otherwise files will be deleted after one hour.
 
 We use SQLlite3 database as it is provides simple and fast database solution. At this point, the database is not big and the tool is simple. Thus, SQLlite3 should be ok to use.
 
