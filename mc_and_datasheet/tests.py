@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from .models import MC_section, Field, File, CardData  # import your models here
-from model_card_lib_v2 import create_model_card
+from utils.model_card_lib_v2 import create_model_card
 import json
 import pandas as pd
 import pickle

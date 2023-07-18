@@ -9,7 +9,7 @@ _MACOXS/
 *.so
 
 data/*
-/media/uploads/*
+media/uploads/*
 
 # Distribution / packaging
 .Python
@@ -68,3 +68,9 @@ target/
 # Database
 db.sqlite3
 
+model_cards/
+data/
+
+
+answer_datasheet.json
+answer.json

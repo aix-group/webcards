@@ -18,8 +18,8 @@ from django.conf import settings
 from django.db.models import Q
 
 # Import core libraries
-import model_card_lib_v2 as mclib_v2
-import datasheet as dt
+import utils.model_card_lib_v2 as mclib_v2
+import utils.datasheet as dt
 
 # Create your views here.
 
