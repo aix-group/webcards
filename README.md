@@ -1,26 +1,27 @@
-# A web application for FEAT principles
+# FEAT Principles Web Application
 
-This web tool seeks to accelerate the development of solutions that validate artificial intelligence models and datasets against the fairness, ethics, accountability and transparency (FEAT) principles, to strengthen trust and promote greater adoption of AI solutions.
+This web tool accelerates the development of solutions that validate artificial intelligence models and datasets against the Fairness, Ethics, Accountability, and Transparency (FEAT) principles. By strengthening trust and promoting the adoption of AI solutions, we aim to contribute to the responsible use of AI.
 
-## Introduction
-The web application tool developed using Django framework. As a baseline to create model card, Google's [model card toolkit](https://github.com/tensorflow/model-card-toolkit.git) is used. Customized library can be foung [here](https://github.com/mcmi-group/featai_lib.git).
+## Overview
+Built with the Django framework, this web application leverages Google's [Model Card Toolkit](https://github.com/tensorflow/model-card-toolkit.git) as a basis for creating model cards. We have created a customized library which can be found [here](https://github.com/mcmi-group/featai_lib.git).
 
+The application allows users to input data and subsequently generates a model card as an HTML file. Users can upload datasets, model and graph files, which are then processed and incorporated into the model card. The uploaded files are temporarily stored in the `media/uploads` directory and are associated with a session key that's stored in the browser's cookies. Users have the option to delete these files, otherwise, they will be automatically removed after one hour.
 
-The tool takes several inputs from the user then export the model card as html file. User has the chance to upload dataset, model and graph files to be utilized in the model card creation process. The uploaded files are then stored in the ```media/uploads``` folder with session key. This 
-session key is stored in the cookies of the used browser. User has the chance the delete the updated files. Otherwise files will be deleted after one hour.
+We use SQLite3 as our database system due to its simplicity and speed, which are adequate for the current scale and complexity of our tool.
 
-We use SQLlite3 database as it is provides simple and fast database solution. At this point, the database is not big and the tool is simple. Thus, SQLlite3 should be ok to use.
+A CI/CD pipeline has been implemented using GitHub Actions for testing, building, and pushing updates to DockerHub. This ensures that data doesn't accumulate in the system, as files are either overwritten or deleted after usage.
 
-Lastly, a small CI/CD pipeline implemented to test, build and push to DockerHub using GitHub Actions. There is no issues stacking up data when using the tool as the files either overwritten or deleted after the use of the tool.
+## Docker Deployment
 
-## To run the Docker image
+To run the Docker image:
+
 ```sh
 docker pull sperbaha/featai:latest
 
 docker run -d -p 8000:8000 --name featai_cont sperbaha/featai:latest
 
 ```
-After this point, some additional steps should be taken in the context of production environment.
+For a production environment, additional deployment steps may be necessary.
 
 ## Instructions to deploy locally
 
