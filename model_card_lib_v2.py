@@ -466,8 +466,13 @@ def create_model_card(csv_file = None,
 
     ## Section 1
     ## Section Title
-    section_name_1 = sorted_sections[0][3:]
-    section_id_1 = sorted_sections[0][:2]
+    if len(sorted_sections) > 0:
+        section_name_1 = sorted_sections[0][3:]
+        section_id_1 = sorted_sections[0][:2]
+    else:
+        section_name_1 = None
+        section_id_1 = None
+        
     model_card.extended_section1.extended1_title = [mctlib.Extended1Title(title=section_name_1)]
 
     ## Section fields
@@ -504,8 +509,12 @@ def create_model_card(csv_file = None,
 
     ## Section 2
     ## Section Title
-    section_name_2 = sorted_sections[1][3:]
-    section_id_2 = sorted_sections[1][:3]
+    if len(sorted_sections) > 1:
+        section_name_2 = sorted_sections[1][3:]
+        section_id_2 = sorted_sections[1][:3]
+    else:
+        section_name_2 = None
+        section_id_2 = None
     model_card.extended_section2.extended2_title = [mctlib.Extended2Title(title=section_name_2)]
 
     ## Section fields
