@@ -37,4 +37,5 @@ jobs:
       - name: Execute tests
         uses: docker://sperbaha/featai:latest
         with:
-          args: /bin/bash -c "python manage.py test"
+          entrypoint: /bin/bash
+          args: -c "cd /home/app/webapp && python manage.py test"
