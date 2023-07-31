@@ -32,12 +32,16 @@ DEBUG = True
 # Set the session engine (default is Django's database-backed sessions)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
+# Set the default session expiry time to 5 minutes (300 seconds)
+#SESSION_COOKIE_AGE = 5
+
 
 # Application definition
 
 INSTALLED_APPS = [
     'mc_and_datasheet.apps.McAndDatasheetConfig',
     #'mc_and_datasheet',
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +61,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'mysite.urls'
+
+CRONJOBS = [
+    ('0 0 * * *', 'mc_and_datasheet.cron.ClearUponDayEndCronJob')
+]
 
 TEMPLATES = [
     {
@@ -145,3 +153,8 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+CRON_CLASSES = [
+    "mc_and_datasheet.cron.ClearUponDayEndCronJob",
+]

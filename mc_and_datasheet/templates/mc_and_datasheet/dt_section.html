@@ -17,17 +17,12 @@ Datasheet Section
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
-
 <!-- Include Bootstrap CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
 <!-- Include Bootstrap Icons CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.4/font/bootstrap-icons.css">
-
 <!-- Include Bootstrap JavaScript (optional) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
 <style>
   body {
   font-family: 'Open Sans', sans-serif;
@@ -97,11 +92,11 @@ Datasheet Section
   }
   
   .list-group-item:hover {
-  background-color: #555b60; /* set the background color when hovered */
+  background-color: #b4e20f; /* set the background color when hovered */
   color: #fff;
   }
   .active {
-  background-color: #337ab7;
+  background-color: #0c497d;
   color: #fff;
   }
   
@@ -115,14 +110,8 @@ Datasheet Section
   
   .drop-zone.drag-over {
   border-color: #000;
-  }
-  
-  
-  
-  
-  
-  
-  </style>
+  }   
+</style>
 <title>FEAT-AI</title>
 
 
@@ -135,29 +124,25 @@ Datasheet Section
     <div class="sidebar-heading border-bottom bg-dark">Sections</div>
       <div class="list-group list-group-flush bg-white active ">
         {% for section in section_list %}
-        
         <a class="list-group-item-dark list-group-item list-group-item-action p-2 {% if section.id == current_section_id %}active{% endif %}" href="{% url 'mc_and_datasheet:dt_section' section.id %}">
-          {{ section.name }}
+        {{ section.name }}
         </a>
-        
         {% endfor %} 
       </div>
-
-        <br>
-        <br>
-        <button class="list-group-item list-group-item-action list-group-item-dark p-2 bg-secondary" data-toggle="modal" data-target="#myModal" id="popup-btn">
-          <i class="fas fa-plus-circle me-2"></i> Add Section
-        </button>
-        <div id="popup-container"></div>
-        <br>
-        <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-success" href="{% url 'mc_and_datasheet:datasheet_export' section.id  %}" name="createcard" class="submit-button">
-          <i class="fas fa-file-export me-2"></i> Export Datasheet to HTML
-        </a>
-        <br>
-        <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_dt_section=1" name="delete_section" class="delete-button">
-          <i class="fas fa-trash-alt me-2"></i> Reset
-        </a>
-      
+      <br>
+      <br>
+      <button class="list-group-item list-group-item-action list-group-item-dark p-2 bg-secondary" data-toggle="modal" data-target="#myModal" id="popup-btn">
+        <i class="fas fa-plus-circle me-2"></i> Add Section
+      </button>
+      <div id="popup-container"></div>
+      <br>
+      <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-success" href="{% url 'mc_and_datasheet:datasheet_export' section.id  %}" name="createcard" class="submit-button">
+        <i class="fas fa-file-export me-2"></i> Export Datasheet to HTML
+      </a>
+      <br>
+      <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_dt_section=1" name="delete_section" class="delete-button">
+        <i class="fas fa-trash-alt me-2"></i> Reset
+      </a>
     </div>
     </div>
   </div>
@@ -193,8 +178,7 @@ Datasheet Section
 
 <div class="container survey" style= " z-index: 1; " >
   <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
-  <p id="description" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; " >Description of the Section</p>
-
+  <p id="description" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; " >{{ section.section_desc }}</p>
   <form method = 'POST' id="survey-form" class="bg-secondary.bg-gradient text-white px-10 py-10" style="margin-left: 125px; z-index: 1; ">
     {% csrf_token %}
  <div class="form-row" style= " z-index: 1; "  >

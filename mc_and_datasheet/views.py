@@ -16,6 +16,9 @@ from django.db.models import Sum, Max
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.db.models import Q
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
+from django.contrib.sessions.models import Session
 
 # Import core libraries
 import utils.model_card_lib_v2 as mclib_v2
@@ -59,14 +62,16 @@ def generate_session_id():
     
 def home(request):
 
-    # Session key based on uuid library
+    # Session key based on uuid library to trigger to session key creation for django
     session_uuid = request.session.get('session_uuid')
     if not session_uuid:
         session_uuid = generate_session_id()
         request.session['session_uuid'] = session_uuid
 
-        print(f"New Session ID for the user: {session_uuid}")
-    print(f"Session ID for the user: {session_uuid}")
+        print(f"New Session uuid  for the user: {session_uuid}")
+    print(f"Session uuid for the user: {session_uuid}")
+    
+    # You can later make use of the uuid session key
 
     # Get the session key
     session_key = request.session.session_key
@@ -126,16 +131,29 @@ def upload_file(response, id):
     }
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
-def delete(request, id):
+def sessionend_handler(sender, **kwargs):
+    session_key = kwargs.get('instance').session_key
+    print(f"Session {session_key} ended. Deleting related objects...")
+    
+    # Call the delete function to perform cleanup actions
+    redirect_url = delete_upon_expiration(session_key)
+    
+    # Redirect the user to the desired URL after the objects are deleted
+    return redirect(redirect_url)
+
+pre_delete.connect(sessionend_handler, sender=Session)
+
+
+def delete(request):
 
     session_key = request.session.session_key
-
+        
     print('Info: everything is deleted. ')    
     CardSectionData.objects.all().delete()
     if 'delete_section' in request.GET:
         CardData.objects.all().delete()
-        Field.objects.filter(mc_section__id=28, id__gt=36, field_session=session_key ).delete()
-        Field.objects.filter(mc_section__id=30, id__gt=19, field_session=session_key ).delete()
+        Field.objects.filter(mc_section__id=28, id__gt=36, field_session=session_key).delete()
+        Field.objects.filter(mc_section__id=30, id__gt=19, field_session=session_key).delete()
         Field.objects.filter(mc_section__id=31, id__gt=22, field_session=session_key).delete()
         Field.objects.filter(mc_section__id=32, id__gt=25, field_session=session_key).delete()
         Field.objects.filter(mc_section__id=33, id__gt=29, field_session=session_key).delete()
@@ -180,7 +198,7 @@ def delete(request, id):
         dt_Field.objects.filter(dt_section__id=5, id__gt=38).delete()
         dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
         dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
-        url = reverse('mc_and_datasheet:dt_section', args=[id]) # You defined an app name so that should go in as well!
+        url = reverse('mc_and_datasheet:dt_section', args=[1]) # You defined an app name so that should go in as well!
         # Delete the field values
         dt_Field.objects.all().update(field_answer="")
 
@@ -536,6 +554,7 @@ def datasheet_section(response,id):
 
     context = {"section_questions": dtsection_instance.dt_field_set.all(),
                "section":dtsection_instance,
+               'current_section_id': dtsection_instance.id,
                "section_list":dtsection_list}
     return render(response , "mc_and_datasheet/dt_section.html",context)# The third attributes are actually variables that you can pass inside the html
 
@@ -680,4 +699,47 @@ def datasheet_export(request,id):
     return response
 
 
-
+def clear_upon_day_end():
+        
+    print('Info: everything is deleted. ')    
+    CardSectionData.objects.all().delete()
+    
+    CardData.objects.all().delete()
+    Field.objects.filter(mc_section__id=28, id__gt=36).delete()
+    Field.objects.filter(mc_section__id=30, id__gt=19).delete()
+    Field.objects.filter(mc_section__id=31, id__gt=22).delete()
+    Field.objects.filter(mc_section__id=32, id__gt=25).delete()
+    Field.objects.filter(mc_section__id=33, id__gt=29).delete()
+    Field.objects.filter(mc_section__id=36, id__gt=35).delete()
+    # Get all sections with id greater than 36
+    MC_section.objects.filter(id__gt=36).delete()
+    
+    # Delete the sections
+    #num_deleted, _ = sections_to_delete.delete()
+    # Delete the field values
+    Field.objects.all().update(field_answer="")
+    # Reset the click count
+    MC_section.objects.update(click_count=0)
+    #print(f"{num_deleted} section has been deleted.")
+    File.objects.all().delete()
+    # Delete all the files as well
+    file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads')
+    # Check if the directory exists
+    if os.path.exists(file_directory):
+        # Iterate over the files in the directory and delete them
+        for file_name in os.listdir(file_directory):
+            file_path = os.path.join(file_directory, file_name)
+            os.remove(file_path)
+        os.remove(file_directory)
+    
+    CardDataDatasheet.objects.all().delete()
+    dt_Field.objects.filter(dt_section__id=1, id__gt=3).delete()
+    dt_Field.objects.filter(dt_section__id=2, id__gt=19).delete()
+    dt_Field.objects.filter(dt_section__id=3, id__gt=30).delete()
+    dt_Field.objects.filter(dt_section__id=4, id__gt=33).delete()
+    dt_Field.objects.filter(dt_section__id=5, id__gt=38).delete()
+    dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
+    dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
+    # Delete the field values
+    dt_Field.objects.all().update(field_answer="")
+    
