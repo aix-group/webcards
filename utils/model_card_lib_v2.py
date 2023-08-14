@@ -1,7 +1,7 @@
 
 # Imports
 import os
-import json
+import json as js
 from sklearn.model_selection import train_test_split
 import sklearn.metrics 
 import pickle
@@ -64,7 +64,7 @@ def create_model_card(csv_file = None,
     
     #save a_dict to disk as answer.json
     with open('answer.json', 'w') as f:
-        json.dump(a_dict, f)   
+        js.dump(a_dict, f)   
     
    
 
@@ -114,7 +114,7 @@ def create_model_card(csv_file = None,
         dict_str = get_answer(a_dict,31)
 
         if len(dict_str)>2: 
-            dict_metric = json.loads(dict_str)
+            dict_metric = js.loads(dict_str)
             dict_metric = list(dict_metric.values())
             precision_score = float(dict_metric[0][1][0]) if dict_metric[0][1][0] else None
             accuracy_score = float(dict_metric[0][0][0]) if dict_metric[0][0][0] else None
@@ -486,6 +486,8 @@ def create_model_card(csv_file = None,
         # check if key has the section id 1 in it
         if key.split('_')[2] == str(section_id_1):
             section_list_1 = a_dict[key]
+        else:
+            section_list_1 = []
 
     #print(section_list_1)
     for i in range(10):
@@ -526,36 +528,46 @@ def create_model_card(csv_file = None,
     ## Section fields
     for key, value in a_dict.items():
         # check if key has the section id 2 in it
-        if key.split('_')[2] == str(section_id_1):
+        if key.split('_')[2] == str(section_id_2):
             section_list_2 = a_dict[key]
+        else:
+            section_list_2 = []
 
     for i in range(10):
         if i < len(section_list_2):
             question = str(list(section_list_2[i].keys())[0]).split('_')[1]
             answer = list(section_list_2[i].values())[0]
             if i == 0:
-                model_card.extended_section2.extended2_field1 = [mctlib.Extended2Field1(entry1= answer, question1 = question)]
+                model_card.extended_section2.extended2_field1 = [mctlib.Extended2Field1(entry1 = answer, question1 = question)]
             elif i == 1:
-                model_card.extended_section2.extended2_field2 = [mctlib.Extended2Field2(entry2= answer, question2 = question)]
+                model_card.extended_section2.extended2_field2 = [mctlib.Extended2Field2(entry2 = answer, question2 = question)]
             elif i == 2:
-                model_card.extended_section2.extended2_field3 = [mctlib.Extended2Field3(entry3= answer, question3 = question)]
+                model_card.extended_section2.extended2_field3 = [mctlib.Extended2Field3(entry3 = answer, question3 = question)]
             elif i == 3:
-                model_card.extended_section2.extended2_field4 = [mctlib.Extended2Field4(entry4= answer, question4 = question)]
+                model_card.extended_section2.extended2_field4 = [mctlib.Extended2Field4(entry4 = answer, question4 = question)]
             elif i == 4:
-                model_card.extended_section2.extended2_field5 = [mctlib.Extended2Field5(entry5= answer, question5 = question)]
+                model_card.extended_section2.extended2_field5 = [mctlib.Extended2Field5(entry5 = answer, question5 = question)]
             elif i == 5:
-                model_card.extended_section2.extended2_field6 = [mctlib.Extended2Field6(entry6= answer, question6 = question)]
+                model_card.extended_section2.extended2_field6 = [mctlib.Extended2Field6(entry6 = answer, question6 = question)]
             elif i == 6:
-                model_card.extended_section2.extended2_field7 = [mctlib.Extended2Field7(entry7= answer, question7 = question)]
+                model_card.extended_section2.extended2_field7 = [mctlib.Extended2Field7(entry7 = answer, question7 = question)]
             elif i == 7:
-                model_card.extended_section2.extended2_field8 = [mctlib.Extended2Field8(entry8= answer, question8 = question)]
+                model_card.extended_section2.extended2_field8 = [mctlib.Extended2Field8(entry8 = answer, question8 = question)]
             elif i == 8:
-                model_card.extended_section2.extended2_field9 = [mctlib.Extended2Field9(entry9= answer, question9 = question)]
+                model_card.extended_section2.extended2_field9 = [mctlib.Extended2Field9(entry9 = answer, question9 = question)]
             elif i == 9:
-                model_card.extended_section2.extended2_field10 = [mctlib.Extended2Field10(entry10= answer, question10 = question)]
+                model_card.extended_section2.extended2_field10 = [mctlib.Extended2Field10(entry10 = answer, question10 = question)]
 
 
     mct.update_model_card(model_card)
+    
+    # export it as proto
+    proto = model_card.to_proto()
+    
+    json = model_card.to_json()
+    
+    
+    
     
     # Return the model card document as an HTML page
 
@@ -566,8 +578,9 @@ def create_model_card(csv_file = None,
 
     #print("JSON and HTML files are created.")
     
+    
 
-    return html, html_is_exported
+    return html, html_is_exported, proto, json
     
 def one_entry(object,entry,question=None):
     if entry:

@@ -1,9 +1,11 @@
 # cron.py
 from django_cron import CronJobBase, Schedule
+import logging
+
+# Configure the logging settings
+logging.basicConfig(filename='cron_job.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class ClearUponDayEndCronJob(CronJobBase):
-    RUN_EVERY_MIDNIGHT = Schedule(run_at_times=['00:00'])
-
-    def job(self):
-        from .views import clear_upon_day_end
-        clear_upon_day_end()
+    from .views import clear_upon_day_end
+    clear_upon_day_end()
+    logging.info('Database cleared.')

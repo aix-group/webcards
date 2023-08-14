@@ -19,6 +19,7 @@ from django.db.models import Q
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
 from django.contrib.sessions.models import Session
+from django.http import JsonResponse
 
 # Import core libraries
 import utils.model_card_lib_v2 as mclib_v2
@@ -144,7 +145,7 @@ def sessionend_handler(sender, **kwargs):
 pre_delete.connect(sessionend_handler, sender=Session)
 
 
-def delete(request):
+def delete(request,id):
 
     session_key = request.session.session_key
         
@@ -562,6 +563,7 @@ def datasheet_section(response,id):
 def createoutput(request,id):
     
     session_key = request.session.session_key
+    export_format = request.POST.get("format")
 
     if CardData.objects.exists():
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
@@ -638,20 +640,36 @@ def createoutput(request,id):
 
         #vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1] 
         print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
-        model_card, _ = mclib_v2.create_model_card(csv_file = dataset_file,
+        html_model_card, _, proto_model_card, json_model_card = mclib_v2.create_model_card(csv_file = dataset_file,
                                                 model_file = model_file,
                                                 vis_metric_files = vis_metric_files,
                                                 vis_dataset_files = vis_dataset_files,
                                                 a_dict=fil_dict,
                                                 section_names = section_names)
-                                                
+        
 
-        # Get the HTML content as a string
-        html_content = str(model_card)
-        # Create an HttpResponse object with the HTML content
-        response = HttpResponse(html_content, content_type="text/html")
-        # Set the Content-Disposition header to prompt the user to save the file
-        response["Content-Disposition"] = "attachment; filename=filename.html"
+        if export_format == "html":
+            # Get the HTML content as a string
+            html_content = str(html_model_card)
+            # Create an HttpResponse object with the HTML content
+            response = HttpResponse(html_content, content_type="text/html")
+            # Set the Content-Disposition header to prompt the user to save the file
+            response["Content-Disposition"] = "attachment; filename=filename.html"
+           
+
+        elif export_format == "proto":
+            # Code to export as proto
+            proto_model_card = str(proto_model_card)
+            response = HttpResponse(proto_model_card,content_type="application/octet-stream")
+            response["Content-Disposition"] = f"attachment; filename=my_model_card.proto"
+          
+
+        elif export_format == "json":
+            json_model_card = str(json_model_card)
+            # Code to export as JSON
+            response = HttpResponse(json_model_card,content_type="application/json")
+            response["Content-Disposition"] = f"attachment; filename=my_model_card.json"
+           
 
     else:
         # User has not filled the form
@@ -660,10 +678,8 @@ def createoutput(request,id):
             message_text = file.read()
         
         response = HttpResponse(message_text, content_type="text/html")
-        
-    
-    #print(model_card)
 
+    print(response)
     return response
 
 def datasheet_export(request,id):

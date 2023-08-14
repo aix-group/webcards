@@ -155,8 +155,9 @@ Section
       </button>
       <div id="popup-container"></div>
       <br>
-      <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-success" href="{% url 'mc_and_datasheet:createoutput' section.id  %}" name="createcard" class="submit-button">
-      <i class="fas fa-file-export me-2"></i> Export Card to HTML
+      <a id="exportButton" class="list-group-item list-group-item-action list-group-item-dark p-2 bg-success"
+      data-toggle="modal" data-target="#exportModal">
+      <i class="fas fa-file-export me-2"></i> Export Model Card
       </a>
       <br>
       <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">
@@ -166,7 +167,7 @@ Section
    </div>
    </div>
    <!-- Form Area -->
-   <!-- Modal -->
+   <!-- Modals -->
    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
          <div class="modal-content" style="background-color:#333333">
@@ -192,12 +193,54 @@ Section
          </div>
       </div>
    </div>
+
+   <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="background-color:#333333">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exportModalLabel" style="color:white" >Export Model Card</h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true" style="color:rgb(0, 0, 0)">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <label for="section-name" style="color:white">Select the desired output format:</label>
+            <br>
+            <br>
+            <div class="row">
+               <div class="col-4">
+                  <button id="htmlButton" type="button" class="btn btn-secondary mb-3">
+                     <i class="fas fa-file-export mr-1"></i> HTML
+                  </button>
+               </div>
+               <div class="col-4">
+                  <button id="protoButton" type="button" class="btn btn-secondary mb-3">
+                     <i class="fas fa-file-code mr-1"></i> Proto
+                  </button>
+               </div>
+               <div class="col-4">
+                  <button id="jsonButton" type="button" class="btn btn-secondary mb-3">
+                     <i class="fas fa-file-code mr-1"></i> JSON
+                  </button>
+               </div>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         </div>
+      </div>
+   </div>
+   </div>
+
+
+
+
    <!-- Form Area For Questions -->
    <div class="container survey" style= " z-index: 1; " >
    <form method = 'POST' id="survey-form" class=".bg-secondary.bg-gradient text-white px-10 py-10" style="margin-left: 125px; z-index: 1; ">
       {% csrf_token %}
       <div class="form-row" style= " z-index: 1; "  >
-         <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
+         <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style="z-index: 1; ">{{section.name}} </h1>
          <p id="description" class="text-white-50 mx-auto mt-2 mb-2 text-center" style="z-index: 1; text-align: justify; margin-left: 20px; margin-right: 20px;">{{ section.section_desc }}</p>
          {% for value in field_values %}
          {% for field in field_set %}
@@ -422,6 +465,58 @@ Section
       
    </script>
    <script>
+
+   document.addEventListener("DOMContentLoaded", function() {
+   const htmlButton = document.getElementById("htmlButton");
+   const protoButton = document.getElementById("protoButton");
+   const jsonButton = document.getElementById("jsonButton");
+   
+   htmlButton.addEventListener("click", function() {
+      exportModelCard("html");
+   });
+   
+   protoButton.addEventListener("click", function() {
+      exportModelCard("proto");
+   });
+   
+   jsonButton.addEventListener("click", function() {
+      exportModelCard("json");
+   });
+
+   function exportModelCard(format) {
+      const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+      const url = "{% url 'mc_and_datasheet:createoutput' section.id %}";
+
+      fetch(url, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": csrfToken,
+         },
+         body: `format=${format}`,
+      })
+      .then(response => {
+         // Get the content-disposition header to extract the filename
+         const contentDisposition = response.headers.get('content-disposition');
+         const filename = contentDisposition.split('filename=')[1];
+         
+         // Create a blob from the response content
+         return response.blob().then(blob => {
+            // Create a blob URL and trigger the download
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+         });
+      })
+      .catch(error => {
+         console.error('Error:', error);
+      });
+   }
+});
       document.getElementById('clearBtn').addEventListener('click', function() {
          var textareas = document.getElementsByClassName('description-answer');
          for (var i = 0; i < textareas.length; i++) {
