@@ -41,7 +41,8 @@ def create_model_card(csv_file = None,
                       vis_metric_files = None,
                       vis_dataset_files = None,
                       a_dict= None,
-                      section_names = None): # (as of moment only Dataframe)
+                      section_names = None,
+                      session_key = None): # (as of moment only Dataframe)
     
     '''
     This function takes a dataset, a model and a split ratio from the user
@@ -64,7 +65,7 @@ def create_model_card(csv_file = None,
     
     #save a_dict to disk as answer.json
     with open('answer.json', 'w') as f:
-        js.dump(a_dict, f)   
+        js.dump(a_dict, f, indent=4, sort_keys=True)  
     
    
 
@@ -564,9 +565,12 @@ def create_model_card(csv_file = None,
     # export it as proto
     proto = model_card.to_proto()
     
+    
+    mct._write_proto_file(os.getcwd() + f'/model_card_output/{session_key}/model_card.proto', model_card)
+    
     json = model_card.to_json()
     
-    
+   
     
     
     # Return the model card document as an HTML page

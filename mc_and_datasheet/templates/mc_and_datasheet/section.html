@@ -163,6 +163,10 @@ Section
       <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-danger" href="{% url 'mc_and_datasheet:delete' section.id  %}?delete_section=1" name="delete_section" class="delete-button">
       <i class="fas fa-trash-alt me-2"></i> Default
       </a>
+      <br>
+      <a class="list-group-item list-group-item-action list-group-item-dark p-2 bg-warning" data-bs-toggle="modal" data-bs-target="#uploadModal">
+         <i class="fas fa-upload me-2"></i> Upload Json
+     </a>
    </div>
    </div>
    </div>
@@ -193,7 +197,7 @@ Section
          </div>
       </div>
    </div>
-
+   <!-- The modal structure for export -->
    <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content" style="background-color:#333333">
@@ -231,6 +235,34 @@ Section
       </div>
    </div>
    </div>
+   <!-- The modal structure for uploading -->
+   <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-content" style="background-color:#333333">
+            <div class="modal-header">
+               <h5 class="modal-title" id="uploadModalLabel" style="color:white" >Upload Json File</h5>
+               <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_json' section.id %}">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                     <label for="json_file" class="form-label" style="color:white">Select Json File:</label>
+                     <input type="file" class="form-control" id="json_file" name="json_file" accept=".json" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                     <i class="fas fa-upload mr-1"></i> Upload and Process
+                  </button>
+               </form>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+
 
 
 
@@ -416,7 +448,7 @@ Section
       {% if section.id == 34 %}
       <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
          <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
-            <p>Drag and drop any image file and the dataset (.csv) file here or click to select files</p>
+            <p>Drag and drop any image file here or click to select files</p>
             {% csrf_token %}
             {{ form.as_p }}
             <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload34" value="upload">
@@ -426,7 +458,7 @@ Section
       </div>
       {% elif section.id == 35 %}
       <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-         <p>Drag and drop the any image file and the model (.pkl) file here or click to select files</p>
+         <p>Drag and drop the any image file here or click to select files</p>
          <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
             {% csrf_token %}
             {{ form.as_p }}
@@ -441,7 +473,9 @@ Section
       {% if is_files %}
       <form>
          {% csrf_token %}
-         <ul>
+         <!-- Add a button to toggle the visibility of uploaded files -->
+         <button type="button" id="toggleFilesButton" class="btn btn-primary btn-sm ">Hide/show files</button>
+         <ul id="fileList" style="display: none;">
             {% for file in files %}
             {% if file.uploaded_section_id == section.id %}
             <li>                
@@ -465,6 +499,18 @@ Section
       
    </script>
    <script>
+   const toggleFilesButton = document.getElementById('toggleFilesButton');
+   const fileList = document.getElementById('fileList');
+
+   toggleFilesButton.addEventListener('click', (event) => {
+      event.preventDefault(); // Prevent the default form submission behavior
+
+      if (fileList.style.display === 'none') {
+         fileList.style.display = 'block';
+      } else {
+         fileList.style.display = 'none';
+      }
+   });
 
    document.addEventListener("DOMContentLoaded", function() {
    const htmlButton = document.getElementById("htmlButton");

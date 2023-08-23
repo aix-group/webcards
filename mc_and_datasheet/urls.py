@@ -23,6 +23,7 @@ urlpatterns = [
     path('<int:id>/file_list', views.file_list, name='file_list'),
     path('dt_section/<int:id>', views.datasheet_section, name='dt_section'),
     path('delete/<int:id>',views.delete , name='delete'),
+    path('upload_json/<int:id>',views.upload_json , name='upload_json'),
     path('createoutput/<int:id>',views.createoutput , name='createoutput'),
     path('datasheet_export/<int:id>',views.datasheet_export , name='datasheet_export'),
     path('my-page/', views.my_view, name='my-page'),

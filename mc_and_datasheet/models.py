@@ -35,7 +35,7 @@ class MC_section(models.Model):
     click_count = models.IntegerField(default=0)
     section_desc = models.CharField(max_length=500, default='')
 
-    mc_section_session = models.CharField(max_length=50, default='')
+    mc_section_session = models.CharField(max_length=50, default='',blank=True)
 
     def givename(self):
         return self.name
@@ -50,7 +50,7 @@ class Field(models.Model):
     field_answer = models.TextField(max_length=1000, blank=True)
     field_answer_date = models.DateTimeField(default=timezone.now)
     field_helper = models.CharField(max_length=1000, default='Info about the field', blank=True)
-    field_session = models.CharField(max_length=50, default='')
+    field_session = models.CharField(max_length=50, default='',blank=True)
    
     def givename(self):
         return str(str(self.id) + '_' + self.field_question)
