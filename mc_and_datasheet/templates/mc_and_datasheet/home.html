@@ -5,52 +5,8 @@ RAI_TOOL
 
  
 {% block content %}
-
-<title>FEAT-AI</title>
-<!--
-<style>
-    body {
-      font-family: 'Open Sans', sans-serif;
-      background-color: #333;
-      color: #fff;
-      padding: 0;
-      margin: 0;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 50;
-      text-align: left;
-      left: 200px;
-      position: absolute;
-      padding: 20px;
-      top:1;
-      
-      box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-    }
-
-    h1 {
-      text-align: center;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    p {
-      line-height: 1.5;
-      text-align: justify;
-    }
-
-    ul {
-      list-style-type: square;
-      padding-left: 2em;
-    }
-
-    li {
-      padding: .5em;
-    }
-  </style>
 {% load static %}
-<body>
-  <div class="container"> -->
+<title>FEAT-AI</title>
     
   <!-- Masthead-->
   <header class="masthead">
@@ -94,7 +50,9 @@ RAI_TOOL
           <div class="col-xl-4 col-lg-5">
               <div class="featured-text text-center text-lg-left">
                   <h4>Model Card</h4>
-                  <p class="text-black-50 mb-0" style="text-align: justify;" >Create a standardized report that describes your machine learning model's capabilities, limitations, and intended use.</p>
+                  <p class="text-black-50 mb-0" style="text-align: left;" >Create a standardized report that describes your machine learning model's capabilities, limitations, and intended use.
+                    <a href="{% url 'mc_and_datasheet:section' 28 %}" class="btn btn-primary mt-3 btn-sm">Try it now</a>
+                  </p>
               </div>
           </div>
       </div>
@@ -108,7 +66,9 @@ RAI_TOOL
                   <div class="d-flex h-100">
                       <div class="project-text w-100 my-auto text-center text-lg-left">
                           <h4 class="text-white">Datasheet</h4>
-                          <p class="mb-0 text-white-50" style="text-align: justify;">Generate a document that provides information on the data used to train and test your machine learning model, including data sources, quality, and processing.</p>
+                          <p class="mb-0 text-white-50" style="text-align: left;">Generate a document that provides information on the data used to train and test your machine learning model, including data sources, quality, and processing.
+                            <a href="{% url 'mc_and_datasheet:dt_section' 1 %}" class="btn btn-primary mt-3 btn-sm">Try it now</a>
+                          </p>
                       </div>
                   </div>
               </div>
@@ -124,7 +84,8 @@ RAI_TOOL
                   <div class="d-flex h-100">
                       <div class="project-text w-100 my-auto text-center text-lg-right">
                           <h4 class="text-white">Datacard</h4>
-                          <p class="mb-0 text-white-50" style="text-align: justify;">Consider also creating a datacard to simplify data management and facilitate sharing and reuse of datasets in machine learning projects.</p>
+                          <p class="mb-0 text-white-50" style="text-align: left;">Consider also creating a datacard to simplify data management and facilitate sharing and reuse of datasets in machine learning projects. (coming later)
+                          </p>
                       </div>
                   </div>
               </div>
@@ -133,12 +94,7 @@ RAI_TOOL
   </div>
 </section>
 
-<!-- Footer
-<footer class="footer bg-black small text-center text-white-50" style="position: absolute; bottom: 0;">
-  <div class="container px-4 px-lg-5">
-    Copyright &copy; Feat-AI 2023
-  </div>
-</footer>-->
+
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Core theme JS-->
@@ -152,4 +108,3 @@ RAI_TOOL
 </body>
 
 {% endblock %}
-

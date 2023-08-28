@@ -4,34 +4,84 @@
 {% endblock %}
  
 {% block content %}
-<style>
-	body {
-		background-color: #111;
-		color: #fff;
-		font-family: Arial, sans-serif;
-		font-size: 24px;
-		line-height: 1.5;
-		text-align: center;
-		padding: 100px;
-	}
-	h1 {
-		font-size: 48px;
-		margin-bottom: 30px;
-	}
-</style>
+{% load static %}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Contact Feat-AI</title>
+	<!-- Bootstrap CSS with Dark Theme -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/css/bootstrap.min.css"
+	  integrity="sha384-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+	  crossorigin="anonymous">
+	  <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333;
+            color: white;
+        }
+        .content-container {
+			margin-top: 100px;
+            padding: 20px;
+        }
+        .contact-info {
+            margin-bottom: 20px;
+        }
+        .logo-container {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        .ikim-logo-container {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .github-icon-container {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
 <body>
-	<h1>Contact page </h1>
 
+	<div class="content-container">
+        <div class="contact-info">
+            <h2>Contact Details </h2>
+			<h4>IKIM (Institut für Künstliche Intelligenz in der Medizin)</h4>
+            <p>Address: Girardethaus<br>
+                Girardetstr. 2<br>
+                45131 Essen<br>
+                Germany</p>
+        </div>
 
-	<ul style="text-align: left;">
-		<li>ONNX model exchange format support</li>
-		<li>Inference support (model testing)</li>
-		<li>Model card modification (supported formats: JSON, Proto)</li>
-		<li>Default template selection w.r.t different machine learning tasks</li>
-		<!-- <li>Default template selection w.r.t different machine learning tasks</li> -->
-		
-	  </ul>
+        <p>For more information:</p>
 
+        <div class="logo-container">
+            <div class="ikim-logo-container">
+                <a href="https://wispermed.com">
+                    <img src="{% static 'mc_and_datasheet/assets/img/wispermed.png' %}" alt="Wispermed Logo" width="200">
+                </a>
+            </div>
+            <div class="ikim-logo-container">
+                <a href="https://www.ikim.uk-essen.de">
+                    <img src="{% static 'mc_and_datasheet/assets/img/Logo-engl-IKIM.png' %}" alt="IKIM Logo" width="250">
+                </a>
+            </div>
+            <div class="github-icon-container">
+                <a href="https://github.com/IKIM-Essen">
+                    <i class="fab fa-github fa-3x"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 
 </body>
+	  
+</html>
+
 {% endblock %}

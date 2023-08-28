@@ -1,87 +1,151 @@
-body {
-  font-family: 'Open Sans', sans-serif;
-  background: #333333 no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  background-size: cover;
-  -o-background-size: cover;
-
-  /*
-  background-image: url({% static 'mc_and_datasheet/assets/img/bg-masthead.jpg' %});
-  background-repeat: no-repeat;
-  background-size: cover; */
-}
-
 .checkboxlabel{
-  display:flex;
-  justify-content: space-between;
-  text-align:justify;
-}
+ display:flex; 
+ justify-content: space-between;
+ text-align:justify;
+ }
 .message{
-  display:flex;
-  justify-content:space-between;
-}
+ display:flex;
+ justify-content:space-between;
+ }
 textarea{
-  width:82%;
-}
+ width:82%;
+ }
 .radiobuttons{
-  display:flex;
-}
+ display:flex;
+ }
 .survey{
-  font-family: 'Raleway', sans-serif;
-  margin-top:40px;
-}
+ font-family: 'Raleway', sans-serif;
+ margin-top:40px;
+ }
 h1{
-  font-weight:400;
-  font-family: 'Merriweather', serif
-}
+ font-weight:400;
+ font-family: 'Merriweather', serif
+ }
 #description{
-  font-family: 'Merriweather', serif
-}
-@media(max-width:400px){
-  .checkboxlabel{
-  display:block;  
-}
-}
-
-#sidebar-wrapper {
-position: fixed;
-top: 75px; /* adjust this value as needed */
-bottom: 0;
-left: 0;
-z-index: 1000;
-overflow-y: auto;
-background-color: #343a40; /* dark background color */
-color: #fff; /* text color */
-padding: 20px;
-}
-
+ font-family: 'Merriweather', serif
+ }
+.active {
+ background-color: #337ab7;
+ color: #fff;
+ }
+.drop-zone {
+ border: 2px dotted rgb(58, 58, 58);
+ height: 130px;
+ text-align: center;
+ width: 100%;
+ }
+.drop-zone.drag-over {
+ border-color: #000;
+ }
+.tooltip {
+ position: relative;
+ display: inline-block;
+ }
+.tooltip-text {
+ visibility: hidden;
+ width: 200px;
+ background-color: #000;
+ color: #fff;
+ text-align: center;
+ border-radius: 6px;
+ padding: 5px;
+ position: absolute;
+ z-index: 1;
+ bottom: 125%;
+ left: 50%;
+ margin-left: -100px;
+ opacity: 0;
+ transition: opacity 0.3s;
+ }
+.tooltip:hover .tooltip-text {
+ visibility: visible;
+ opacity: 1;
+ }
+.default-placeholder {
+ color: #888;
+ }
+.container_metrics {
+ border: 1px solid #ccc;
+ border-radius: 5px;
+ padding: 10px;
+ }
 #main-content {
-margin-left: 250px; /* width of the sidebar */
+  margin-left: 250px; /* width of the sidebar */
 }
 
 .list-group-item {
-background-color: #343a40; /* set the default background color */
-color: #ffffff;
+  background-color: #343a40;
+  color: #ffffff;
 }
 
-.list-group-item:hover {
-background-color: #555b60; /* set the background color when hovered */
-color: #fff;
-}
-.active {
-background-color: #337ab7;
-color: #fff;
+.list-group-item:hover, .active {
+  background-color: #555b60;
+  color: #fff;
 }
 
 .drop-zone {
-border: 2px dotted black;
-height: 130px;
-text-align: center;
-width: 100%;
+  border: 2px dotted black;
+  height: 130px;
+  text-align: center;
+  width: 100%;
+}
+
+.drop-zone.drag-over {
+  border-color: #000;
+}
+
+#sidebar-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2000;
+  overflow-y: auto;
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+  width: 280px; /* initial width for larger screens */
+  transition: width 0.5s; /* smooth width transition */
+}
+
+#main-content {
+  margin-left: 250px; /* initial margin to accommodate the sidebar */
+  transition: margin-left 0.5s; /* smooth margin transition */
 }
 
 
-.drop-zone.drag-over {
-border-color: #000;
+
+.checkboxlabel {
+  display: block;
+}
+
+#sidebarToggle {
+  position: fixed;
+  top: 80px;
+  left: 15px;
+  z-index: 2010; /* ensures the button is above the sidebar */
+  padding: 10px 20px;
+  background-color: #343a40;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#sidebarToggle:hover {
+  background-color: #495057; /* slightly darker shade on hover */
+}
+
+/* Styles for when the sidebar is hidden on smaller screens */
+#sidebar-wrapper:not(.active) {
+  width: 100px;
+  /* display: hidden; */
+}
+
+/* Hide the toggle button on larger screens */
+@media (min-width: 600px) {
+  #sidebarToggle {
+    display: none;
+  }
 }
