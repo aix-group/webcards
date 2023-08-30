@@ -630,6 +630,7 @@ def createoutput(request,id):
     session_key = request.session.session_key
     export_format = request.POST.get("format")
 
+    print("in the create output function")
     if CardData.objects.exists():
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
         message_text = ""
@@ -713,12 +714,14 @@ def createoutput(request,id):
                                                 section_names = section_names,
                                                 session_key = session_key)
         
-
+        print(f"Export format {export_format}")
         if export_format == "html":
             # Get the HTML content as a string
             html_content = str(html_model_card)
             # Create an HttpResponse object with the HTML content
             response = HttpResponse(html_content, content_type="text/html")
+
+            
             # Set the Content-Disposition header to prompt the user to save the file
             response["Content-Disposition"] = "attachment; filename=filename.html"
            

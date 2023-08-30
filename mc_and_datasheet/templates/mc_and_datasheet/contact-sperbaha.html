@@ -23,16 +23,28 @@
         }
         .content-container {
 			margin-top: 100px;
-            margin-left: 250px;
-            padding: 20px;
+			margin-left: auto;
+			margin-right: auto;
+            padding: 40px;
+			border-radius: 15px;
+			background-color: rgba(255, 255, 255, 0.1); /* A subtle white shade */
+			box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+			max-width: 800px; /* You can adjust this value based on your preference */
         }
         .contact-info {
             margin-bottom: 20px;
         }
         .logo-container {
             display: flex;
-            gap: 30px;
+            gap: 50px;
             align-items: center;
+			justify-content: center;
+        }
+        .ikim-logo-container, .github-icon-container {
+            transition: transform 0.3s; /* Transition effect for hover */
+        }
+        .ikim-logo-container:hover, .github-icon-container:hover {
+            transform: scale(1.05); /* Slightly scale the logo containers on hover */
         }
         .ikim-logo-container {
             background-color: #ffffff;
@@ -82,7 +94,6 @@
     </div>
 
 </body>
-	  
 </html>
 
 {% endblock %}

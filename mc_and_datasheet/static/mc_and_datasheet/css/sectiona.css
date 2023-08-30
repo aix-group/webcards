@@ -69,9 +69,7 @@ h1{
  border-radius: 5px;
  padding: 10px;
  }
-#main-content {
-  margin-left: 250px; /* width of the sidebar */
-}
+
 
 .list-group-item {
   background-color: #343a40;
@@ -111,9 +109,13 @@ h1{
 #main-content {
   margin-left: 250px; /* initial margin to accommodate the sidebar */
   transition: margin-left 0.5s; /* smooth margin transition */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+   /* full viewport height */
 }
-
-
 
 .checkboxlabel {
   display: block;
@@ -148,4 +150,18 @@ h1{
   #sidebarToggle {
     display: none;
   }
+}
+
+.container.survey {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(69, 69, 69, 0.8); /* semi-transparent white background */
+  border-radius: 15px; /* rounded corners */
+  padding: 20px; /* spacing inside the container */
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2); /* subtle shadow for depth */
+  margin: 20px 0; /* spacing outside the container */
+  width: 80%; /* or any desired width */
+  max-width: 1200px; /* or any desired max width */
 }

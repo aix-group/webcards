@@ -26,20 +26,73 @@
     <style>
       .hover-effect:hover {
         /* Define the styles for the hover state */
-        /* For example, change the background color and text color */
         background-color: #575757;
         color: #f3efef;
       }
+    
       body {
         display: flex;
         flex-direction: column;
         min-height: 100vh;
       }
 
+      body, html {
+        height: 100%;
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+    
+      /* General styles for the footer */
       .footer {
-        z-index: 3000 ;
+        width: 100%;
+        background-color: #333;
+        padding: 20px 0;
+        color: #eaeaea;
+        position: relative;
+        z-index: 3000;
+        text-align: center;
+        bottom: 0;
+        margin-top: auto;
       }
-    </style>
+    
+      .logo-container {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
+    
+      .ikim-logo-container, .github-icon-container {
+        transition: all 0.3s;  /* Smooth transition */
+        cursor: pointer;  /* Change the mouse cursor to indicate clickability */
+      }
+    
+      .ikim-logo-container:hover, .github-icon-container:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow */
+        transform: translateY(-5px);  /* Slight upward movement */
+      }
+    
+      .ikim-logo-container {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+    
+      .github-icon-container {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    
+      /* Setting the GitHub icon to black */
+      .footer i.fab.fa-github {
+        color: #000;
+      }
+
+
+      </style>
   </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav" style="height: 75px;  ">
@@ -67,7 +120,7 @@
     <!-- Navigation-->
     
 
-    <div id="content", name="content">
+    <div id="content">
 
         {% block content %}
         {% endblock %}
@@ -80,29 +133,35 @@
     <!-- Footer -->
 
     
- <!-- <div class = "footer" style="width: 100%; bottom:0; margin: 0; padding: 0;">
-      <footer class="footer bg-white small text-center text-black-50" style="background-color: white; text-align: center; padding: 15px 0;">
-      
-          <div style="display: flex; justify-content: center; align-items: center; gap: 50px; margin-bottom: 20px;">
-           
-              <div>
-                  <a href="https://wispermed.com"><img src="{% static 'mc_and_datasheet/assets/img/wispermed.png' %}" alt="" width="200"></a>
-              </div>
-       
-              <div>
-                  <a href="https://www.ikim.uk-essen.de"><img src="{% static 'mc_and_datasheet/assets/img/Logo-engl-IKIM.png' %}" alt="" width="250"></a>
-              </div>
-        
-              <div>
-                  <a href="https://github.com/IKIM-Essen" style="text-decoration: none; color: black;"><i class="fab fa-github fa-3x"></i></a>
-              </div>
+
+    <footer class="footer">
+  
+      <div style="display: flex; justify-content: center; align-items: center; gap: 50px; margin-bottom: 20px;">
+         
+        <div class="logo-container">
+          <div class="ikim-logo-container">
+              <a href="https://wispermed.com">
+                  <img src="{% static 'mc_and_datasheet/assets/img/wispermed.png' %}" alt="Wispermed Logo" width="200">
+              </a>
           </div>
-   
-          <div style="font-size: 14px; color: #333;">
-              Institute for AI in Medicine / University Hospital Essen / University of Duisburg-Essen / Germany
+          <div class="ikim-logo-container">
+              <a href="https://www.ikim.uk-essen.de">
+                  <img src="{% static 'mc_and_datasheet/assets/img/Uni_Marburg_Logo.png' %}" alt="IKIM Logo" width="190">
+              </a>
           </div>
-      </footer>
-    </div> -->
+          <div class="github-icon-container">
+              <a href="https://github.com/mcmi-group/feat_ai">
+                  <i class="fab fa-github fa-3x"></i>
+              </a>
+          </div>
+      </div>
+      </div>
+  
+      <div>
+        Mathematics and Computer Science Department / University of Marburg / Germany
+      </div>
+  </footer>
+
 
 </body>
 </html>
