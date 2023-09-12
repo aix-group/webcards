@@ -22,10 +22,12 @@ Section
     background-image: url({% static 'mc_and_datasheet/assets/img/section.jpg' %});
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* full viewport height */
+    min-height: 200vh; /* full viewport height */
     margin: 0;
+    overflow-x: hidden;
     }
     @media(max-width:400px){
     .checkboxlabel{
@@ -44,7 +46,6 @@ Section
   
 </style>
 <title>FEAT-AI</title>
-<body>
   <br>
   <br>
   <br>
@@ -165,6 +166,3 @@ Section
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 {% endblock %}
-</body>
-</html>
-```

@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Feat AI</title>
+    <title>WebCards</title>
     <link rel="icon" type="image/x-icon" href="{% static 'mc_and_datasheet/assets/favicon.ico' %}" />
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -91,13 +91,39 @@
         color: #000;
       }
 
+      .logo-container-logo {
+        display: inline-block;
+        border-radius: 15px; /* This rounds the edges */
+        overflow: hidden; /* This ensures the image doesn't spill out of the rounded container */
+        transition: all 0.3s ease; /* Smooth transition effect for all properties */
+    }
+    
+    .logo-container-logo img {
+        display: block; /* Removes any default gaps below the image */
+        transition: transform 0.3s ease; /* Smooth zoom effect on hover */
+    }
+    
+    .logo-container-logo:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Adds a shadow on hover */
+    }
+    
+    .logo-container-logo:hover img {
+        transform: scale(1.05); /* Slightly zooms the image in on hover */
+    }
+    
+
 
       </style>
   </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav" style="height: 75px;  ">
       <div class="container px-4 px-lg-5">
-        <a class="navbar-brand mb-2 h1 hover-effect" href="{% url 'mc_and_datasheet:home' %}">FEAT-AI</a>
+        <div class="logo-container-logo">
+          <a href="{% url 'mc_and_datasheet:home' %}">
+              <img src="{% static 'mc_and_datasheet/assets/img/logo.png' %}" alt="App Logo" width="200">
+          </a>
+      </div>
+      
 
           <button class="navbar-toggler navbar-toggler-left" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               Menu
@@ -145,7 +171,7 @@
               </a>
           </div>
           <div class="ikim-logo-container">
-              <a href="https://www.ikim.uk-essen.de">
+              <a href="https://www.uni-marburg.de/de/fb12">
                   <img src="{% static 'mc_and_datasheet/assets/img/Uni_Marburg_Logo.png' %}" alt="IKIM Logo" width="190">
               </a>
           </div>
