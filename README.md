@@ -1,6 +1,6 @@
-# FEAT Principles Web Application
+# WEBCARDS
 
-This web tool accelerates the development of solutions that validate artificial intelligence models and datasets against the Fairness, Ethics, Accountability, and Transparency (FEAT) principles. By strengthening trust and promoting the adoption of AI solutions, we aim to contribute to the responsible use of AI.
+We provide web-based generation of model cards and data sheets for machine learning transparancy. This tool accelerates the development of solutions that validate artificial intelligence models and datasets against the Fairness, Ethics, Accountability, and Transparency (FEAT) principles. By strengthening trust and promoting the adoption of AI solutions, we aim to contribute to the responsible use of AI.
 
 ## Overview
 Built with the Django framework, this web application leverages Google's [Model Card Toolkit](https://github.com/tensorflow/model-card-toolkit.git) as a basis for creating model cards. A customized library is created which can be found [here](https://github.com/mcmi-group/featai_lib.git).
