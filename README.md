@@ -27,11 +27,11 @@ For a production environment, additional deployment steps may be necessary.
 
 -Create a new virtual environment:
 ```sh
-conda create --name featai python=3.8
+conda create --name webcards python=3.8
 ```
 -Activate the virtual environment:
 ```sh
-conda activate featai
+conda activate webcards
 ```
 -Installation:
 ```sh
@@ -39,8 +39,6 @@ conda activate featai
 git clone https://github.com/mcmi-group/feat_ai.git
 
 cd rai_webapp
-
-pip install django
 
 pip install -r requirements.txt
 
