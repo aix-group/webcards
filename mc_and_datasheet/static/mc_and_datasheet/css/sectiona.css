@@ -163,6 +163,14 @@ h1{
   padding: 20px; /* spacing inside the container */
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2); /* subtle shadow for depth */
   margin: 20px 0; /* spacing outside the container */
-  width: 80%; /* or any desired width */
+  width: 70%; /* or any desired width */
   max-width: 1200px; /* or any desired max width */
+}
+
+.centered-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }

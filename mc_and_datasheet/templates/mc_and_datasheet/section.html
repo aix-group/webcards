@@ -174,8 +174,8 @@ Section
    <div id="main-content">
 
    <!-- Form Area For Questions -->
-   <div class="container survey" style= " z-index: 1; " >
-   <form method = 'POST' id="survey-form" class=".bg-secondary.bg-gradient text-white px-10 py-10" style=" z-index: 1; ">
+   <div class="container survey .bg-secondary.bg-gradient text-white px-10 py-10" style=" z-index: 1; ">
+   <form method = 'POST' id="survey-form" >
       {% csrf_token %}
       <div class="form-row" style= " z-index: 1; "  >
          <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style="z-index: 1; ">{{section.name}} </h1>
@@ -321,7 +321,6 @@ Section
       {% endif %}
       {% endif %}
       {% endfor %} 
-      <!-- </form> -->
       <hr style="border-width: 3px;">
       {% if section.id ==  34 or section.id ==  35  %}
       {% else %}
@@ -346,35 +345,26 @@ Section
       <br>
       <br>
       <br>
-   
+   </form> 
    {% if section.id == 34 or section.id == 35 %}
-   <div style="text-align: left;">
-      {% if section.id == 34 %}
-      <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-         <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
-            <p>Drag and drop any image file here or click to select files</p>
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload34" value="upload">
+   <div class="container survey" style="text-align: left;">
+      <div class="drop-zone centered-content" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
+      <form method="post"  id="file-form" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
+         
+               <p>Drag and drop any image file here or click to select files</p>
+               {% csrf_token %}
+               {{ form.as_p }}
+         
+         
+         </div>
+         <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload34" value="upload">
             <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
             </button>
-         </form>
-      </div>
-      {% elif section.id == 35 %}
-      <div class="drop-zone" ondragover="event.preventDefault()" ondrop="event.preventDefault(); document.getElementById('id_file').files = event.dataTransfer.files">
-         <p>Drag and drop the any image file here or click to select files</p>
-         <form method="post" enctype="multipart/form-data" action="{% url 'mc_and_datasheet:upload_file' section.id %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button class="list-group-item list-group-item-action list-group-item-dark p-3 bg-secondary" type="submit" name="upload35" value="upload">
-            <i class="fas fa-cloud-upload-alt fa-lg fa-fw me-2"></i> Upload
-            </button>
-         </form>
-      </div>
-      {% endif %}
+      </form>
+      
       <br>
       {% if is_files %}
-      <form>
+      <form id="survey-form">
          {% csrf_token %}
          <!-- Add a button to toggle the visibility of uploaded files -->
          <button type="button" id="toggleFilesButton" class="btn btn-primary btn-sm ">Hide/show files</button>
@@ -388,11 +378,11 @@ Section
             {% endif %}
             {% endfor %}
          </ul>
-      </form>
+       </form>
       {% endif %}
    </div>
    {% endif %}
-   </form>
+   <!-- ENDING the FORM was here -->
    <!-- Close container survey -->
    </div>
 <!-- Close the main content div -->

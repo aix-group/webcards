@@ -98,6 +98,7 @@ def get_session_id(request):
 
 def upload_file(response, id):
     
+    print('YOU ARE HERE')
     session_key = response.session.session_key
     
     section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
@@ -128,6 +129,7 @@ def upload_file(response, id):
             
             #return render(response, 'mc_and_datasheet/section.html', context)
             
+            print('YOU ARE HERE')
             url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
             return HttpResponseRedirect(url)
 
@@ -142,8 +144,42 @@ def upload_file(response, id):
     #"field_answers":section_instance.field_answer
     "form":form
     }
+    print('YOU ARE HERE')
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
+def upload_json(response, id):
+    
+    session_key = response.session.session_key
+    
+    
+    model_card_output_path = os.getcwd() 
+
+    mct = mctlib.ModelCardToolkit(model_card_output_path)
+    
+    if response.method == 'POST' and 'json_file' in response.FILES:
+        json_file = response.FILES['json_file']
+    
+        # Save the uploaded file to a specific folder within your project
+        storage = FileSystemStorage(location=settings.MEDIA_ROOT) 
+        saved_json_file = storage.save(json_file.name, json_file)
+        
+        # Get the path of the saved file
+        saved_file_path = os.path.join(settings.MEDIA_ROOT, saved_json_file)
+        
+        with open(saved_file_path, 'r') as f:
+            model_card_json = json.load(f)
+        
+        # Store the model_card_json in session
+        response.session['model_card_json'] = model_card_json
+        os.remove(saved_file_path)
+
+    #CardData.objects.create(carddata_session = session_key,
+    #                        card_data = section2beadded,
+    #                        created_at = timezone.now())
+    
+    
+    url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+    return HttpResponseRedirect(url)   
 
 def delete(request,id):
 
@@ -440,40 +476,6 @@ def section(response, id):
     
     print(context)
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
-
-def upload_json(response, id):
-    
-    session_key = response.session.session_key
-    
-    
-    model_card_output_path = os.getcwd() 
-
-    mct = mctlib.ModelCardToolkit(model_card_output_path)
-    
-    if response.method == 'POST' and 'json_file' in response.FILES:
-        json_file = response.FILES['json_file']
-    
-        # Save the uploaded file to a specific folder within your project
-        storage = FileSystemStorage(location=settings.MEDIA_ROOT)  # Assuming MEDIA_ROOT is where you want to save
-        saved_json_file = storage.save(json_file.name, json_file)
-        
-        # Get the path of the saved file
-        saved_file_path = os.path.join(settings.MEDIA_ROOT, saved_json_file)
-        
-        with open(saved_file_path, 'r') as f:
-            model_card_json = json.load(f)
-        
-        # Store the model_card_json in session
-        response.session['model_card_json'] = model_card_json
-        os.remove(saved_file_path)
-
-    #CardData.objects.create(carddata_session = session_key,
-    #                        card_data = section2beadded,
-    #                        created_at = timezone.now())
-    
-    
-    url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
-    return HttpResponseRedirect(url)   
 
 
 def create(response): 
