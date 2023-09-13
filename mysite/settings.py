@@ -32,8 +32,7 @@ DEBUG = True
 # Set the session engine (default is Django's database-backed sessions)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-# Set the default session expiry time to 5 minutes (300 seconds)
-#SESSION_COOKIE_AGE = 5
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60 
 
 
 # Application definition
