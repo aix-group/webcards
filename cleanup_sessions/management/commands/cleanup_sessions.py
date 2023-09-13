@@ -63,7 +63,10 @@ class Command(BaseCommand):
                         file_path = os.path.join(file_directory, file_name)
                         os.remove(file_path)
                     os.rmdir(file_directory)
-                os.rmdir(session_key_directories)
+                
+                # Also delete the empty directories
+                if os.path.exists(session_key_directories):
+                    os.rmdir(session_key_directories)
                 #Clean the Datasheet Card data
                 
                 CardDataDatasheet.objects.all().delete()
