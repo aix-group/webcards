@@ -52,19 +52,8 @@ class Command(BaseCommand):
                 File.objects.all().delete()
 
                 # Delete all the files as well
-
-                file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads', session_key)
                 session_key_directories = os.path.join(settings.MEDIA_ROOT, 'uploads')
-
-                # Check if the directory exists
-                if os.path.exists(file_directory):
-                    # Iterate over the files in the directory and delete them
-                    for file_name in os.listdir(file_directory):
-                        file_path = os.path.join(file_directory, file_name)
-                        os.remove(file_path)
-                    os.rmdir(file_directory)
-                
-                # Also delete the empty directories
+            
                 if os.path.exists(session_key_directories):
                     os.rmdir(session_key_directories)
                 #Clean the Datasheet Card data
