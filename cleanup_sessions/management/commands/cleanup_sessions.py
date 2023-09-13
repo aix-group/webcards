@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.http import HttpRequest
 from django.contrib.sessions.backends.db import SessionStore
+import shutil
 import os
 
 class Command(BaseCommand):
@@ -55,7 +56,7 @@ class Command(BaseCommand):
                 session_key_directories = os.path.join(settings.MEDIA_ROOT, 'uploads')
             
                 if os.path.exists(session_key_directories):
-                    os.rmdir(session_key_directories)
+                    shutil.rmtree(session_key_directories)
                 #Clean the Datasheet Card data
                 
                 CardDataDatasheet.objects.all().delete()
