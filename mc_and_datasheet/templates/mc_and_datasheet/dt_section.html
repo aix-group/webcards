@@ -106,11 +106,13 @@ Section
     <h1 id="title" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; "  >{{section.name}} </h1>
     <p id="description" class="text-white-50 mx-auto mt-2 mb-5 text-center" style= " z-index: 1; " >{{ section.section_desc }}</p>
     <div class="form-row" style= " z-index: 1;">
-       {% for field in section_questions %}
+      {% for value in field_values %}
+      {% for field in field_set %}
+      {% if forloop.counter0 == forloop.parentloop.counter0 %}
         <div class="col" style= " z-index: 1; " >
           <br><label id="name-label" style= " z-index: 1; " >{{field.field_question}}</label>
           <div class="input-group" style= " z-index: 1; " >
-             <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;" >{{ field.get_answer }}</textarea>
+             <textarea id="description" class="form-control bg-dark text-light" type="text" name="a{{ field.id }}" style="z-index: 1;" >{{ value }}</textarea>
              <button type="button" class="btn btn-danger">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
@@ -119,7 +121,9 @@ Section
              </button>
           </div>
         </div>
-        {% endfor %}
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
     </div>
     <div class="form-group">
       <label id="email-label">Add Question</label>

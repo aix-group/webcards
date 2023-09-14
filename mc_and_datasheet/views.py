@@ -230,17 +230,16 @@ def delete(request,id):
 
     if 'delete_dt_section' in request.GET:
         CardDataDatasheet.objects.all().delete()
-        dt_Field.objects.filter(dt_section__id=1, id__gt=3).delete()
-        dt_Field.objects.filter(dt_section__id=2, id__gt=19).delete()
-        dt_Field.objects.filter(dt_section__id=3, id__gt=30).delete()
-        dt_Field.objects.filter(dt_section__id=4, id__gt=33).delete()
-        dt_Field.objects.filter(dt_section__id=5, id__gt=38).delete()
-        dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
-        dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
+        dt_Field.objects.filter(dt_section__id=1, id__gt=3, field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=2, id__gt=19, field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=3, id__gt=30,field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=4, id__gt=33,field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=5, id__gt=38,field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=6, id__gt=44,field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=7, id__gt=51,field_session = session_key).delete()
         url = reverse('mc_and_datasheet:dt_section', args=[1]) # You defined an app name so that should go in as well!
         # Delete the field values
-        dt_Field.objects.all().update(field_answer="")
-
+        dt_Field.objects.filter(field_session=session_key).all().update(field_answer="")
     
     #request.session.flush() # Send the session to the depth of toilet
     
@@ -563,9 +562,20 @@ def file_list(request,id):
     return render(request, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': files})
 
 def datasheet_section(response,id):
+    
+    session_key = response.session.session_key
 
-    dtsection_instance = get_object_or_404(dt_section, id=id) # Actually this is get command you are doing QUERY
-    dtsection_list = get_list_or_404(dt_section) # Actually this is get command you are doing QUERY
+    dtsection_instance = get_object_or_404(
+    dt_section.objects.filter(
+        Q(dt_section_session=response.session.session_key) | Q(dt_section_session='')
+    ),
+    id=id
+    )
+    dtsection_list = get_list_or_404(
+        dt_section.objects.filter(
+        Q(dt_section_session=response.session.session_key) | Q(dt_section_session='')
+    )
+    )
     #{"save":["save"],"c1":["clicked"]}
     #print(dtsection_instance.dt_field_set.all()) # this logging.infos all the field question as objects
     if response.method == "POST":
@@ -589,6 +599,15 @@ def datasheet_section(response,id):
             # Send the data in order to be used to create model card   
             section2beadded = retrievedata(dtsection_instance,dtsection_instance.dt_field_set.all(),section_answers)
 
+            section2beadded = json.loads(section2beadded)
+
+            # add session_id to the section2beadded in the beginning
+            section2beadded['session_id'] = session_key
+
+            # dump it back to json string
+            section2beadded = json.dumps(section2beadded)
+
+
             print(section2beadded)
             if CardDataDatasheet.objects.exists():
                 print(" IT SEEMS CARD DATA IS POPULATED ALREADY NEW SECTION DATA WILL BE ADDED")
@@ -601,14 +620,14 @@ def datasheet_section(response,id):
                 combined_json_string = json.dumps(combined_dict) 
 
                 # Save the accumulated data to database 
-                CardDataDatasheet.objects.create(
-                card_data = combined_json_string,
-                created_at = timezone.now()) 
+                CardDataDatasheet.objects.create(carddata_session =  response.session.session_key,
+                                                card_data = combined_json_string,
+                                                created_at = timezone.now()) 
             else:
                 print(" IT SEEMS CARD DATA IS EMPTY POPULATING NOW")
                 #print(section2beadded)
 
-                CardDataDatasheet.objects.create(
+                CardDataDatasheet.objects.create(carddata_session = response.session.session_key,
                 card_data = section2beadded,
                 created_at = timezone.now())
                                             
@@ -617,14 +636,47 @@ def datasheet_section(response,id):
             txt = response.POST.get("newfieldtext")
 
             if len(txt) > 2:
-                dtsection_instance.dt_field_set.create(field_question = txt)
+                dtsection_instance.dt_field_set.create(field_session = response.session.session_key,
+                                                       field_question = txt)
             else:
                 print("invalid")
+    
+    field_set = dtsection_instance.dt_field_set.filter(
+     Q(field_session = session_key) | Q(field_session='')
+     ).all()
+    
+    # Handle the user answers automaticly shown in the fields
+    try:
+        most_recent_entry = CardDataDatasheet.objects.filter(carddata_session = session_key).latest('created_at')
+        most_recent_entry_data = most_recent_entry.card_data
         
+        # convert the json string to dictionary
+        most_recent_entry_data = json.loads(most_recent_entry_data)
+    
+        # Second security layer that no user can access other users data
+        if most_recent_entry_data["session_id"] == session_key:
+            print('The session key is the same')
+            
+            try:
+            
+                field_dicts = most_recent_entry_data[f'Section_Data_{dtsection_instance.id}']
+                field_values = [''.join(dict.values()) for dict in field_dicts]
+                
+            except:
+    
+                length = len(field_set)
+                field_values = ["" for _ in range(length)]
+    
+    except:
+        
+        length = len(field_set)
+        field_values = ["" for _ in range(length)]  
     print(" YOU ARE RETURNED TO DATASHEET SECTION ")
 
     context = {"section_questions": dtsection_instance.dt_field_set.all(),
                "section":dtsection_instance,
+               "field_set":field_set,
+               "field_values":field_values,
                'current_section_id': dtsection_instance.id,
                "section_list":dtsection_list}
     return render(response , "mc_and_datasheet/dt_section.html",context)# The third attributes are actually variables that you can pass inside the html

@@ -114,6 +114,7 @@ class dt_section(models.Model):
 
     name = models.CharField(max_length=300)
     section_desc = models.CharField(max_length=500, default='Info about the section')
+    dt_section_session = models.CharField(max_length=50, default='',blank=True)
 
     def givename(self):
         return self.name
@@ -128,6 +129,7 @@ class dt_Field(models.Model):
     field_answer = models.TextField(max_length=1000, blank=True)
     field_answer_date = models.DateTimeField(default=timezone.now)
     field_helper = models.CharField(max_length=500, default='Info about the field')
+    field_session = models.CharField(max_length=50, default='',blank=True)
    
     def givename(self):
 
@@ -143,6 +145,7 @@ class CardDataDatasheet(models.Model):
 
     card_data = models.JSONField()
     created_at = models.DateTimeField(default=timezone.now)
+    carddata_session = models.CharField(max_length=50, default='')
     
     def __str__(self):
         return f'{self.card_data}'

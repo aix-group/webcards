@@ -60,15 +60,15 @@ class Command(BaseCommand):
                 #Clean the Datasheet Card data
                 
                 CardDataDatasheet.objects.all().delete()
-                dt_Field.objects.filter(dt_section__id=1, id__gt=3).delete()
-                dt_Field.objects.filter(dt_section__id=2, id__gt=19).delete()
-                dt_Field.objects.filter(dt_section__id=3, id__gt=30).delete()
-                dt_Field.objects.filter(dt_section__id=4, id__gt=33).delete()
-                dt_Field.objects.filter(dt_section__id=5, id__gt=38).delete()
-                dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
-                dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
-                # Delete the field values
-                dt_Field.objects.all().update(field_answer="")
+                dt_Field.objects.filter(dt_section__id=1, id__gt=3, field_session = session_key).delete()
+                dt_Field.objects.filter(dt_section__id=2, id__gt=19, field_session = session_key).delete()
+                dt_Field.objects.filter(dt_section__id=3, id__gt=30,field_session = session_key).delete()
+                dt_Field.objects.filter(dt_section__id=4, id__gt=33,field_session = session_key).delete()
+                dt_Field.objects.filter(dt_section__id=5, id__gt=38,field_session = session_key).delete()
+                dt_Field.objects.filter(dt_section__id=6, id__gt=44,field_session = session_key).delete()
+                dt_Field.objects.filter(dt_section__id=7, id__gt=51,field_session = session_key).delete()
+            
+                dt_Field.objects.filter(field_session=session_key).all().update(field_answer="")
                 
                 # Laslty clean the session itself
                 request.session.flush()
