@@ -1,733 +1,733 @@
-<!DOCTYPE html>
-{% macro render_if_exist(name, value) %}
-  {% if value %}
-    <div>{{name}}: {{value}}</div>
-  {%- endif %}
-{% endmacro %}
-{% macro render_considerations(list) %}
-  {% if list %}
-  <ul>
-  {% for item in list %}
-    <li>{{ item.description }}</li>
-  {% endfor %}
-  </ul>
-  {%- endif %}
-{% endmacro %}
-{% macro render_uri_list(list) %}
-  {% if list %}
-  <ul>
-  {% for item in list %}
-    <li><a href="{{ item }}">{{ item }}</a></li>
-  {% endfor %}
-  </ul>
-  {%- endif %}
-{% endmacro %}
-{% macro render_all_datasets(datasets) %}
-  <div class="col card">
-    <h2>Datasets</h2>
-    {% for dataset in datasets %}
-      <div class="row">
-        <div class="col card">
-          {% if dataset.name %}<h3>{{ dataset.name }}</h3>{% endif %}
-            {% if dataset.description %}<p>{{ dataset.description }}</p>{% endif %}
-            {% if dataset.link %}<a href="{{ dataset.link }}">{{ dataset.link }}</a>{% endif %}
-            {% if dataset.graphics and dataset.graphics.collection %}
-              {{ render_graphics(dataset.graphics.collection) }}
-            {% endif %}
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-{% endmacro %}
-{% macro render_graphics(graphics) %}
-  <div class="img-container">
-  {% if graphics.description %}
-    <p>{{ graphics.description }}</p>
-  {% endif %}  <div class="img-row">
-    {% for graph in graphics %}
-      <div class="img-item">
-        <img src='data:image/jpeg;base64,{{ graph.image }}' alt='{{ graph.name }}'' style="max-width: 100%; max-height: 400px;" />
-      </div>
-    {% endfor %}
-  </div>
-</div>
-{% endmacro %}
-{% macro render_license(license) %}
-{% if license.identifier %}
-                <li>{{ license.identifier }}{% endif %}{% if license.custom_text %}{{ license.custom_text }}{% endif %}</li>
-{% endmacro %}
-{% macro metric_name(metric) %}
-{{ metric.type }}{% if metric.threshold %}@{{ metric.threshold }}{% endif %}{% if metric.slice %}, {{ metric.slice }}{% endif %}
-{% endmacro %}
-{% macro metric_value(metric) %}
-{{ metric.value }}{% if metric.confidence_interval %} ({{ metric.confidence_interval.lower_bound }}, {{ metric.confidence_interval.upper_bound }}){% endif %}
-{% endmacro %}
-{% macro render_quantitative_analysis(quantitative_analysis) %}
-<h2>Quantitative Analysis</h2>
-<div class="container">
-  <div class="col card">
-    {% if quantitative_analysis.performance_metrics %}
-      {{ render_metrics_table(quantitative_analysis.performance_metrics )}}
-    {% endif %}
-  </div>
-  
-  <div class="col card">
-    {% if quantitative_analysis.graphics.collection %}
-      {{ render_metrics_graphics(quantitative_analysis.graphics) }}
-    {% endif %}
-  </div>
-</div>
-{% endmacro %}
-{% macro render_metrics_table(metrics) %}
-<p> {{ model_details.path }} </p>
-<br>
-<br>
-<br>
-<br>
-<div class="center">
-  {% if metrics %}
-  <table>
-      <caption>Performance Metrics</caption>
-      <tr>
-          <th>Name</th>
-          <th>Value</th>
-      </tr>
-      {% for metric in metrics %}
-          
-          <tr>
-            {% if metric_value(metric) != None %}
-              <td>{{ metric_name(metric) }}</td>
-              <td>{{ metric_value(metric) }}</td>
-              {% endif %}
-          </tr>
-        
-      {% endfor %}
-  </table>
-  {% endif %}
-</div>
-{% endmacro %}
-{% macro render_metrics_graphics(graphics) %}
-  <div class="row">
-    <div class="col">
-      {% if graphics.description %}<p>{{ graphics.description }}</p>{% endif %}
-      {{ render_graphics(graphics.collection) }}
-    </div>
-  </div>
-{% endmacro %}
-<html lang="en">
-<head>
-<style>
-  h1 {text-align: center;}
-  .row {
-    display: flex;
-  }
-  .col {
-    flex: 1;
-  }
-  .card {
-    padding: 1em;
-    border: 1px solid #DADCE0;
-    margin: 10px;
-  }
-  .img-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    height: auto;
-    text-align: center;
-  }  .img-item {
-    flex: 1;
-    margin: 20px;
-    max-width: 100%;
-    max-height: 100%;
-  }
-  .center {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  table {
-    margin-bottom: 0px;
-  }
-  table th {
-    background: #eee;
-  }
-  table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-  }
-  th, td {
-    border: 1px solid #ccc;
-    height: 30px;
-    text-align: left;
-    padding: 5px 10px
-  }
-  caption { font-weight: bold; }  .img-row {
-  display: flex;
-}.img-item {
-  flex: 1;
-  /* Add any additional styles for each image item here */
-}.container {
-  display: flex;
-}.center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: auto;
-  }  .center table {
-    border-collapse: collapse;
-    width: 70%;
-    max-width: 800px;
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-    text-align: left;
-    font-family: Arial, sans-serif;
-    margin: 20 auto;
-  }  .center table caption {
-    font-weight: bold;
-    font-size: 1.2em;
-    padding: 10px;
-    background-color: #ddd;
-    border-bottom: 1px solid #bbb;
-  }  .center table th, .center table td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }  .center table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }  .center table tr:last-child td {
-    border-bottom: none;
-  }</style><title>
-  Model Card{% if model_details.name %} for {{ model_details.name }}{% endif %}
-</title>
-</head>
-<body>
-  <h1>
-    Model Card{% if model_details.name %} for {{ model_details.name }}{% endif %}
-  </h1><!-- MODEL DETAILS -->  <div class="row">
-  {% if model_details %}
-  <div class="col card">
-    <h2>Model Details</h2>
-    {% if model_details.overview %}
-        <h3>Model Type</h3>
-        {{ model_details.overview }}
-    {% endif %}
-    {% if model_details.version and model_details.version.name %}
-        <h3>Version</h3>
-        {{ render_if_exist('name', model_details.version.name) }}
-        {{ render_if_exist('date', model_details.version.date) }}
-        {{ render_if_exist('diff', model_details.version.diff) }}
-    {% endif %}
-    {% if model_details.documentation %}
-        <h3>Documentation</h3>
-        {{ model_details.documentation }}
-    {% endif %}
-    {% if model_details.owners %}
-        <h3>Owners</h3>
-        {% if model_details.owners|length > 1 %}
-            <ul>
-                {% for owner in model_details.owners %}
-                    <li>{{ owner.name }}, {{ owner.contact }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            {{ model_details.owners[0].name }}, {{ model_details.owners[0].contact }}
-        {% endif %}
-        <!-- end owner -->
-    {% endif %}
-    {% if model_details.licenses %}
-        <h3>Licenses</h3>
-        <ul>
-            {% for license in model_details.licenses %}
-                {{ render_license(license) }}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.references %}
-        <h3>References</h3>
-        <ul>
-            {% for reference in model_details.references %}
-                <li><a href="{{ reference.reference }}">{{ reference.reference }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.citations %}
-        <h3>Citations</h3>
-        <ul>
-            {% for citation in model_details.citations %}
-                <li>{{ citation.citation }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.feedbacks %}
-        <h3>Feedbacks</h3>
-        <ul>
-            {% for feedback in model_details.feedbacks %}
-                <li><a href="{{ feedback.feedback }}">{{ feedback.feedback }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.entry1 %}
-        <h3>{{ model_details.entry1[0].question1 }}</h3>
-        <ul>
-            {% for entry in model_details.entry1 %}
-                {{ entry.entry1 }}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.entry2 %}
-        <h3>{{ model_details.entry2[0].question2 }}</h3>
-        <ul>
-            {% for entry in model_details.entry2 %}
-                {{ entry.entry2 }}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.entry3 %}
-        <h3>{{ model_details.entry3[0].question3 }}</h3>
-        <ul>
-            {% for entry in model_details.entry3 %}
-                {{ entry.entry3 }}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.entry4 %}
-        <h3>{{ model_details.entry4[0].question4 }}</h3>
-        <ul>
-            {% for entry in model_details.entry4 %}
-                {{ entry.entry4 }}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if model_details.entry5 %}
-        <h3>{{ model_details.entry5[0].question5 }}</h3>
-        <ul>
-            {% for entry in model_details.entry5 %}
-                {{ entry.entry5 }}
-            {% endfor %}
-        </ul>
-    {% endif %}
-  </div>
-  {% endif %}<!-- MODEL PARAMETERS -->
-    
-  {% if model_parameters.model_architecture or model_parameters.input_format or model_parameters.input_format_map or model_parameters.output_format or model_parameters.output_format_map %}
-    <div class="col card">
-      <h2>Model Parameters</h2>
-      {% if model_parameters.model_architecture %}
-          <h3>Model Architecture</h3>
-          <div style="white-space:pre-wrap;">{{ model_parameters.model_architecture }}</div>
-      {% endif %}
-      {% if model_parameters.input_format %}
-          <h3>Parameters</h3>
-          <div style="white-space:pre-wrap;">{{ model_parameters.input_format }}</div>
-      {% endif %}
-      {% if model_parameters.input_format_map %}
-          <h3>Input Format</h3>
-          <table>
-              <tr><th>Key</th><th>Value</th></tr>
-              {% for kv in model_parameters.input_format_map %}
-                  <tr><td>{{ kv.key }}</td><td>{{ kv.value }}</td></tr>
-              {% endfor %}
-          </table>
-      {% endif %}
-      {% if model_parameters.output_format %}
-          <h3>Output Format</h3>
-          <div style="white-space:pre-wrap;">{{ model_parameters.output_format }}</div>
-      {% endif %}
-      {% if model_parameters.output_format_map %}
-          <h3>Output Format</h3>
-          <table>
-              <tr><th>Key</th><th>Value</th></tr>
-              {% for kv in model_parameters.output_format_map %}
-                  <tr><td>{{ kv.key }}</td><td>{{ kv.value }}</td></tr>
-              {% endfor %}
-          </table>
-      {% endif %}
-    </div>
-{% endif %}
-             
-{% if considerations and (considerations.users or considerations.use_cases or considerations.limitations or considerations.tradeoffs or considerations.ethical_considerations or considerations.out_of_scope_uses or considerations.human_life or considerations.fraught or considerations.sensitive) %}
-  <div class="col card">
-    <h2>Considerations</h2>
-    {% if considerations.users %}
-        <h3>Intended Users</h3>
-        {{ render_considerations(considerations.users) }}
-    {% endif %}
-    {% if considerations.use_cases %}
-        <h3>Use Cases</h3>
-        {{ render_considerations(considerations.use_cases) }}
-    {% endif %}
-    {% if considerations.limitations %}
-        <h3>Limitations</h3>
-        {{ render_considerations(considerations.limitations) }}
-    {% endif %}
-    {% if considerations.tradeoffs %}
-        <h3>Tradeoffs</h3>
-        {{ render_considerations(considerations.tradeoffs) }}
-    {% endif %}
-    {% if considerations.out_of_scope_uses %}
-        <h3>Out of Scope Uses</h3>
-        {{ render_considerations(considerations.out_of_scope_uses) }}
-    {% endif %}
-    {% if considerations.human_life %}
-        <h3>Human Benefit</h3>
-        {{ render_considerations(considerations.human_life) }}
-    {% endif %}
-    {% if considerations.fraught %}
-        <h3>Misuse</h3>
-        {{ render_considerations(considerations.fraught) }}
-    {% endif %}
-    {% if considerations.sensitive %}
-        <h3>Sensitive</h3>
-        {{ render_considerations(considerations.sensitive) }}
-    {% endif %}
-    {% if considerations.ethical_considerations %}
-        <h3>Ethical Considerations</h3>
-        <ul>
-            {% for risk in considerations.ethical_considerations %}
-                <li>
-                    <div>Risk: {{ risk.name }}</div>
-                    <div>Mitigation Strategy: {{ risk.mitigation_strategy }}</div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if considerations.entry1 %}
-        <h3>{{ considerations.entry1[0].question1 }}</h3>
-        <ul>{% for entry in considerations.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
-    {% endif %}
-    {% if considerations.entry2 %}
-        <h3>{{ considerations.entry2[0].question2 }}</h3>
-        <ul>{% for entry in considerations.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
-    {% endif %}
-    {% if considerations.entry3 %}
-        <h3>{{ considerations.entry3[0].question3 }}</h3>
-        <ul>{% for entry in considerations.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
-    {% endif %}
-    {% if considerations.entry4 %}
-        <h3>{{ considerations.entry4[0].question4 }}</h3>
-        <ul>{% for entry in considerations.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
-    {% endif %}
-    {% if considerations.entry5 %}
-        <h3>{{ considerations.entry5[0].question5 }}</h3>
-        <ul>{% for entry in considerations.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
-    {% endif %}
-  </div>
-{% endif %}
-</div> <!-- end row -->
-       
-    
-<div class="row">
-{% if factors and (factors.salient_factors or factors.reported_factors) %}
-  <div class="col card">
-    <h2>Factors</h2>
-    {% if factors.salient_factors %}
-      <h3>Salient Factors</h3>
-      {{ render_considerations(factors.salient_factors) }}
-    {% endif %}
-    {% if factors.reported_factors %}
-      <h3>Reported Factors</h3>
-      {{ render_considerations(factors.reported_factors) }}
-    {% endif %}
-    {% if factors.entry1 %}
-      <h3>{{ factors.entry1[0].question1 }}</h3>
-      <ul>{% for entry in factors.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
-    {% endif %}
-    {% if factors.entry2 %}
-      <h3>{{ factors.entry2[0].question2 }}</h3>
-      <ul>{% for entry in factors.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
-    {% endif %}
-    {% if factors.entry3 %}
-      <h3>{{ factors.entry3[0].question3 }}</h3>
-      <ul>{% for entry in factors.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
-    {% endif %}
-    {% if factors.entry4 %}
-      <h3>{{ factors.entry4[0].question4 }}</h3>
-      <ul>{% for entry in factors.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
-    {% endif %}
-    {% if factors.entry5 %}
-      <h3>{{ factors.entry5[0].question5 }}</h3>
-      <ul>{% for entry in factors.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
-    {% endif %}
-  </div>
-{% endif %}
-{% if dataset_details and (dataset_details.meaning_of_output or dataset_details.utilize_output or dataset_details.not_used_data or dataset_details.used_datasets or dataset_details.reason_of_use or dataset_details.preprocessing) %}
-  <div class="col card">
-    <h2>Dataset Details</h2>
-    {% if dataset_details.meaning_of_output %}
-      <h3>Meaning Of Output</h3>
-      {{ render_considerations(dataset_details.meaning_of_output) }}
-    {% endif %}
-    {% if dataset_details.utilize_output %}
-      <h3>Utilize Output</h3>
-      {{ render_considerations(dataset_details.utilize_output) }}
-    {% endif %}
-    {% if dataset_details.not_used_data %}
-      <h3>Not Used Data</h3>
-      {{ render_considerations(dataset_details.not_used_data) }}
-    {% endif %}
-    {% if dataset_details.used_datasets %}
-      <h3>Used Dataset</h3>
-      <ul>
-        {% for dataset in dataset_details.used_datasets %}
-          <li>
-            <div>Name: {{ dataset.description }}</div>
-            <div>Reason of Use: {{ dataset.reason_of_use }}</div>
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-    {% if dataset_details.preprocessing %}
-      <h3>Preprocessing</h3>
-      {{ render_considerations(dataset_details.preprocessing) }}
-    {% endif %}
-    {% if dataset_details.entry1 %}
-      <h3>{{ dataset_details.entry1[0].question1 }}</h3>
-      <ul>{% for entry in dataset_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
-    {% endif %}
-    {% if dataset_details.entry2 %}
-      <h3>{{ dataset_details.entry2[0].question2 }}</h3>
-      <ul>{% for entry in dataset_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
-    {% endif %}
-    {% if dataset_details.entry3 %}
-      <h3>{{ dataset_details.entry3[0].question3 }}</h3>
-      <ul>{% for entry in dataset_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
-    {% endif %}
-    {% if dataset_details.entry4 %}
-      <h3>{{ dataset_details.entry4[0].question4 }}</h3>
-      <ul>{% for entry in dataset_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
-    {% endif %}
-    {% if dataset_details.entry5 %}
-      <h3>{{ dataset_details.entry5[0].question5 }}</h3>
-      <ul>{% for entry in dataset_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
-    {% endif %}
-  </div>
-{% endif %}{% if performance_details and (performance_details.scope or performance_details.reliability or performance_details.mistake_frequency or performance_details.likelyhood_of_correction or performance_details.mistakes or performance_details.reported_metrics or performance_details.thresholds or performance_details.how_metrics or performance_details.unitary_results or performance_details.intersectional_results) %}
-  <div class="col card">
-    <h2>Performance Details</h2>
-    {% if performance_details.scope %}
-      <h3>Scope</h3>
-      {{ render_considerations(performance_details.scope) }}
-    {% endif %}
-    {% if performance_details.reliability %}
-      <h3>Reliability</h3>
-      {{ render_considerations(performance_details.reliability) }}
-    {% endif %}
-    {% if performance_details.mistake_frequency %}
-      <h3>Mistake Frequency</h3>
-      {{ render_considerations(performance_details.mistake_frequency) }}
-    {% endif %}
-    {% if performance_details.likelyhood_of_correction %}
-      <h3>Likelihood of Correction</h3>
-      {{ render_considerations(performance_details.likelyhood_of_correction) }}
-    {% endif %}
-    {% if performance_details.mistakes %}
-      <h3>Possible Mistakes</h3>
-      {{ render_considerations(performance_details.mistakes) }}
-    {% endif %}
-    {% if performance_details.reported_metrics %}
-      <h3>Reported Metrics</h3>
-      {{ render_considerations(performance_details.reported_metrics) }}
-    {% endif %}
-    {% if performance_details.thresholds %}
-      <h3>Thresholds</h3>
-      {{ render_considerations(performance_details.thresholds) }}
-    {% endif %}
-    {% if performance_details.how_metrics %}
-      <h3>How are these Calculated?</h3>
-      <ul>
-        {% for metric in performance_details.how_metrics %}
-          <li>
-            {% if metric.accuracy %}
-              <div>Accuracy: {{ metric.accuracy }}</div>
-            {% endif %}
-            {% if metric.precision %}
-              <div>Precision: {{ metric.precision }}</div>
-            {% endif %}
-            {% if metric.error_rate %}
-              <div>Error rate: {{ metric.error_rate }}</div>
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-    {% if performance_details.unitary_results %}
-      <h3>Unitary Results</h3>
-      {{ render_considerations(performance_details.unitary_results) }}
-    {% endif %}
-    {% if performance_details.intersectional_results %}
-      <h3>Intersectional Results</h3>
-      {{ render_considerations(performance_details.intersectional_results) }}
-    {% endif %}
-    {% if performance_details.entry1 %}
-      <h3>{{ performance_details.entry1[0].question1 }}</h3>
-      <ul>{% for entry in performance_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
-    {% endif %}
-    {% if performance_details.entry2 %}
-      <h3>{{ performance_details.entry2[0].question2 }}</h3>
-      <ul>{% for entry in performance_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
-    {% endif %}
-    {% if performance_details.entry3 %}
-      <h3>{{ performance_details.entry3[0].question3 }}</h3>
-      <ul>{% for entry in performance_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
-    {% endif %}
-    {% if performance_details.entry4 %}
-      <h3>{{ performance_details.entry4[0].question4 }}</h3>
-      <ul>{% for entry in performance_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
-    {% endif %}
-    {% if performance_details.entry5 %}
-      <h3>{{ performance_details.entry5[0].question5 }}</h3>
-      <ul>{% for entry in performance_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
-    {% endif %}
-  </div>
-{% endif %}
-</div> <!-- end row -->    
-<div class="row">
-<div class="col card">
-  {% if model_parameters.data %}  
-      {{ render_all_datasets(model_parameters.data) }}
-    {% endif %}
-</div>
-</div> <!-- end row --><div class="row">
-<div class="col card">
-  {% if quantitative_analysis.performance_metrics or quantitative_analysis.graphics.collection %}
-      {{ render_quantitative_analysis(quantitative_analysis) }}
-  {% endif %}
-</div>
-</div> <!-- end row --><div class="row">
-{% if recommendations and (recommendations.further_testing or recommendations.relevant_groups or recommendations.additional_recommendations or recommendations.ideal_characteristics) %}
-<div class="col card">
-  <h2>Caveats and Recommendations</h2>
-    {% if recommendations.further_testing %}
-      <h3>Further Testing </h3>
-        {{ render_considerations(recommendations.further_testing) }}
-    {% endif %}
-    {% if recommendations.relevant_groups %}
-      <h3>Relevant Groups </h3>
-        {{ render_considerations(recommendations.relevant_groups) }}
-    {% endif %}
-    {% if recommendations.additional_recommendations %}
-      <h3>Additional Recommendations </h3>
-        {{ render_considerations(recommendations.additional_recommendations) }}
-    {% endif %}
-    {% if recommendations.ideal_characteristics %}
-      <h3>Ideal Characteristics </h3>
-        {{ render_considerations(recommendations.ideal_characteristics) }}
-    {% endif %}
-    {% if recommendations.entry1 %}
-      <h3>{{ recommendations.entry1[0].question1 }}</h3>
-        <ul>{% for entry in recommendations.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
-        {% endif %}
-    {% if recommendations.entry2 %}
-      <h3>{{ recommendations.entry2[0].question2 }}</h3>
-        <ul>{% for entry in recommendations.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
-        {% endif %}
-    {% if recommendations.entry3 %}
-      <h3>{{ recommendations.entry3[0].question3 }}</h3>
-        <ul>{% for entry in recommendations.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
-        {% endif %}
-    {% if recommendations.entry4 %}
-      <h3>{{ recommendations.entry4[0].question4 }}</h3>
-        <ul>{% for entry in recommendations.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
-        {% endif %}
-    {% if recommendations.entry5 %}
-      <h3>{{ recommendations.entry5[0].question5 }}</h3>
-        <ul>{% for entry in recommendations.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
-        {% endif %}
-</div>
-{% endif %}      
-</div> <!-- end row --> 
-{% if extended_section1.extended1_title[0].title %}
-  <div class="row">
-  <div class="col card"> 
-  <h2>{{ extended_section1.extended1_title[0].title }}</h2>  
-  {% if extended_section1.extended1_field1 %}
-  <h3>{{ extended_section1.extended1_field1[0].question1 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field2 %}
-  <h3>{{ extended_section1.extended1_field2[0].question2 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field2 %}<li>{{ entry.entry2 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field3 %}
-  <h3>{{ extended_section1.extended1_field3[0].question3 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field3 %}<li>{{ entry.entry3 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field4 %}
-  <h3>{{ extended_section1.extended1_field4[0].question4 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field4 %}<li>{{ entry.entry4 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field5 %}
-  <h3>{{ extended_section1.extended1_field5[0].question5 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field5 %}<li>{{ entry.entry5 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field6 %}
-  <h3>{{ extended_section1.extended1_field6[0].question6 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field6 %}<li>{{ entry.entry6 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field7 %}
-  <h3>{{ extended_section1.extended1_field7[0].question7 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field7 %}<li>{{ entry.entry7 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field8 %}
-  <h3>{{ extended_section1.extended1_field8[0].question8 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field8 %}<li>{{ entry.entry8 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field9 %}
-  <h3>{{ extended_section1.extended1_field9[0].question9 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field9 %}<li>{{ entry.entry9 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section1.extended1_field10 %}
-  <h3>{{ extended_section1.extended1_field10[0].question10 }}</h3>
-      <ul>{% for entry in extended_section1.extended1_field10 %}<li>{{ entry.entry10 }}</li>{% endfor %}</ul>
-  {% endif %}
-{% endif %}   
-</div>
-{% if extended_section2.extended2_title %} 
-<div class="col card">
-  <h2>{{ extended_section2.extended2_title[0].title }}</h2> 
-  {% if extended_section2.extended2_field1 %}
-  <h3>{{ extended_section2.extended2_field1[0].question1 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field2 %}
-  <h3>{{ extended_section2.extended2_field2[0].question2 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field2 %}<li>{{ entry.entry2 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field3 %}
-  <h3>{{ extended_section2.extended2_field3[0].question3 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field3 %}<li>{{ entry.entry3 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field4 %}
-  <h3>{{ extended_section2.extended2_field4[0].question4 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field4 %}<li>{{ entry.entry4 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field5 %}
-  <h3>{{ extended_section2.extended2_field5[0].question5 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field5 %}<li>{{ entry.entry5 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field6 %}
-  <h3>{{ extended_section2.extended2_field6[0].question6 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field6 %}<li>{{ entry.entry6 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field7 %}
-  <h3>{{ extended_section2.extended2_field7[0].question7 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field7 %}<li>{{ entry.entry7 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field8 %}
-  <h3>{{ extended_section2.extended2_field8[0].question8 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field8 %}<li>{{ entry.entry8 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field9 %}
-  <h3>{{ extended_section2.extended2_field9[0].question9 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field9 %}<li>{{ entry.entry9 }}</li>{% endfor %}</ul>
-  {% endif %}
-  {% if extended_section2.extended2_field10 %}
-  <h3>{{ extended_section2.extended2_field10[0].question10 }}</h3>
-      <ul>{% for entry in extended_section2.extended2_field10 %}<li>{{ entry.entry10 }}</li>{% endfor %}</ul>
-  {% endif %} 
-{% endif %}  
-</div> 
-</div> <!-- end row -->
-</body>
-</html>
+<!DOCTYPE html>
+{% macro render_if_exist(name, value) %}
+  {% if value %}
+    <div>{{name}}: {{value}}</div>
+  {%- endif %}
+{% endmacro %}
+{% macro render_considerations(list) %}
+  {% if list %}
+  <ul>
+  {% for item in list %}
+    <li>{{ item.description }}</li>
+  {% endfor %}
+  </ul>
+  {%- endif %}
+{% endmacro %}
+{% macro render_uri_list(list) %}
+  {% if list %}
+  <ul>
+  {% for item in list %}
+    <li><a href="{{ item }}">{{ item }}</a></li>
+  {% endfor %}
+  </ul>
+  {%- endif %}
+{% endmacro %}
+{% macro render_all_datasets(datasets) %}
+  <div class="col card">
+    <h2>Datasets</h2>
+    {% for dataset in datasets %}
+      <div class="row">
+        <div class="col card">
+          {% if dataset.name %}<h3>{{ dataset.name }}</h3>{% endif %}
+            {% if dataset.description %}<p>{{ dataset.description }}</p>{% endif %}
+            {% if dataset.link %}<a href="{{ dataset.link }}">{{ dataset.link }}</a>{% endif %}
+            {% if dataset.graphics and dataset.graphics.collection %}
+              {{ render_graphics(dataset.graphics.collection) }}
+            {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+{% macro render_graphics(graphics) %}
+  <div class="img-container">
+  {% if graphics.description %}
+    <p>{{ graphics.description }}</p>
+  {% endif %}  <div class="img-row">
+    {% for graph in graphics %}
+      <div class="img-item">
+        <img src='data:image/jpeg;base64,{{ graph.image }}' alt='{{ graph.name }}'' style="max-width: 100%; max-height: 400px;" />
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}
+{% macro render_license(license) %}
+{% if license.identifier %}
+                <li>{{ license.identifier }}{% endif %}{% if license.custom_text %}{{ license.custom_text }}{% endif %}</li>
+{% endmacro %}
+{% macro metric_name(metric) %}
+{{ metric.type }}{% if metric.threshold %}@{{ metric.threshold }}{% endif %}{% if metric.slice %}, {{ metric.slice }}{% endif %}
+{% endmacro %}
+{% macro metric_value(metric) %}
+{{ metric.value }}{% if metric.confidence_interval %} ({{ metric.confidence_interval.lower_bound }}, {{ metric.confidence_interval.upper_bound }}){% endif %}
+{% endmacro %}
+{% macro render_quantitative_analysis(quantitative_analysis) %}
+<h2>Quantitative Analysis</h2>
+<div class="container">
+  <div class="col card">
+    {% if quantitative_analysis.performance_metrics %}
+      {{ render_metrics_table(quantitative_analysis.performance_metrics )}}
+    {% endif %}
+  </div>
+  
+  <div class="col card">
+    {% if quantitative_analysis.graphics.collection %}
+      {{ render_metrics_graphics(quantitative_analysis.graphics) }}
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+{% macro render_metrics_table(metrics) %}
+<p> {{ model_details.path }} </p>
+<br>
+<br>
+<br>
+<br>
+<div class="center">
+  {% if metrics %}
+  <table>
+      <caption>Performance Metrics</caption>
+      <tr>
+          <th>Name</th>
+          <th>Value</th>
+      </tr>
+      {% for metric in metrics %}
+          
+          <tr>
+            {% if metric_value(metric) != None %}
+              <td>{{ metric_name(metric) }}</td>
+              <td>{{ metric_value(metric) }}</td>
+              {% endif %}
+          </tr>
+        
+      {% endfor %}
+  </table>
+  {% endif %}
+</div>
+{% endmacro %}
+{% macro render_metrics_graphics(graphics) %}
+  <div class="row">
+    <div class="col">
+      {% if graphics.description %}<p>{{ graphics.description }}</p>{% endif %}
+      {{ render_graphics(graphics.collection) }}
+    </div>
+  </div>
+{% endmacro %}
+<html lang="en">
+<head>
+<style>
+  h1 {text-align: center;}
+  .row {
+    display: flex;
+  }
+  .col {
+    flex: 1;
+  }
+  .card {
+    padding: 1em;
+    border: 1px solid #DADCE0;
+    margin: 10px;
+  }
+  .img-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    text-align: center;
+  }  .img-item {
+    flex: 1;
+    margin: 20px;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  table {
+    margin-bottom: 0px;
+  }
+  table th {
+    background: #eee;
+  }
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    height: 30px;
+    text-align: left;
+    padding: 5px 10px
+  }
+  caption { font-weight: bold; }  .img-row {
+  display: flex;
+}.img-item {
+  flex: 1;
+  /* Add any additional styles for each image item here */
+}.container {
+  display: flex;
+}.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+  }  .center table {
+    border-collapse: collapse;
+    width: 70%;
+    max-width: 800px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-family: Arial, sans-serif;
+    margin: 20 auto;
+  }  .center table caption {
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 10px;
+    background-color: #ddd;
+    border-bottom: 1px solid #bbb;
+  }  .center table th, .center table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }  .center table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }  .center table tr:last-child td {
+    border-bottom: none;
+  }</style><title>
+  Model Card{% if model_details.name %} for {{ model_details.name }}{% endif %}
+</title>
+</head>
+<body>
+  <h1>
+    Model Card{% if model_details.name %} for {{ model_details.name }}{% endif %}
+  </h1><!-- MODEL DETAILS -->  <div class="row">
+  {% if model_details %}
+  <div class="col card">
+    <h2>Model Details</h2>
+    {% if model_details.overview %}
+        <h3>Model Type</h3>
+        {{ model_details.overview }}
+    {% endif %}
+    {% if model_details.version and model_details.version.name %}
+        <h3>Version</h3>
+        {{ render_if_exist('name', model_details.version.name) }}
+        {{ render_if_exist('date', model_details.version.date) }}
+        {{ render_if_exist('diff', model_details.version.diff) }}
+    {% endif %}
+    {% if model_details.documentation %}
+        <h3>Documentation</h3>
+        {{ model_details.documentation }}
+    {% endif %}
+    {% if model_details.owners %}
+        <h3>Owners</h3>
+        {% if model_details.owners|length > 1 %}
+            <ul>
+                {% for owner in model_details.owners %}
+                    <li>{{ owner.name }}, {{ owner.contact }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            {{ model_details.owners[0].name }}, {{ model_details.owners[0].contact }}
+        {% endif %}
+        <!-- end owner -->
+    {% endif %}
+    {% if model_details.licenses %}
+        <h3>Licenses</h3>
+        <ul>
+            {% for license in model_details.licenses %}
+                {{ render_license(license) }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.references %}
+        <h3>References</h3>
+        <ul>
+            {% for reference in model_details.references %}
+                <li><a href="{{ reference.reference }}">{{ reference.reference }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.citations %}
+        <h3>Citations</h3>
+        <ul>
+            {% for citation in model_details.citations %}
+                <li>{{ citation.citation }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.feedbacks %}
+        <h3>Feedbacks</h3>
+        <ul>
+            {% for feedback in model_details.feedbacks %}
+                <li><a href="{{ feedback.feedback }}">{{ feedback.feedback }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.entry1 %}
+        <h3>{{ model_details.entry1[0].question1 }}</h3>
+        <ul>
+            {% for entry in model_details.entry1 %}
+                {{ entry.entry1 }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.entry2 %}
+        <h3>{{ model_details.entry2[0].question2 }}</h3>
+        <ul>
+            {% for entry in model_details.entry2 %}
+                {{ entry.entry2 }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.entry3 %}
+        <h3>{{ model_details.entry3[0].question3 }}</h3>
+        <ul>
+            {% for entry in model_details.entry3 %}
+                {{ entry.entry3 }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.entry4 %}
+        <h3>{{ model_details.entry4[0].question4 }}</h3>
+        <ul>
+            {% for entry in model_details.entry4 %}
+                {{ entry.entry4 }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if model_details.entry5 %}
+        <h3>{{ model_details.entry5[0].question5 }}</h3>
+        <ul>
+            {% for entry in model_details.entry5 %}
+                {{ entry.entry5 }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+  </div>
+  {% endif %}<!-- MODEL PARAMETERS -->
+    
+  {% if model_parameters.model_architecture or model_parameters.input_format or model_parameters.input_format_map or model_parameters.output_format or model_parameters.output_format_map %}
+    <div class="col card">
+      <h2>Model Parameters</h2>
+      {% if model_parameters.model_architecture %}
+          <h3>Model Architecture</h3>
+          <div style="white-space:pre-wrap;">{{ model_parameters.model_architecture }}</div>
+      {% endif %}
+      {% if model_parameters.input_format %}
+          <h3>Parameters</h3>
+          <div style="white-space:pre-wrap;">{{ model_parameters.input_format }}</div>
+      {% endif %}
+      {% if model_parameters.input_format_map %}
+          <h3>Input Format</h3>
+          <table>
+              <tr><th>Key</th><th>Value</th></tr>
+              {% for kv in model_parameters.input_format_map %}
+                  <tr><td>{{ kv.key }}</td><td>{{ kv.value }}</td></tr>
+              {% endfor %}
+          </table>
+      {% endif %}
+      {% if model_parameters.output_format %}
+          <h3>Output Format</h3>
+          <div style="white-space:pre-wrap;">{{ model_parameters.output_format }}</div>
+      {% endif %}
+      {% if model_parameters.output_format_map %}
+          <h3>Output Format</h3>
+          <table>
+              <tr><th>Key</th><th>Value</th></tr>
+              {% for kv in model_parameters.output_format_map %}
+                  <tr><td>{{ kv.key }}</td><td>{{ kv.value }}</td></tr>
+              {% endfor %}
+          </table>
+      {% endif %}
+    </div>
+{% endif %}
+             
+{% if considerations and (considerations.users or considerations.use_cases or considerations.limitations or considerations.tradeoffs or considerations.ethical_considerations or considerations.out_of_scope_uses or considerations.human_life or considerations.fraught or considerations.sensitive) %}
+  <div class="col card">
+    <h2>Considerations</h2>
+    {% if considerations.users %}
+        <h3>Intended Users</h3>
+        {{ render_considerations(considerations.users) }}
+    {% endif %}
+    {% if considerations.use_cases %}
+        <h3>Use Cases</h3>
+        {{ render_considerations(considerations.use_cases) }}
+    {% endif %}
+    {% if considerations.limitations %}
+        <h3>Limitations</h3>
+        {{ render_considerations(considerations.limitations) }}
+    {% endif %}
+    {% if considerations.tradeoffs %}
+        <h3>Tradeoffs</h3>
+        {{ render_considerations(considerations.tradeoffs) }}
+    {% endif %}
+    {% if considerations.out_of_scope_uses %}
+        <h3>Out of Scope Uses</h3>
+        {{ render_considerations(considerations.out_of_scope_uses) }}
+    {% endif %}
+    {% if considerations.human_life %}
+        <h3>Human Benefit</h3>
+        {{ render_considerations(considerations.human_life) }}
+    {% endif %}
+    {% if considerations.fraught %}
+        <h3>Misuse</h3>
+        {{ render_considerations(considerations.fraught) }}
+    {% endif %}
+    {% if considerations.sensitive %}
+        <h3>Sensitive</h3>
+        {{ render_considerations(considerations.sensitive) }}
+    {% endif %}
+    {% if considerations.ethical_considerations %}
+        <h3>Ethical Considerations</h3>
+        <ul>
+            {% for risk in considerations.ethical_considerations %}
+                <li>
+                    <div>Risk: {{ risk.name }}</div>
+                    <div>Mitigation Strategy: {{ risk.mitigation_strategy }}</div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if considerations.entry1 %}
+        <h3>{{ considerations.entry1[0].question1 }}</h3>
+        <ul>{% for entry in considerations.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+    {% endif %}
+    {% if considerations.entry2 %}
+        <h3>{{ considerations.entry2[0].question2 }}</h3>
+        <ul>{% for entry in considerations.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+    {% endif %}
+    {% if considerations.entry3 %}
+        <h3>{{ considerations.entry3[0].question3 }}</h3>
+        <ul>{% for entry in considerations.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+    {% endif %}
+    {% if considerations.entry4 %}
+        <h3>{{ considerations.entry4[0].question4 }}</h3>
+        <ul>{% for entry in considerations.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+    {% endif %}
+    {% if considerations.entry5 %}
+        <h3>{{ considerations.entry5[0].question5 }}</h3>
+        <ul>{% for entry in considerations.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+    {% endif %}
+  </div>
+{% endif %}
+</div> <!-- end row -->
+       
+    
+<div class="row">
+{% if factors and (factors.salient_factors or factors.reported_factors) %}
+  <div class="col card">
+    <h2>Factors</h2>
+    {% if factors.salient_factors %}
+      <h3>Salient Factors</h3>
+      {{ render_considerations(factors.salient_factors) }}
+    {% endif %}
+    {% if factors.reported_factors %}
+      <h3>Reported Factors</h3>
+      {{ render_considerations(factors.reported_factors) }}
+    {% endif %}
+    {% if factors.entry1 %}
+      <h3>{{ factors.entry1[0].question1 }}</h3>
+      <ul>{% for entry in factors.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+    {% endif %}
+    {% if factors.entry2 %}
+      <h3>{{ factors.entry2[0].question2 }}</h3>
+      <ul>{% for entry in factors.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+    {% endif %}
+    {% if factors.entry3 %}
+      <h3>{{ factors.entry3[0].question3 }}</h3>
+      <ul>{% for entry in factors.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+    {% endif %}
+    {% if factors.entry4 %}
+      <h3>{{ factors.entry4[0].question4 }}</h3>
+      <ul>{% for entry in factors.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+    {% endif %}
+    {% if factors.entry5 %}
+      <h3>{{ factors.entry5[0].question5 }}</h3>
+      <ul>{% for entry in factors.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+    {% endif %}
+  </div>
+{% endif %}
+{% if dataset_details and (dataset_details.meaning_of_output or dataset_details.utilize_output or dataset_details.not_used_data or dataset_details.used_datasets or dataset_details.reason_of_use or dataset_details.preprocessing) %}
+  <div class="col card">
+    <h2>Dataset Details</h2>
+    {% if dataset_details.meaning_of_output %}
+      <h3>Meaning Of Output</h3>
+      {{ render_considerations(dataset_details.meaning_of_output) }}
+    {% endif %}
+    {% if dataset_details.utilize_output %}
+      <h3>Utilize Output</h3>
+      {{ render_considerations(dataset_details.utilize_output) }}
+    {% endif %}
+    {% if dataset_details.not_used_data %}
+      <h3>Not Used Data</h3>
+      {{ render_considerations(dataset_details.not_used_data) }}
+    {% endif %}
+    {% if dataset_details.used_datasets %}
+      <h3>Used Dataset</h3>
+      <ul>
+        {% for dataset in dataset_details.used_datasets %}
+          <li>
+            <div>Name: {{ dataset.description }}</div>
+            <div>Reason of Use: {{ dataset.reason_of_use }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if dataset_details.preprocessing %}
+      <h3>Preprocessing</h3>
+      {{ render_considerations(dataset_details.preprocessing) }}
+    {% endif %}
+    {% if dataset_details.entry1 %}
+      <h3>{{ dataset_details.entry1[0].question1 }}</h3>
+      <ul>{% for entry in dataset_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+    {% endif %}
+    {% if dataset_details.entry2 %}
+      <h3>{{ dataset_details.entry2[0].question2 }}</h3>
+      <ul>{% for entry in dataset_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+    {% endif %}
+    {% if dataset_details.entry3 %}
+      <h3>{{ dataset_details.entry3[0].question3 }}</h3>
+      <ul>{% for entry in dataset_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+    {% endif %}
+    {% if dataset_details.entry4 %}
+      <h3>{{ dataset_details.entry4[0].question4 }}</h3>
+      <ul>{% for entry in dataset_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+    {% endif %}
+    {% if dataset_details.entry5 %}
+      <h3>{{ dataset_details.entry5[0].question5 }}</h3>
+      <ul>{% for entry in dataset_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+    {% endif %}
+  </div>
+{% endif %}{% if performance_details and (performance_details.scope or performance_details.reliability or performance_details.mistake_frequency or performance_details.likelyhood_of_correction or performance_details.mistakes or performance_details.reported_metrics or performance_details.thresholds or performance_details.how_metrics or performance_details.unitary_results or performance_details.intersectional_results) %}
+  <div class="col card">
+    <h2>Performance Details</h2>
+    {% if performance_details.scope %}
+      <h3>Scope</h3>
+      {{ render_considerations(performance_details.scope) }}
+    {% endif %}
+    {% if performance_details.reliability %}
+      <h3>Reliability</h3>
+      {{ render_considerations(performance_details.reliability) }}
+    {% endif %}
+    {% if performance_details.mistake_frequency %}
+      <h3>Mistake Frequency</h3>
+      {{ render_considerations(performance_details.mistake_frequency) }}
+    {% endif %}
+    {% if performance_details.likelyhood_of_correction %}
+      <h3>Likelihood of Correction</h3>
+      {{ render_considerations(performance_details.likelyhood_of_correction) }}
+    {% endif %}
+    {% if performance_details.mistakes %}
+      <h3>Possible Mistakes</h3>
+      {{ render_considerations(performance_details.mistakes) }}
+    {% endif %}
+    {% if performance_details.reported_metrics %}
+      <h3>Reported Metrics</h3>
+      {{ render_considerations(performance_details.reported_metrics) }}
+    {% endif %}
+    {% if performance_details.thresholds %}
+      <h3>Thresholds</h3>
+      {{ render_considerations(performance_details.thresholds) }}
+    {% endif %}
+    {% if performance_details.how_metrics %}
+      <h3>How are these Calculated?</h3>
+      <ul>
+        {% for metric in performance_details.how_metrics %}
+          <li>
+            {% if metric.accuracy %}
+              <div>Accuracy: {{ metric.accuracy }}</div>
+            {% endif %}
+            {% if metric.precision %}
+              <div>Precision: {{ metric.precision }}</div>
+            {% endif %}
+            {% if metric.error_rate %}
+              <div>Error rate: {{ metric.error_rate }}</div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if performance_details.unitary_results %}
+      <h3>Unitary Results</h3>
+      {{ render_considerations(performance_details.unitary_results) }}
+    {% endif %}
+    {% if performance_details.intersectional_results %}
+      <h3>Intersectional Results</h3>
+      {{ render_considerations(performance_details.intersectional_results) }}
+    {% endif %}
+    {% if performance_details.entry1 %}
+      <h3>{{ performance_details.entry1[0].question1 }}</h3>
+      <ul>{% for entry in performance_details.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+    {% endif %}
+    {% if performance_details.entry2 %}
+      <h3>{{ performance_details.entry2[0].question2 }}</h3>
+      <ul>{% for entry in performance_details.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+    {% endif %}
+    {% if performance_details.entry3 %}
+      <h3>{{ performance_details.entry3[0].question3 }}</h3>
+      <ul>{% for entry in performance_details.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+    {% endif %}
+    {% if performance_details.entry4 %}
+      <h3>{{ performance_details.entry4[0].question4 }}</h3>
+      <ul>{% for entry in performance_details.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+    {% endif %}
+    {% if performance_details.entry5 %}
+      <h3>{{ performance_details.entry5[0].question5 }}</h3>
+      <ul>{% for entry in performance_details.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+    {% endif %}
+  </div>
+{% endif %}
+</div> <!-- end row -->    
+<div class="row">
+<div class="col card">
+  {% if model_parameters.data %}  
+      {{ render_all_datasets(model_parameters.data) }}
+    {% endif %}
+</div>
+</div> <!-- end row --><div class="row">
+<div class="col card">
+  {% if quantitative_analysis.performance_metrics or quantitative_analysis.graphics.collection %}
+      {{ render_quantitative_analysis(quantitative_analysis) }}
+  {% endif %}
+</div>
+</div> <!-- end row --><div class="row">
+{% if recommendations and (recommendations.further_testing or recommendations.relevant_groups or recommendations.additional_recommendations or recommendations.ideal_characteristics) %}
+<div class="col card">
+  <h2>Caveats and Recommendations</h2>
+    {% if recommendations.further_testing %}
+      <h3>Further Testing </h3>
+        {{ render_considerations(recommendations.further_testing) }}
+    {% endif %}
+    {% if recommendations.relevant_groups %}
+      <h3>Relevant Groups </h3>
+        {{ render_considerations(recommendations.relevant_groups) }}
+    {% endif %}
+    {% if recommendations.additional_recommendations %}
+      <h3>Additional Recommendations </h3>
+        {{ render_considerations(recommendations.additional_recommendations) }}
+    {% endif %}
+    {% if recommendations.ideal_characteristics %}
+      <h3>Ideal Characteristics </h3>
+        {{ render_considerations(recommendations.ideal_characteristics) }}
+    {% endif %}
+    {% if recommendations.entry1 %}
+      <h3>{{ recommendations.entry1[0].question1 }}</h3>
+        <ul>{% for entry in recommendations.entry1 %}{{ entry.entry1 }}{% endfor %}</ul>
+        {% endif %}
+    {% if recommendations.entry2 %}
+      <h3>{{ recommendations.entry2[0].question2 }}</h3>
+        <ul>{% for entry in recommendations.entry2 %}{{ entry.entry2 }}{% endfor %}</ul>
+        {% endif %}
+    {% if recommendations.entry3 %}
+      <h3>{{ recommendations.entry3[0].question3 }}</h3>
+        <ul>{% for entry in recommendations.entry3 %}{{ entry.entry3 }}{% endfor %}</ul>
+        {% endif %}
+    {% if recommendations.entry4 %}
+      <h3>{{ recommendations.entry4[0].question4 }}</h3>
+        <ul>{% for entry in recommendations.entry4 %}{{ entry.entry4 }}{% endfor %}</ul>
+        {% endif %}
+    {% if recommendations.entry5 %}
+      <h3>{{ recommendations.entry5[0].question5 }}</h3>
+        <ul>{% for entry in recommendations.entry5 %}{{ entry.entry5 }}{% endfor %}</ul>
+        {% endif %}
+</div>
+{% endif %}      
+</div> <!-- end row --> 
+{% if extended_section1.extended1_title[0].title %}
+  <div class="row">
+  <div class="col card"> 
+  <h2>{{ extended_section1.extended1_title[0].title }}</h2>  
+  {% if extended_section1.extended1_field1 %}
+  <h3>{{ extended_section1.extended1_field1[0].question1 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field2 %}
+  <h3>{{ extended_section1.extended1_field2[0].question2 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field2 %}<li>{{ entry.entry2 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field3 %}
+  <h3>{{ extended_section1.extended1_field3[0].question3 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field3 %}<li>{{ entry.entry3 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field4 %}
+  <h3>{{ extended_section1.extended1_field4[0].question4 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field4 %}<li>{{ entry.entry4 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field5 %}
+  <h3>{{ extended_section1.extended1_field5[0].question5 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field5 %}<li>{{ entry.entry5 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field6 %}
+  <h3>{{ extended_section1.extended1_field6[0].question6 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field6 %}<li>{{ entry.entry6 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field7 %}
+  <h3>{{ extended_section1.extended1_field7[0].question7 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field7 %}<li>{{ entry.entry7 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field8 %}
+  <h3>{{ extended_section1.extended1_field8[0].question8 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field8 %}<li>{{ entry.entry8 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field9 %}
+  <h3>{{ extended_section1.extended1_field9[0].question9 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field9 %}<li>{{ entry.entry9 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section1.extended1_field10 %}
+  <h3>{{ extended_section1.extended1_field10[0].question10 }}</h3>
+      <ul>{% for entry in extended_section1.extended1_field10 %}<li>{{ entry.entry10 }}</li>{% endfor %}</ul>
+  {% endif %}
+{% endif %}   
+</div>
+{% if extended_section2.extended2_title %} 
+<div class="col card">
+  <h2>{{ extended_section2.extended2_title[0].title }}</h2> 
+  {% if extended_section2.extended2_field1 %}
+  <h3>{{ extended_section2.extended2_field1[0].question1 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field2 %}
+  <h3>{{ extended_section2.extended2_field2[0].question2 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field2 %}<li>{{ entry.entry2 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field3 %}
+  <h3>{{ extended_section2.extended2_field3[0].question3 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field3 %}<li>{{ entry.entry3 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field4 %}
+  <h3>{{ extended_section2.extended2_field4[0].question4 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field4 %}<li>{{ entry.entry4 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field5 %}
+  <h3>{{ extended_section2.extended2_field5[0].question5 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field5 %}<li>{{ entry.entry5 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field6 %}
+  <h3>{{ extended_section2.extended2_field6[0].question6 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field6 %}<li>{{ entry.entry6 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field7 %}
+  <h3>{{ extended_section2.extended2_field7[0].question7 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field7 %}<li>{{ entry.entry7 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field8 %}
+  <h3>{{ extended_section2.extended2_field8[0].question8 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field8 %}<li>{{ entry.entry8 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field9 %}
+  <h3>{{ extended_section2.extended2_field9[0].question9 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field9 %}<li>{{ entry.entry9 }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if extended_section2.extended2_field10 %}
+  <h3>{{ extended_section2.extended2_field10[0].question10 }}</h3>
+      <ul>{% for entry in extended_section2.extended2_field10 %}<li>{{ entry.entry10 }}</li>{% endfor %}</ul>
+  {% endif %} 
+{% endif %}  
+</div> 
+</div> <!-- end row -->
+</body>
+</html>
