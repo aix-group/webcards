@@ -343,8 +343,11 @@ def section(response, id):
                 else: # This is the 'select the metrics you want to include' field
                     accuracy = response.POST.getlist('accuracy')
                     precision = response.POST.getlist('precision')
-                    mean_error = response.POST.getlist('mean-error')
-                    selected_metrics = {"selected metrics":[accuracy,precision,mean_error]}
+                    brier_score = response.POST.getlist('brier-score')
+                    recall = response.POST.getlist('recall')
+                    f1_score = response.POST.getlist('f1-score')
+                    auc_score = response.POST.getlist('auc-score')
+                    selected_metrics = {"selected metrics":[accuracy,precision,brier_score,recall,f1_score,auc_score]}
                     selected_metrics = json.dumps(selected_metrics)
                     #print(selected_metrics)
                     #field.field_answers = selected_metrics
@@ -387,7 +390,7 @@ def section(response, id):
             # After save answer redirect to the next section
             if id == 28:
                id = 30
-            else:
+            elif id != 36:
                id +=1
              
             url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!

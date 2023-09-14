@@ -113,13 +113,21 @@ def create_model_card(csv_file = None,
         # User wanted to manually input the metrics
 
         dict_str = get_answer(a_dict,31)
-
+        
         if len(dict_str)>2: 
             dict_metric = js.loads(dict_str)
+            
+            print(dict_metric)
+            
             dict_metric = list(dict_metric.values())
-            precision_score = float(dict_metric[0][1][0]) if dict_metric[0][1][0] else None
+            
             accuracy_score = float(dict_metric[0][0][0]) if dict_metric[0][0][0] else None
-            mean_error_score = float(dict_metric[0][2][0]) if dict_metric[0][2][0] else None
+            precision_score = float(dict_metric[0][1][0]) if dict_metric[0][1][0] else None
+            brier_score = float(dict_metric[0][2][0]) if dict_metric[0][2][0] else None
+            recall_score = float(dict_metric[0][3][0]) if dict_metric[0][3][0] else None
+            f1_score = float(dict_metric[0][4][0]) if dict_metric[0][4][0] else None
+            auc_score = float(dict_metric[0][5][0]) if dict_metric[0][5][0] else None
+            
 
     # Make the HTML file
     model_card_output_path = os.getcwd() 
@@ -237,7 +245,7 @@ def create_model_card(csv_file = None,
         else:
             mean_error = None
         
-        ## TODO activate this ones the logic is implemented.
+        ## TODO activate this ones once the logic is implemented.
         # This is will be automatic filled if the metric is chosen for reporting
         #model_card.performance_details.how_metrics = [mctlib.HowMetrics(accuracy = accuracy_exp,
         #                                                                precision = precision_exp,
@@ -351,16 +359,32 @@ def create_model_card(csv_file = None,
     precision = None
     mean_error = None
     if 'accuracy_score' in locals() and accuracy_score is not None:
-        accuracy = bytes(str(round(accuracy_score, 4)), 'utf-8')
+        accuracy = str(round(accuracy_score, 4))
+        
     if 'precision_score' in locals() and precision_score is not None:
-        precision = bytes(str(round(precision_score, 4)), 'utf-8')
-    if 'mean_error_score' in locals() and mean_error_score is not None:
-        mean_error = bytes(str(round(mean_error_score, 4)), 'utf-8')
+        precision = str(round(precision_score, 4))
+        
+    if 'brier_score' in locals() and brier_score is not None:
+        brier_score = str(round(brier_score, 4))
+    
+    if 'recall_score' in locals() and recall_score is not None:
+        recall_score = str(round(recall_score, 4))
+    
+    if 'f1_score' in locals() and f1_score is not None:
+        f1_score = str(round(f1_score, 4))
+    
+    if 'auc_score' in locals() and auc_score is not None:
+        auc_score = str(round(auc_score, 4))
+    
     model_card.quantitative_analysis.performance_metrics = [
-    mctlib.PerformanceMetric(type='Accuracy', value=accuracy, slice = None),
-    mctlib.PerformanceMetric(type='Precision', value=precision, slice = None),
-    mctlib.PerformanceMetric(type='Mean error', value=mean_error, slice = None),
+    mctlib.PerformanceMetric(type ='Accuracy', value=accuracy, slice = None),
+    mctlib.PerformanceMetric(type ='Precision', value=precision, slice = None),
+    mctlib.PerformanceMetric(type ='Brier Score', value=brier_score, slice = None),
+    mctlib.PerformanceMetric(type ='Recall', value=recall_score, slice = None),
+    mctlib.PerformanceMetric(type ='F1 Score', value=f1_score, slice = None),
+    mctlib.PerformanceMetric(type ='AUC Score', value=auc_score, slice = None),
     ]
+    
     if vis_metric_files is not None:
         
         graph_metrics = read_image_as_base64(vis_metric_files)
@@ -565,13 +589,11 @@ def create_model_card(csv_file = None,
     # export it as proto
     proto = model_card.to_proto()
     
-    
     mct._write_proto_file(os.getcwd() + f'/model_card_output/{session_key}/model_card.proto', model_card)
     
+    
+    
     json = model_card.to_json()
-    
-   
-    
     
     # Return the model card document as an HTML page
 
@@ -581,8 +603,6 @@ def create_model_card(csv_file = None,
         html_is_exported = True
 
     #print("JSON and HTML files are created.")
-    
-    
 
     return html, html_is_exported, proto, json
     
