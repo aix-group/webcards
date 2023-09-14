@@ -637,10 +637,10 @@
 </div>
 {% endif %}      
 </div> <!-- end row --> 
-
-{% if extended_section1.extended1_title[0].title %}<h2>{{ extended_section1.extended1_title[0].title }}</h2>  
+{% if extended_section1.extended1_title[0].title %}
   <div class="row">
   <div class="col card"> 
+  <h2>{{ extended_section1.extended1_title[0].title }}</h2>  
   {% if extended_section1.extended1_field1 %}
   <h3>{{ extended_section1.extended1_field1[0].question1 }}</h3>
       <ul>{% for entry in extended_section1.extended1_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
@@ -683,8 +683,9 @@
   {% endif %}
 {% endif %}   
 </div>
-{% if extended_section2.extended2_title %}<h2>{{ extended_section2.extended2_title[0].title }}</h2>  
+{% if extended_section2.extended2_title %} 
 <div class="col card">
+  <h2>{{ extended_section2.extended2_title[0].title }}</h2> 
   {% if extended_section2.extended2_field1 %}
   <h3>{{ extended_section2.extended2_field1[0].question1 }}</h3>
       <ul>{% for entry in extended_section2.extended2_field1 %}<li>{{ entry.entry1 }}</li>{% endfor %}</ul>
