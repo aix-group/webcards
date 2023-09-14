@@ -357,7 +357,10 @@ def create_model_card(csv_file = None,
     ##QUANTITATIVE ANALYSIS 
     accuracy = None
     precision = None
-    mean_error = None
+    brier_score = None
+    recall_score = None
+    f1_score = None
+    auc_score = None
     if 'accuracy_score' in locals() and accuracy_score is not None:
         accuracy = str(round(accuracy_score, 4))
         

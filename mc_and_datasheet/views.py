@@ -390,7 +390,7 @@ def section(response, id):
             # After save answer redirect to the next section
             if id == 28:
                id = 30
-            elif id != 36:
+            elif id < 36: 
                id +=1
              
             url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
