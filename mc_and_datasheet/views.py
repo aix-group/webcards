@@ -249,7 +249,22 @@ def delete(request,id):
 
 def section(response, id):
     
-    session_key = response.session.session_key
+     # Session key based on uuid library to trigger to session key creation for django (uuid is not really used in the tool)
+    session_uuid = request.session.get('session_uuid')
+    if not session_uuid:
+        session_uuid = generate_session_id()
+        request.session['session_uuid'] = session_uuid
+
+        print(f"New Session uuid  for the user: {session_uuid}")
+    print(f"Session uuid for the user: {session_uuid}")
+    
+    # You can later make use of the uuid session key
+
+    # Get the session key
+    session_key = request.session.session_key
+
+    # Print the session key
+    print(f"Session key: {session_key}")
     
     
     model_card_json = response.session.get('model_card_json', None)      
@@ -563,7 +578,22 @@ def file_list(request,id):
 
 def datasheet_section(response,id):
     
-    session_key = response.session.session_key
+     # Session key based on uuid library to trigger to session key creation for django (uuid is not really used in the tool)
+    session_uuid = request.session.get('session_uuid')
+    if not session_uuid:
+        session_uuid = generate_session_id()
+        request.session['session_uuid'] = session_uuid
+
+        print(f"New Session uuid  for the user: {session_uuid}")
+    print(f"Session uuid for the user: {session_uuid}")
+    
+    # You can later make use of the uuid session key
+
+    # Get the session key
+    session_key = request.session.session_key
+
+    # Print the session key
+    print(f"Session key: {session_key}")
 
     dtsection_instance = get_object_or_404(
     dt_section.objects.filter(
