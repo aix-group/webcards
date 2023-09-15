@@ -250,10 +250,10 @@ def delete(request,id):
 def section(response, id):
     
      # Session key based on uuid library to trigger to session key creation for django (uuid is not really used in the tool)
-    session_uuid = request.session.get('session_uuid')
+    session_uuid = response.session.get('session_uuid')
     if not session_uuid:
         session_uuid = generate_session_id()
-        request.session['session_uuid'] = session_uuid
+        response.session['session_uuid'] = session_uuid
 
         print(f"New Session uuid  for the user: {session_uuid}")
     print(f"Session uuid for the user: {session_uuid}")
@@ -261,7 +261,7 @@ def section(response, id):
     # You can later make use of the uuid session key
 
     # Get the session key
-    session_key = request.session.session_key
+    session_key = response.session.session_key
 
     # Print the session key
     print(f"Session key: {session_key}")
@@ -579,10 +579,10 @@ def file_list(request,id):
 def datasheet_section(response,id):
     
      # Session key based on uuid library to trigger to session key creation for django (uuid is not really used in the tool)
-    session_uuid = request.session.get('session_uuid')
+    session_uuid = response.session.get('session_uuid')
     if not session_uuid:
         session_uuid = generate_session_id()
-        request.session['session_uuid'] = session_uuid
+        response.session['session_uuid'] = session_uuid
 
         print(f"New Session uuid  for the user: {session_uuid}")
     print(f"Session uuid for the user: {session_uuid}")
@@ -590,7 +590,7 @@ def datasheet_section(response,id):
     # You can later make use of the uuid session key
 
     # Get the session key
-    session_key = request.session.session_key
+    session_key = response.session.session_key
 
     # Print the session key
     print(f"Session key: {session_key}")
