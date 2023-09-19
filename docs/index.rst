@@ -74,9 +74,13 @@ After following these steps, you should have the tool set up and ready to run lo
 
 
 .. toctree::
+   :caption: Backend
+   :name: backend
    :maxdepth: 2
 
    backend/customization
+   backend/database
+   backend/django_backend
 
 
 Technical Overview
