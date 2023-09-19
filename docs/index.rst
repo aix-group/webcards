@@ -123,22 +123,35 @@ Frontend Design
 - `Web Design and Structure <frontend/html_structure.rst>`_: A thorough explanation of the Django HTML templates, accompanied by details on associated CSS and JS assets.
 
 
-
 .. toctree::
-   :caption: Backend
-   :name: backend
-   :hidden:
+   :caption: Developer Guide
    :maxdepth: 2
+
+   Backend
+   -------
 
    backend/customization
    backend/database
    backend/django_backend
 
+   Frontend
+   --------
+
+   frontend/views
+   frontend/html_structure
+
+
 .. toctree::
-   :caption: Frontend
-   :name: backend
+   :caption: User Guide
    :maxdepth: 2
 
-   frontend/html_structure
-   frontend/views
+   Model Cards
+   -------
 
+   model_card/usage
+   model_card/example_usage
+
+   Datasheets
+   --------
+
+   datasheet/usage
