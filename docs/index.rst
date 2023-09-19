@@ -73,6 +73,12 @@ To deploy the tool locally, follow these steps:
 After following these steps, you should have the tool set up and ready to run locally.
 
 
+.. toctree::
+   :maxdepth: 2
+
+   backend/customization
+
+
 Technical Overview
 ==================
 
