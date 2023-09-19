@@ -5,7 +5,7 @@ WeBCards Documentation
 =========================
 
 Welcome to the documentation of the WebCards tool. Here you can find useful information about the app, its logic, and its use. WebCards is a tool for creating and sharing model cards, which are documents that provide context and transparency for models. 
-The tool is under development and heavy testing. If you find any bugs or have any suggestions, please create an issue in GitHub page.
+The tool is under development and heavy testing. If you find any bugs or have any suggestions, please create an issue in `GitHub <https://github.com/mcmi-group/webcards>`_ page.
 
 Overview
 ============
