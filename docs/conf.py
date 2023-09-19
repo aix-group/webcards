@@ -2,14 +2,16 @@
 
 import os
 import sys
-#import sphinx_bootstrap_theme
+from datetime import datetime
+
 sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'WebCards'
-copyright = '2023'
+date = datetime.now()
+copyright = "2023-{year}, WisPerMed".format(year=date.timetuple()[0])
 author = 'Bahadir Eryilmaz'
 
 # -- General configuration ---------------------------------------------------
@@ -23,7 +25,16 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'sphinxarg.ext',
+    'sphinx.ext.autosectionlabel',
+    'myst_parser',
 ]
+
+# The master toctree document.
+master_doc = "index"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
