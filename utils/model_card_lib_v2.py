@@ -585,6 +585,22 @@ def create_model_card(csv_file = None,
                 model_card.extended_section2.extended2_field9 = [mctlib.Extended2Field9(entry9 = answer, question9 = question)]
             elif i == 9:
                 model_card.extended_section2.extended2_field10 = [mctlib.Extended2Field10(entry10 = answer, question10 = question)]
+                
+                
+
+    
+    # Environmental Impact
+    # model_card.enviromental_impact.hardware_information = [mctlib.HardwareInformation(
+    #     gpu_name="NVIDIA Tesla V100",
+    #     gpu_tdp="250W",
+    #     cpu_name="Intel(R) Xeon(R) CPU @ 2.30GHz",
+    #     cpu_tdp="150W"
+    # )]
+    # model_card.enviromental_impact.training_environment = [mct.TrainingEnvironment(
+    #     total_time="2h",
+    #     co2_kwh="0.0005"
+    # )]
+ 
 
 
     mct.update_model_card(model_card)

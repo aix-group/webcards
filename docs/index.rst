@@ -113,9 +113,9 @@ Other Topics
 
 Backend Architecture
 ---------------------
-- `Customization <backend/customization.rst>`_: This segment delves into the intricacies of integrating native sections into the model card by customizing the Model Card Toolkit.
-- `Database Infrastructure <backend/database.rst>`_: A comprehensive guide on the database schema, its design principles, and methods to interact with it.
-- `Django Backend Framework <backend/django_backend.rst>`_: A deep dive into the backend's architecture, detailing the process of incorporating new features.
+- `Customization <backend/customization.rst>`_: Instructions on adding native sections into the model card by customizing the Model Card Toolkit.
+- `Database Infrastructure <backend/database.rst>`_:Introduction to database and methods to interact with it.
+- `Django Backend Framework <backend/django_backend.rst>`_: Backend logic, file handling and adding new features.
 
 Frontend Design
 ---------------
