@@ -2,7 +2,7 @@
 
 import os
 import sys
-import sphinx_bootstrap_theme
+#import sphinx_bootstrap_theme
 sys.path.insert(0, os.path.abspath('.'))
 
 
@@ -28,5 +28,5 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-html_theme = 'bootstrap'
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme = 'sphinx_rtd_theme'
+#html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
