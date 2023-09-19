@@ -124,34 +124,30 @@ Frontend Design
 
 
 .. toctree::
-   :caption: Developer Guide
-   :maxdepth: 2
-
-   Backend
-   -------
+   :caption: Backend
+   :name: backend
+   :hidden:
+   :maxdepth: 1
 
    backend/customization
    backend/database
    backend/django_backend
 
-   Frontend
-   --------
+.. toctree::
+   :caption: Frontend
+   :name: frontend
+   :hidden:
+   :maxdepth: 1
 
-   frontend/views
    frontend/html_structure
-
+   frontend/views
 
 .. toctree::
    :caption: User Guide
-   :maxdepth: 2
+   :name: user_guide
+   :hidden:
+   :maxdepth: 1
 
-   Model Cards
-   -------
-
-   model_card/usage
+   model_card/mc_usage
    model_card/example_usage
-
-   Datasheets
-   --------
-
-   datasheet/usage
+   datasheet/dt_usage
