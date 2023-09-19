@@ -11,10 +11,10 @@ Here step-by-step instructions to add new section to the model card that will be
 
 - In the ``model-card-toolkit`` folder we need to change the following files:
 
-    - ``model_card.py``
-    - ``core.py``
-    - ``proto/model_card.proto``
-    - ``template/test/default_template.html.jinja``
+    - `model_card.py`
+    - `core.py`
+    - `proto/model_card.proto`
+    - `template/test/default_template.html.jinja`
 
 
 Let's say we want to add an Environmental Impact section to the model card. We will update the code and you can actually see in the Repository.
