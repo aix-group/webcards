@@ -73,16 +73,6 @@ To deploy the tool locally, follow these steps:
 After following these steps, you should have the tool set up and ready to run locally.
 
 
-.. toctree::
-   :caption: Backend
-   :name: backend
-   :maxdepth: 2
-
-   backend/customization
-   backend/database
-   backend/django_backend
-
-
 Technical Overview
 ==================
 
@@ -131,3 +121,24 @@ Frontend Design
 ---------------
 - `View Management <frontend/views.rst>`_: An overview of the views, their implementation strategy, and their association with specific URLs.
 - `Web Design and Structure <frontend/html_structure.rst>`_: A thorough explanation of the Django HTML templates, accompanied by details on associated CSS and JS assets.
+
+
+
+.. toctree::
+   :caption: Backend
+   :name: backend
+   :hidden:
+   :maxdepth: 2
+
+   backend/customization
+   backend/database
+   backend/django_backend
+
+.. toctree::
+   :caption: Frontend
+   :name: backend
+   :maxdepth: 2
+
+   frontend/html_structure
+   frontend/views
+
