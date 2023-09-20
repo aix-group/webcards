@@ -24,7 +24,7 @@ Adding a New Section
     - ``proto/model_card.proto``
     - ``template/test/default_template.html.jinja``
 
-3. **Incorporate Environmental Impact in ``model_card.py``**:
+3. **Incorporate Environmental Impact in `model_card.py`**:
 
     Insert the following sections before the ``class ModelCard(BaseModelCardField):`` class definition:
 
@@ -86,13 +86,13 @@ Adding a New Section
         enviromental_impact: EnvironmentalImpact = dataclasses.field(
         default_factory=EnvironmentalImpact)
 
-4. **Update ``core.py``**: At approximately line 326, append the following:
+4. **Update `core.py`**: At approximately line 326, append the following:
 
     .. code-block:: python
 
        environmental_impact = model_card.environmental_impact,
 
-5. **Alter ``proto/model_card.proto``**:
+5. **Alter `proto/model_card.proto`**:
 
     Define your new data structures using the following code. Here we also see a similar structure as in `model_card.py`. First comes the child classes then parent classes:
 
@@ -124,7 +124,7 @@ Adding a New Section
 
        optional EnvironmentalImpact environmental_impact = 11;
 
-6. **Enhance Rendering in ``template/test/default_template.html.jinja``**:
+6. **Enhance Rendering in `template/test/default_template.html.jinja` **:
 
     Incorporate the provided Jinja template snippet before the extended sections code:
 
@@ -193,7 +193,7 @@ Building & Installing the Modified Library
 
         pip install --upgrade model_card_toolkit-2.0.0.dev0-py3-none-any.whl
 
-9.  **Modify the ``model_card_lib_v2.py`` in the ``utils`` Folder**:
+9.  **Modify the `model_card_lib_v2.py` in the `utils` Folder**:
 
     Append the provided Python code snippet before the ``mct.update_model_card(model_card)``:
 
