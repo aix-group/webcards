@@ -114,21 +114,6 @@ For datasheets, the process is streamlined. User responses are directly rendered
 User inputs, collected through the website, are populated into these data structures. The `ModelCardGenerator` then processes these inputs, culminating in the creation of a model card ready for export.
 
 
-Other Topics
-======================
-
-Backend Architecture
----------------------
-- `Customization <backend/customization.rst>`_: Instructions on adding native sections into the model card by customizing the Model Card Toolkit.
-- `Database Infrastructure <backend/database.rst>`_:Introduction to database and methods to interact with it.
-- `Django Backend Framework <backend/django_backend.rst>`_: Backend logic, file handling and adding new features.
-
-Frontend Design
----------------
-- `View Management <frontend/views.rst>`_: An overview of the views, their implementation strategy, and their association with specific URLs.
-- `Web Design and Structure <frontend/html_structure.rst>`_: A thorough explanation of the Django HTML templates, accompanied by details on associated CSS and JS assets.
-
-
 .. toctree::
    :caption: Developer Guide
    :maxdepth: 2
@@ -147,11 +132,3 @@ Frontend Design
    model_card/usage
    model_card/example_usage
    datasheet/usage
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
