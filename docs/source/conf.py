@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('.'))
 
 
 project = 'WebCards'
-copyright = "2023-{year}, WisPerMed".format(year=date.timetuple()[0])
+copyright = "2023-{year}, WisPerMed".format(year=datetime.now().year)
 author = 'Bahadir Eryilmaz'
 release = '2023'
 
