@@ -1,30 +1,32 @@
-Customization
-=============
+Customization Guide
+===================
 
-As mentioned in the main page of the tool, the model card generation based on a toolkit provided by Google.
-In the current status, there have been some modification made to the tool to make it more suitable for the project.
-These modifications are more native sections and some extended sections to allow users add their own sections.
+The tool's model card generation process leans heavily on a toolkit developed by Google. While the base toolkit is comprehensive, we've incorporated custom modifications to better align with project-specific needs. This includes additional native sections and an extended format to accommodate user-defined sections.
 
-Here step-by-step instructions to add new section to the model card that will be rendered in the website and final model card.
+This guide outlines a procedure to integrate a new section into the model card. For our example, we'll incorporate an "Environmental Impact" section. 
 
-- Clone the modified library first (special permissions might be needed)
+Initial Setup
+-------------
+
+1. **Clone the Modified Library**: Start by cloning our modified library. Please note that you might need special permissions for this step.
+
     .. code-block:: bash
-   
-      git clone https://github.com/mcmi-group/featai_lib
 
-- In the ``model-card-toolkit`` folder we need to change the following files:
+       git clone https://github.com/mcmi-group/featai_lib
 
-    - `model_card.py`
-    - `core.py`
-    - `proto/model_card.proto`
-    - `template/test/default_template.html.jinja`
+Adding a New Section
+--------------------
 
+2. **Modify Essential Files**: Navigate to the ``model-card-toolkit`` folder. You'll need to update these files:
 
-Let's say we want to add an Environmental Impact section to the model card. We will update the code and you can actually see in the Repository.
+    - ``model_card.py``
+    - ``core.py``
+    - ``proto/model_card.proto``
+    - ``template/test/default_template.html.jinja``
 
+3. **Incorporate Environmental Impact in ``model_card.py``**:
 
-
-- To integrate an "Environmental Impact" section into the model card, you should modify the `model_card.py` file. Incorporate the following code snippets right before the ``class ModelCard(BaseModelCardField):`` class definiton. This structure ensures that the code remains organized and easy to maintain.
+    Insert the following sections before the ``class ModelCard(BaseModelCardField):`` class definition:
 
     .. code-block:: python
 
@@ -77,39 +79,37 @@ Let's say we want to add an Environmental Impact section to the model card. We w
             _proto_type: dataclasses.InitVar[Type[
                 model_card_pb2.EnvironmentalImpact]] = model_card_pb2.EnvironmentalImpact
 
-- We should also add our new section in the parent model card class. Add the following code snippet to the ``class ModelCard(BaseModelCardField):`` class definition.
+    Now, inside the ``class ModelCard(BaseModelCardField):`` class definition, integrate the reference for the new section:
 
     .. code-block:: python
 
         enviromental_impact: EnvironmentalImpact = dataclasses.field(
         default_factory=EnvironmentalImpact)
 
-- Next, we have to modify the `core.py` file. We add to the line 326 following:
-  
+4. **Update ``core.py``**: At approximately line 326, append the following:
+
     .. code-block:: python
 
-        environmental_impact = model_card.environmental_impact,  
+       environmental_impact = model_card.environmental_impact,
 
-- We also need to modify the `proto/model_card.proto` file. Here we also see a similar structure as in `model_card.py`. First comes the child classes then parent classes.
+5. **Alter ``proto/model_card.proto``**:
+
+    Define your new data structures using the following code. Here we also see a similar structure as in `model_card.py`. First comes the child classes then parent classes:
 
     .. code-block:: proto
 
         message HardwareInformation {
           // Information for the used hardware in training
-          // Next tag number is 5
           optional string gpu_name = 1;
           optional string gpu_tdp = 2;
           optional string cpu_name = 3;
           optional string cpu_tdp = 4;
-
         }
 
         message TrainingEnvironment {
           // Information on training environment 
-          // Next tag number is 3
           optional string total_time = 1;
           optional string co2_kwh = 2;
-
         }
 
         message EnvironmentalImpact {
@@ -118,19 +118,22 @@ Let's say we want to add an Environmental Impact section to the model card. We w
           repeated TrainingEnvironment training_enviroment = 2;
         }
 
-- Then the parent model card class add line 1063 following:
+    Then, within the parent model card class, add:
+
     .. code-block:: proto
 
        optional EnvironmentalImpact environmental_impact = 11;
 
-- Now we can already build the library but modifying the template the render these modifications would be a good idea. For that we go the the `template/test/default_template.html.jinja` and add the following before the extended sections code. Important point here there is no one correct way to render it in the template. What is below is just an example.
-  
+6. **Enhance Rendering in ``template/test/default_template.html.jinja``**:
+
+    Incorporate the provided Jinja template snippet before the extended sections code:
+
     .. code-block:: jinja
 
        <div class="row">
-       {% if environmental_impact and (environmental_impact.hardware_information or environmental_impact.training_environment)%}
+       {% if environmental_impact and (environmental_impact.hardware_information or environmental_impact.training_environment) %}
          <div class="col card">
-         <h2>Enviromental Impact</h2>
+         <h2>Environmental Impact</h2>
            {% if environmental_impact.hardware_information %}
                <h3>Hardware Information</h3>
                <ul>
@@ -158,10 +161,15 @@ Let's say we want to add an Environmental Impact section to the model card. We w
          </div>
        </div>    
 
-- After modifying the template, copy it to the `model_card_v2\template\html` folder under the main repository.
+    Finally, copy this updated template to the ``model_card_v2\template\html`` folder within the main repository.
 
-- Now we can build the library
-    
+Building & Installing the Modified Library
+------------------------------------------
+
+7. **Build the Library**:
+   
+   Use the following command to build the library:
+
     .. code-block:: bash
     
         chmod +x model_card_toolkit/move_generated_files.sh
@@ -170,20 +178,24 @@ Let's say we want to add an Environmental Impact section to the model card. We w
 
         python3 setup.py sdist bdist_wheel
 
+
     .. note::
 
-        To compile the library from source, it is recommended to install `Bazel <https://bazel.build/install>`_. While Bazel can present challenges on Windows, utilizing WSL2 (Windows Subsystem for Linux 2) is advised for a smoother experience on this platform.
+        Before compiling the library, consider installing `Bazel <https://bazel.build/install>`_. Bazel might present challenges on Windows, but utilizing WSL2 (Windows Subsystem for Linux 2) can alleviate most issues.
 
+8. **Install the New Library**:
 
-- Copy the `model_card_toolkit-2.0.0.dev0-py3-none-any.whl` from the newly created dist folder to the `utils` folder
+    - Move the ``model_card_toolkit-2.0.0.dev0-py3-none-any.whl`` file from the recently created dist folder to the ``utils`` directory.
 
-- Then, install it in the `utils` folder
+    - Install the library to your enviroment while within the ``utils`` directory. You might need to use `--force-reinstall` flag. 
 
     .. code-block:: bash
 
         pip install --upgrade model_card_toolkit-2.0.0.dev0-py3-none-any.whl
 
-- Now we can use the new library to populate the new section in the model card. For that we need to modify the `model_card_lib_v2.py` file in the `utils` folder. We add the following code snippet to the `model_card_lib_v2.py` file right before the `mct.update_model_card(model_card)`.
+9.  **Modify the ``model_card_lib_v2.py`` in the ``utils`` Folder**:
+
+    Append the provided Python code snippet before the ``mct.update_model_card(model_card)``:
 
     .. code-block:: python
 
@@ -200,9 +212,9 @@ Let's say we want to add an Environmental Impact section to the model card. We w
         )]
  
 
-Above just a usage of the new section is shown. There are other functions to streamline the taken input from the user and incorporate it to the population of model card. For more information please refer to the `Django Backend Framework <backend/django_backend.rst>`_.
+For a comprehensive breakdown of user input incorporation and other specific functions, refer to the `Django Backend Framework <backend/django_backend.rst>`_.
 
+Final Thoughts
+--------------
 
-The next steps would be commiting the changes and pushing it to the repository. From there, the website can be updated.  
-
-Customization of the core library only needed when a native section needed to be added. However, customization of the jinja template may be needed more frequent.
+Remember to commit and push your changes to the repository. Subsequently, you can update the website to reflect these changes. While customization of the core library is reserved for native section additions, template modifications might be more frequent.
