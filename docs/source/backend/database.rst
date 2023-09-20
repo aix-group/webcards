@@ -23,4 +23,11 @@ To access to  admin interface you need to create superuser. Use the following co
 
     python manage.py createsuperuser
 
-After that you can access to admin interface on the following URL: http://
+After that you can access to admin interface on the following URL: `http://localhost:8000/admin/`. There you have to login with your superuser credentials. In the Admin page, you can make changes to the database. You can add new records, edit existing records, and delete records.
+To be more specific:
+
+- Modifying the fields and sections with all of the attributes (descriptions, helpers) 
+- Checking the sessions and current number of session Ids in the database with their data
+- Adding the new section and fields 
+
+is possible. However if there is no available dataclasses in the core library adding new section and fields would not be meaningful. Otherwise a new logic has to be implemented to make us of the new sections.
