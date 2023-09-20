@@ -77,7 +77,7 @@ Let's say we want to add an Environmental Impact section to the model card. We w
             _proto_type: dataclasses.InitVar[Type[
                 model_card_pb2.EnvironmentalImpact]] = model_card_pb2.EnvironmentalImpact
 
-- We should also add our new section also in the parent model card class. Add the following code snippet to the ``class ModelCard(BaseModelCardField):`` class definition.
+- We should also add our new section in the parent model card class. Add the following code snippet to the ``class ModelCard(BaseModelCardField):`` class definition.
 
     .. code-block:: python
 
