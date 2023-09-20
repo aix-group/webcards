@@ -1,2 +1,2 @@
-EXAMPLE USAGE
+Example Case 
 =============

@@ -1,4 +1,4 @@
-CUSTOMIZATION
+Customization
 =============
 
 As mentioned in the main page of the tool, the model card generation based on a toolkit provided by Google.

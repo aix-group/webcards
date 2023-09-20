@@ -1,2 +1,2 @@
-DJANGO BACKEND
+Django Backend
 ==============
