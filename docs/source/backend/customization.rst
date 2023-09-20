@@ -185,7 +185,7 @@ Building & Installing the Modified Library
 
 8. **Install the New Library**:
 
-    - Move the ``model_card_toolkit-2.0.0.dev0-py3-none-any.whl`` file from the recently created dist folder to the ``utils`` directory.
+    - Move the ``model_card_toolkit-2.0.0.dev0-py3-none-any.whl`` file from the recently created dist folder to the ``utils`` directory in the main repository.
 
     - Install the library to your enviroment while within the ``utils`` directory. You might need to use `--force-reinstall` flag. 
 
