@@ -1,10 +1,13 @@
+CUSTOMIZATION
+=============
+
 As mentioned in the main page of the tool, the model card generation based on a toolkit provided by Google.
 In the current status, there have been some modification made to the tool to make it more suitable for the project.
 These modifications are more native sections and some extended sections to allow users add their own sections.
 
 Here step-by-step instructions to add new section to the model card that will be rendered in the website and final model card.
 
-- Clone the modified library first(special permissions might be needed)
+- Clone the modified library first (special permissions might be needed)
     .. code-block:: bash
    
       git clone https://github.com/mcmi-group/featai_lib
@@ -74,7 +77,7 @@ Let's say we want to add an Environmental Impact section to the model card. We w
             _proto_type: dataclasses.InitVar[Type[
                 model_card_pb2.EnvironmentalImpact]] = model_card_pb2.EnvironmentalImpact
 
-- We should also add our new section also in the paren model card class. Add the following code snippet to the ``class ModelCard(BaseModelCardField):`` class definition.
+- We should also add our new section also in the parent model card class. Add the following code snippet to the ``class ModelCard(BaseModelCardField):`` class definition.
 
     .. code-block:: python
 

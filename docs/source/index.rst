@@ -1,8 +1,14 @@
-.. _index:
+.. WebCards documentation master file, created by
+   sphinx-quickstart on Wed Sep 20 09:31:17 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-=========================
-WeBCards Documentation
-=========================
+Welcome to WebCards's documentation!
+====================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
 
 Welcome to the documentation of the WebCards tool. Here you can find useful information about the app, its logic, and its use. WebCards is a tool for creating and sharing model cards and datasheets, which are documents that provide context and transparency for machine learning tasks. 
 The tool is under development and heavy testing. If you find any bugs or have any suggestions, please create an issue in `GitHub <https://github.com/mcmi-group/webcards>`_ page.
@@ -124,30 +130,28 @@ Frontend Design
 
 
 .. toctree::
-   :caption: Backend
-   :name: backend
-   :hidden:
-   :maxdepth: 1
+   :caption: Developer Guide
+   :maxdepth: 2
 
    backend/customization
    backend/database
    backend/django_backend
-
-.. toctree::
-   :caption: Frontend
-   :name: frontend
-   :hidden:
-   :maxdepth: 1
-
-   frontend/html_structure
    frontend/views
+   frontend/html_structure
+
 
 .. toctree::
    :caption: User Guide
-   :name: user_guide
-   :hidden:
-   :maxdepth: 1
+   :maxdepth: 2
 
-   model_card/mc_usage
+   model_card/usage
    model_card/example_usage
-   datasheet/dt_usage
+   datasheet/usage
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
