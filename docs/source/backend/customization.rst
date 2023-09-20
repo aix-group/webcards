@@ -156,7 +156,9 @@ Let's say we want to add an Environmental Impact section to the model card. We w
                </ul>
          {% endif %}  
          </div>
-       </div>      
+       </div>    
+
+- After modifying the template, copy it to the `model_card_v2\template\html` folder under the main repository.
 
 - Now we can build the library
     
@@ -167,6 +169,11 @@ Let's say we want to add an Environmental Impact section to the model card. We w
         pip install wheel
 
         python3 setup.py sdist bdist_wheel
+
+    .. note::
+
+        To compile the library from source, it is recommended to install `Bazel <https://bazel.build/install>`_. While Bazel can present challenges on Windows, utilizing WSL2 (Windows Subsystem for Linux 2) is advised for a smoother experience on this platform.
+
 
 - Copy the `model_card_toolkit-2.0.0.dev0-py3-none-any.whl` from the newly created dist folder to the `utils` folder
 
