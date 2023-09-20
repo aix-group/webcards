@@ -113,7 +113,7 @@ For datasheets, the process is streamlined. User responses are directly rendered
 
 User inputs, collected through the website, are populated into these data structures. The `ModelCardGenerator` then processes these inputs, culminating in the creation of a model card ready for export.
 
-Through the documentation especially for the developer guider, it is recommended to check the official django documentation for more information about the framework. The documentation can be found `here <https://docs.djangoproject.com/en/3.2/>`_.
+Through the documentation especially for the developer guide, it is recommended to check the official django documentation for more information about the framework. The documentation can be found `here <https://docs.djangoproject.com/en/3.2/>`_.
 
 .. toctree::
    :caption: Developer Guide
