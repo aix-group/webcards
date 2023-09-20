@@ -56,6 +56,6 @@ python manage.py runserver
 ```
 ###
 
-For detailed documentation: https://webcards.readthedocs.io/en/latest/index.html
-
 now click [here](http://localhost:8000/feat_ai/) to open the server.
+
+For detailed documentation: https://webcards.readthedocs.io/en/latest/index.html
