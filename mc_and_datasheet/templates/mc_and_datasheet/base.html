@@ -110,9 +110,35 @@
     .logo-container-logo:hover img {
         transform: scale(1.05); /* Slightly zooms the image in on hover */
     }
+
+    /* Legal section */
+    .legal-section {
+      align-items: center;
+    }
     
-
-
+    .legal-link {
+      text-decoration: none; /* Remove underline */
+      color: #ecf0f1; /* Same light shade for text */
+      padding: 5px 10px;
+      border: 2px solid transparent; /* Invisible border to maintain button size on hover */
+      transition: 0.3s ease; /* Smooth transition for hover effects */
+    }
+    
+    .legal-link:hover {
+      color: #2c3e50; /* Dark shade of blue for contrast on hover */
+      background-color: #ecf0f1; /* Light shade for background */
+      border: 2px solid #e74c3c; /* Red accent border on hover */
+    }
+    
+    /* Footer bottom text */
+    .footer > div {
+      margin-top: 20px;
+      font-size: 0.9em; /* Slightly smaller text */
+      text-align: center;
+    }
+        
+    
+    
       </style>
   </head>
 <body>
@@ -161,30 +187,37 @@
     
 
     <footer class="footer">
-  
       <div style="display: flex; justify-content: center; align-items: center; gap: 50px; margin-bottom: 20px;">
-         
-        <div class="logo-container">
-          <div class="ikim-logo-container">
-              <a href="https://wispermed.com">
-                  <img src="{% static 'mc_and_datasheet/assets/img/wispermed.png' %}" alt="Wispermed Logo" width="200">
-              </a>
+  
+          <!-- Logo Section -->
+          <div class="logo-section" style="display: flex; gap: 50px;">
+              <div class="ikim-logo-container">
+                  <a href="https://wispermed.com">
+                      <img src="{% static 'mc_and_datasheet/assets/img/wispermed.png' %}" alt="Wispermed Logo" width="200">
+                  </a>
+              </div>
+              <div class="ikim-logo-container">
+                  <a href="https://www.uni-marburg.de/de/fb12">
+                      <img src="{% static 'mc_and_datasheet/assets/img/Uni_Marburg_Logo.png' %}" alt="IKIM Logo" width="190">
+                  </a>
+              </div>
+              <div class="github-icon-container">
+                  <a href="https://github.com/mcmi-group/feat_ai">
+                      <i class="fab fa-github fa-5x"></i>
+                  </a>
+              </div>
           </div>
-          <div class="ikim-logo-container">
-              <a href="https://www.uni-marburg.de/de/fb12">
-                  <img src="{% static 'mc_and_datasheet/assets/img/Uni_Marburg_Logo.png' %}" alt="IKIM Logo" width="190">
-              </a>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 50px; margin-bottom: 20px;">
+          <!-- Legal and Impressum Links -->
+          <div class="legal-section" style="display: flex; gap: 30px;">
+              <a href="{% url 'mc_and_datasheet:impressum' %}" class="legal-link">Impressum</a>
+              <a href="{% url 'mc_and_datasheet:legal' %}" class="legal-link">Legal</a>
           </div>
-          <div class="github-icon-container">
-              <a href="https://github.com/mcmi-group/feat_ai">
-                  <i class="fab fa-github fa-3x"></i>
-              </a>
-          </div>
-      </div>
       </div>
   
-      <div>
-        Mathematics and Computer Science Department / University of Marburg / Germany
+      <div style="text-align: center;">
+          Mathematics and Computer Science Department / University of Marburg / Germany
       </div>
   </footer>
 

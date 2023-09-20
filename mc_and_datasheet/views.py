@@ -28,35 +28,23 @@ import utils.datasheet as dt
 
 # Create your views here.
 
+def impressum(response):
+    return render(response, "mc_and_datasheet/impressum.html")
+
+def legal(response):
+    return render(response, "mc_and_datasheet/legal.html")
+
+def about(response):
+    return render(response, "mc_and_datasheet/about.html")
+
+def contact(response):
+    return render(response, "mc_and_datasheet/contact.html")
+
 def datacard_section(response, id):
     context = {}
-    return render(response, "mc_and_datasheet/datacard_section.html", context)
-def index(request):
-    context = {}
-    return render(request, "mc_and_datasheet/index.html", context)
-def about(request):
-    context = {}
-    return render(request, "mc_and_datasheet/about.html", context)
-def contact(request):
-    context = {}
-    return render(request, "mc_and_datasheet/contact.html", context)
-def projects(request):
-    context = {}
-    return render(request, "mc_and_datasheet/projects.html", context)
-def blog_home(request):
-    context = {}
-    return render(request, "mc_and_datasheet/blog-home.html", context)
-def blog_post(request):
-    context = {}
-    return render(request, "mc_and_datasheet/blog-post.html", context)
-def portfolio_overview(request):
-    context = {}
-    return render(request, "mc_and_datasheet/portfolio-overview.html", context)
-def portfolio_item(request):
-    context = {}
-    return render(request, "mc_and_datasheet/portfolio-item.html", context)
-def my_view(request):
-    return render(request, 'mc_and_datasheet/my_template.html')
+    return render(response, "mc_and_datasheet/datacard_section.html", context=context)
+
+
 
 def generate_session_id():
     return str(uuid.uuid4())
