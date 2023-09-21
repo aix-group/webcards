@@ -219,7 +219,7 @@ def delete(request,id):
     if 'delete_dt_section' in request.GET:
         CardDataDatasheet.objects.all().delete()
         dt_Field.objects.filter(dt_section__id=1, id__gt=3, field_session = session_key).delete()
-        dt_Field.objects.filter(dt_section__id=2, id__gt=19, field_session = session_key).delete()
+        dt_Field.objects.filter(dt_section__id=2, id__gt=19,field_session = session_key).delete()
         dt_Field.objects.filter(dt_section__id=3, id__gt=30,field_session = session_key).delete()
         dt_Field.objects.filter(dt_section__id=4, id__gt=33,field_session = session_key).delete()
         dt_Field.objects.filter(dt_section__id=5, id__gt=38,field_session = session_key).delete()
@@ -335,9 +335,10 @@ def section(response, id):
             for field in section_instance.field_set.all():
                 
                 if field.field_question != "Select the metrics you want to include:":
-                    answer_instance = response.POST.get("a" + str(field.id))
-                    #field.field_answer = answer_instance # save to database
-                    section_answers.append(answer_instance) # also append the list
+                    if field.field_session == session_key or field.field_session == "":
+                        answer_instance = response.POST.get("a" + str(field.id))
+                        field.field_answer = answer_instance # save to database
+                        section_answers.append(answer_instance) # also append the list
 
                     #print(answer_instance)
                     #field.save()
@@ -423,7 +424,7 @@ def section(response, id):
         print(" Method is not Post ")
         
     print(" YOU ARE RETURNED TO SECTION ")
-
+    
       
     file_exists = File.objects.exists()
     # Get it from backend to use in front end
@@ -434,14 +435,25 @@ def section(response, id):
         Q(field_session = session_key) | Q(field_session='')
         ).all()
     
+    print(field_set)
+    for field in field_set:
+        
+        print(field.field_question)
+    
     # Handle the user answers automaticly shown in the fields
     try:
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
+        
+        print(f"MOST RECENT ENTRY. {most_recent_entry}")
+            
         most_recent_entry_data = most_recent_entry.card_data
         
         # convert the json string to dictionary
         most_recent_entry_data = json.loads(most_recent_entry_data)
-    
+        
+        
+        print('The most recent entry data is:')
+        print(most_recent_entry_data)
         # Second security layer that no user can access other users data
         if most_recent_entry_data["session_id"] == session_key:
             print('The session key is the same')
@@ -465,7 +477,11 @@ def section(response, id):
         else:
             length = len(field_set)
             field_values = ["" for _ in range(length)]
-        
+    
+    # Match the length of the field_values with the field_set so that loop counter in html would work    
+    if len(field_values) != len(field_set):
+        while len(field_values) < len(field_set):
+            field_values.append("")
 
     #print(f'The field values are {field_values}')
     #print(type(field_set))
@@ -666,6 +682,7 @@ def datasheet_section(response,id):
     # Handle the user answers automaticly shown in the fields
     try:
         most_recent_entry = CardDataDatasheet.objects.filter(carddata_session = session_key).latest('created_at')
+        
         most_recent_entry_data = most_recent_entry.card_data
         
         # convert the json string to dictionary
