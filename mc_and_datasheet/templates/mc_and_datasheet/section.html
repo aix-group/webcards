@@ -235,7 +235,7 @@ Section
             }
          </style>
       </div>
-      <input type="date" id="appointment-time" name="a{{field.id}}" class="form-control bg-dark text-light">
+      <input type="date" id="appointment-time" value="{{ version_date }}" name="a{{field.id}}" class="form-control bg-dark text-light">
       {% elif field.field_question == 'Size of the dataset:' %} 
       <br>
       <label id="name-label">{{field.field_question}}</label>

@@ -21,7 +21,7 @@ from django.db.models.signals import pre_delete
 from django.contrib.sessions.models import Session
 from django.http import JsonResponse
 import model_card_toolkit as mctlib
-
+import datetime
 # Import core libraries
 import utils.model_card_lib_v2 as mclib_v2
 import utils.datasheet as dt
@@ -456,8 +456,18 @@ def section(response, id):
                 else:
                     field_dicts = most_recent_entry_data[f'Section_Data_{section_instance.id}']
                 
-                field_values = [''.join([str(val) if val is not None else "" for val in dict.values()]) for dict in field_dicts]
+                print(field_dicts)
+                for dict in field_dicts:
+                    for key in dict:
+                        if key.startswith("36"):
+                            version_date = dict[key]
                 
+                if version_date:
+                    print(version_date)
+                else:
+                    print("Version date not found.")    
+                field_values = [''.join([str(val) if val is not None else "" for val in dict.values()]) for dict in field_dicts]
+
             except Exception as e_inner:
                 print("Error inner:", e_inner)  # Print the inner exception
                 if model_card_json:
@@ -466,7 +476,7 @@ def section(response, id):
                 else:
                     length = len(field_set)
                     field_values = ["" for _ in range(length)]
-
+                version_date = datetime.datetime.now().strftime("%Y-%m-%d")           
     except Exception as e_outer:
         print("Error outer:", e_outer)  # Print the outer exception
         if model_card_json:
@@ -487,6 +497,7 @@ def section(response, id):
     context = {"section":section_instance,
                "field_set":field_set,
                "field_values":field_values,
+               "version_date":version_date,
                "section_list":section_list,
                'current_section_id': section_instance.id,
                "files": file_objects,
