@@ -86,7 +86,7 @@ def get_session_id(request):
 
 def upload_file(response, id):
     
-    print('YOU ARE HERE')
+    #print('YOU ARE HERE')
     session_key = response.session.session_key
     
     section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
@@ -117,7 +117,7 @@ def upload_file(response, id):
             
             #return render(response, 'mc_and_datasheet/section.html', context)
             
-            print('YOU ARE HERE')
+            #print('YOU ARE HERE')
             url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
             return HttpResponseRedirect(url)
 
@@ -132,7 +132,7 @@ def upload_file(response, id):
     #"field_answers":section_instance.field_answer
     "form":form
     }
-    print('YOU ARE HERE')
+    #print('YOU ARE HERE')
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
 def upload_json(response, id):
@@ -435,25 +435,18 @@ def section(response, id):
         Q(field_session = session_key) | Q(field_session='')
         ).all()
     
-    print(field_set)
-    for field in field_set:
+    #print(field_set)
+    #for field in field_set:
         
-        print(field.field_question)
+        #print(field.field_question)
     
     # Handle the user answers automaticly shown in the fields
     try:
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
-        
-        print(f"MOST RECENT ENTRY. {most_recent_entry}")
-            
         most_recent_entry_data = most_recent_entry.card_data
-        
         # convert the json string to dictionary
         most_recent_entry_data = json.loads(most_recent_entry_data)
-        
-        
-        print('The most recent entry data is:')
-        print(most_recent_entry_data)
+
         # Second security layer that no user can access other users data
         if most_recent_entry_data["session_id"] == session_key:
             print('The session key is the same')
@@ -462,21 +455,27 @@ def section(response, id):
                     field_dicts = model_card_json[f'Section_Data_{section_instance.id}']
                 else:
                     field_dicts = most_recent_entry_data[f'Section_Data_{section_instance.id}']
-                field_values = [''.join(dict.values()) for dict in field_dicts]
-            except:
+                
+                field_values = [''.join([str(val) if val is not None else "" for val in dict.values()]) for dict in field_dicts]
+                
+            except Exception as e_inner:
+                print("Error inner:", e_inner)  # Print the inner exception
                 if model_card_json:
                     field_dicts = model_card_json[f'Section_Data_{section_instance.id}']
                     field_values = [''.join(dict.values()) for dict in field_dicts]
                 else:
                     length = len(field_set)
                     field_values = ["" for _ in range(length)]
-    except:
+
+    except Exception as e_outer:
+        print("Error outer:", e_outer)  # Print the outer exception
         if model_card_json:
             field_dicts = model_card_json[f'Section_Data_{section_instance.id}']
             field_values = [''.join(dict.values()) for dict in field_dicts]
         else:
             length = len(field_set)
             field_values = ["" for _ in range(length)]
+
     
     # Match the length of the field_values with the field_set so that loop counter in html would work    
     if len(field_values) != len(field_set):
@@ -494,8 +493,6 @@ def section(response, id):
                "is_files": file_exists,
                "form":form
     }
-    
-    print(context)
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
 
@@ -505,7 +502,7 @@ def create(response):
         form = CreateNewSection(response.POST)
         if form.is_valid():
             n = form.cleaned_data["name"]
-            print('n')
+            #print('n')
             t = MC_section(name=n)
             t.save()
         return HttpResponseRedirect("/mc_and_datasheet/%i"%t.id)
@@ -613,11 +610,11 @@ def datasheet_section(response,id):
     #{"save":["save"],"c1":["clicked"]}
     #print(dtsection_instance.dt_field_set.all()) # this logging.infos all the field question as objects
     if response.method == "POST":
-        print(" I am here you stooopid")
+        #print(" I am here you stooopid")
         
         if response.POST.get("save"):
 
-            print(response.POST)
+            #print(response.POST)
 
             section_answers = []
             
@@ -642,7 +639,7 @@ def datasheet_section(response,id):
             section2beadded = json.dumps(section2beadded)
 
 
-            print(section2beadded)
+            #print(section2beadded)
             if CardDataDatasheet.objects.exists():
                 print(" IT SEEMS CARD DATA IS POPULATED ALREADY NEW SECTION DATA WILL BE ADDED")
                 
@@ -722,7 +719,7 @@ def createoutput(request,id):
     session_key = request.session.session_key
     export_format = request.POST.get("format")
 
-    print("in the create output function")
+    #print("in the create output function")
     if CardData.objects.exists():
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
         message_text = ""
@@ -806,7 +803,7 @@ def createoutput(request,id):
                                                 section_names = section_names,
                                                 session_key = session_key)
         
-        print(f"Export format {export_format}")
+        #print(f"Export format {export_format}")
         if export_format == "html":
             # Get the HTML content as a string
             html_content = str(html_model_card)
@@ -844,7 +841,7 @@ def createoutput(request,id):
         
         response = HttpResponse(message_text, content_type="text/html")
 
-    print(response)
+    #print(response)
     return response
 
 def datasheet_export(request,id):
@@ -860,7 +857,7 @@ def datasheet_export(request,id):
         model_card_dict = json.loads(most_recent_entry.get())
 
         fil_dict = {key: value for key, value in model_card_dict.items() if key.startswith("Section_Data")}
-        print(fil_dict)
+        #print(fil_dict)
 
         # Get the HTML content as a string
         html_content = dt.create_datasheet(fil_dict)
