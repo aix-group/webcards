@@ -461,7 +461,7 @@ def section(response, id):
                     for key in dict:
                         if key.startswith("36"):
                             version_date = dict[key]
-                
+
                 if version_date:
                     print(version_date)
                 else:
@@ -485,6 +485,7 @@ def section(response, id):
         else:
             length = len(field_set)
             field_values = ["" for _ in range(length)]
+        version_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     
     # Match the length of the field_values with the field_set so that loop counter in html would work    
