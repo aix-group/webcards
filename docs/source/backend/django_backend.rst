@@ -59,3 +59,54 @@ The Logic of the Datasheet
 --------------------------
 
 For datasheet, a simpler approach is taken. The answers directly gets rendered into the html file and the html file is returned to the user to be downloaded as attachment.
+
+Django Templates
+----------------
+
+Django templates are used to generate dynamic HTML content and are integral to the Django web framework. These templates allow for a clear separation between the presentation logic and business logic, aiding in the maintainability and readability of code.
+
+Location
+^^^^^^^^
+
+By convention, the HTML files leveraging Django's templating engine are stored in the `templates` folder. This organization helps in keeping the structure clean and manageable. Depending on the complexity of the application, the `templates` folder can further contain sub-directories named after the respective Django apps, ensuring a modular structure.
+
+Functionality
+^^^^^^^^^^^^^
+
+Django templates come with a built-in templating language that offers a wide array of tools:
+
+- **Variables**: Display the value of Python expressions using double curly braces, like `{{ variable_name }}`.
+  
+- **Tags**: Execute certain logic such as loops and conditionals. For instance, `{% for item in items %}` ... `{% endfor %}` will loop through a list of items.
+  
+- **Filters**: Transform the values of variables and arguments. For example, `{{ name|lower }}` will display the name in lowercase.
+
+Interaction with Views
+^^^^^^^^^^^^^^^^^^^^^^
+
+In a typical Django application, views fetch or compute data, then combine it with a template, and finally return an HttpResponse. This ensures a clear separation between data processing (view) and presentation (template). For instance, a view might fetch a list of articles from a database and then render these using an `articles.html` template.
+
+URLs and Templates
+^^^^^^^^^^^^^^^^^^
+
+URL configurations in Django define URL patterns to match against the requested URL. Once matched, the associated view function or class is invoked. This view can then leverage a template to generate the final HTML response. Thus, the URL patterns indirectly determine which template gets displayed, based on the associated view's logic.
+
+Power of Django Templates
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Django templates are designed to be easy for non-programmers to read and write. At the same time, they offer the power and flexibility to cater to complex scenarios:
+
+1. **Inheritance**: Templates can extend other templates using the `{% extends %}` tag. This promotes code reusability by allowing base templates to define structures and blocks that child templates can override.
+
+2. **Includes**: Smaller reusable templates can be included in larger templates using the `{% include %}` tag, promoting modularity.
+
+3. **Custom Tags and Filters**: While Django provides many built-in tags and filters, developers can also create custom ones tailored to specific needs.
+
+4. **Safe Rendering**: Django templates escape content by default, offering protection against cross-site scripting (XSS) attacks.
+
+5. **Context Processors**: These allow developers to make certain data available globally to all templates, ensuring common data is easily accessible.
+
+Conclusion
+^^^^^^^^^^
+
+Django templates form the cornerstone of the framework's front-end capabilities. With their seamless integration with views, structured organization, and powerful templating language, they enable developers to build dynamic, data-driven, and maintainable web applications efficiently.
