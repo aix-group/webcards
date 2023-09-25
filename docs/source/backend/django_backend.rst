@@ -50,3 +50,12 @@ The logic can be better understood with this diagram:
    :align: center
 
    Model Card creation logic. 
+
+
+The export formats are html, proto and json. The json format can be used to populate the fields in the web interface directly to make some modification or have a starting point.
+
+
+The Logic of the Datasheet
+--------------------------
+
+For datasheet, a simpler approach is taken. The answers directly gets rendered into the html file and the html file is returned to the user to be downloaded as attachment.
