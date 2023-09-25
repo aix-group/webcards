@@ -122,7 +122,6 @@ Through the documentation especially for the developer guide, it is recommended 
    backend/customization
    backend/database
    backend/django_backend
-   frontend/views
    frontend/html_structure
    backend/session
 
