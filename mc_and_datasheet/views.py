@@ -236,15 +236,8 @@ def section(response, id):
     # Print the session key in yellow
     print(f"\033[93mSession key in section view: {session_key}\033[0m")
 
-    model_card_json = response.session.get('model_card_json', None)  
-
-    # checking if the from_createoutput query parameter is present in the URL and if its value is set to true.
-    
-    from_createoutput = response.GET.get('from_createoutput', 'false') == 'true' # If from_createoutput is not present, it defaults to 'false'.
-       
-    
-    show_warning = response.GET.get('from_inner', 'false') == 'true' # If from_inner is not present, it defaults to 'false'.
-
+    model_card_json = response.session.get('model_card_json', None)        
+        
     # Query the database with the session id
     section_instance = get_object_or_404(
     MC_section.objects.filter(
@@ -465,12 +458,7 @@ def section(response, id):
                "show_warning": show_warning,
                "warning_message" : "Warning: You did not click 'Save'. Please ensure you save your changes."
                 } 
-                
-    if from_createoutput:
-        print('User is coming from createoutput page. Warning will be shown.')
-        alert_script = '<script>alert("User is coming from createoutput page. Warning will be shown.");</script>'
-        
-        
+           
     return render(response , "mc_and_datasheet/section.html", context)# The third attributes are actually variables that you can pass inside the html!
 
 # A subroutine the retrieves the data from the database and returns it as a json string
