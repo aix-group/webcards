@@ -29,7 +29,7 @@ This will create a table in your database named `django_session` where session d
 
 Application-Specific Implementation
 -----------------------------------
-In the application we adopt the loginless usage and thus anonymous sessions are leveraged. Whenever the webpage is visited a process is triggered and a session id sent from database to browser cookies. With that session id we ensure that no data is mixed with other users data. The application uses Django sessions primarily to store the uploaded JSON model card data. While Django sessions offer a vast array of uses, in this specific application, the primary use case revolves around maintaining user-specific data tied to their session ID. The session ID acts as a unique identifier, ensuring that users' data doesn't mix up with others.
+In the application, we embrace a login-free approach and, as a result, heavily rely on anonymous sessions. Every time a user visits the webpage, a process is initiated that sends a session ID from the database to the browser's cookies. This session ID ensures that each user's data remains distinct and doesn't get entangled with the data of others. The application uses Django sessions primarily to store the uploaded JSON model card data. While Django sessions offer a vast array of uses, in this specific application, the primary use case revolves around maintaining user-specific data tied to their session ID. The session ID acts as a unique identifier, ensuring that users' data doesn't mix up with others.
 
 Data affiliated with a user is tied to their session ID. This is achieved by appending a `_session_id` suffix to various class variables. When creating or querying data, it's filtered using this session ID, ensuring data integrity for each user.
 

@@ -174,3 +174,9 @@ h1{
   align-items: center;
   height: 100%;
 }
+
+.custom-dark-warning {
+  background-color: #222;  /* Dark background */
+  color: #ddd;             /* Light text color */
+  border-color: #444;      /* Slightly lighter border */
+}

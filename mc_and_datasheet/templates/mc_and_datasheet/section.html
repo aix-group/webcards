@@ -106,10 +106,16 @@ Section
       <div class="modal-dialog modal-dialog-centered" role="document">
          <div class="modal-content" style="background-color:#333333">
             <div class="modal-header">
-               <h5 class="modal-title" id="exportModalLabel" style="color:white" >Export Model Card</h5>
+               <h5 class="modal-title" id="exportModalLabel" style="color:white">Export Model Card</h5>
                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+               <!-- Display warning if show_warning is True -->
+               {% if show_warning %}
+               <div class="alert alert-dark custom-dark-warning" role="alert">
+                  {{ warning_message }}
+               </div>
+               {% endif %}
                <label for="section-name" style="color:white">Select the desired output format:</label>
                <br>
                <br>
@@ -126,7 +132,7 @@ Section
                   </div>
                   <div class="col-4">
                      <button id="jsonButton" type="button" class="btn btn-secondary mb-3">
-                        <i class="fas fa-file-code me-1"></i> JSON
+                        <i class="fas fa-file-code me-1"></i> JSON 
                      </button>
                   </div>
                </div>
@@ -137,6 +143,7 @@ Section
          </div>
       </div>
    </div>
+
    <!-- The modal structure for uploading -->
    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -162,9 +169,7 @@ Section
             </div>
          </div>
       </div>
-   </div>
-
-
+   </div> 
 
 
    <br>

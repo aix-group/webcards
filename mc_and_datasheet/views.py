@@ -1,3 +1,15 @@
+# Author: Bahadir Eryilmaz 
+# Date: 30/09/2023
+# Documentation: https://webcards.readthedocs.io/en/latest/index.html
+# Desc: This file contains the views of the application. The views are the functions that are called when a user makes a request to a URL.
+
+
+# Import python libraries
+import os
+import json
+import uuid
+
+#Django imports
 from django.shortcuts import get_object_or_404, render, get_list_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
@@ -7,9 +19,6 @@ from django.utils import timezone
 from django.contrib import messages
 from .forms import FileForm, CreateNewSection
 from .models import File
-import os
-import json
-import uuid
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Sum, Max
@@ -19,14 +28,14 @@ from django.db.models import Q
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
 from django.contrib.sessions.models import Session
-from django.http import JsonResponse
 import model_card_toolkit as mctlib
 import datetime
+
 # Import core libraries
 import utils.model_card_lib_v2 as mclib_v2
 import utils.datasheet as dt
 
-# Create your views here.
+
 
 def impressum(response):
     return render(response, "mc_and_datasheet/impressum.html")
@@ -44,12 +53,9 @@ def datacard_section(response, id):
     context = {}
     return render(response, "mc_and_datasheet/datacard_section.html", context=context)
 
-
-
 def generate_session_id():
     return str(uuid.uuid4())
 
-    
 def home(request):
 
     # Session key based on uuid library to trigger to session key creation for django (uuid is not really used in the tool)
@@ -86,11 +92,10 @@ def get_session_id(request):
 
 def upload_file(response, id):
     
-    #print('YOU ARE HERE')
     session_key = response.session.session_key
     
-    section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
-    section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
+    section_instance = get_object_or_404(MC_section, id=id) # Query the database to get the section instance
+    section_list = get_list_or_404(MC_section) # Query the database to get the section list
     
     if response.method == 'POST':
         form = FileForm(response.POST, response.FILES)
@@ -100,25 +105,21 @@ def upload_file(response, id):
             
             # Get the file from form in front end
             file = form.cleaned_data['file']
-            #print(file)
+
             # Create the file instance
             file_instance = File(file=file, name=file.name, uploaded_at=timezone.now(), uploaded_section_id=section_instance.id, file_session=session_key)
             
-            #print('Info: file instance: ', file_instance.name)
             # Specify the upload path relative to the media root
             file_path = f'uploads/{session_key}/{file_instance.name}'
-            #print('Info: file path: ', file_path)
+       
             # Save the file
             
             fs = FileSystemStorage()
             fs.save(file_path, file)
             # Save the file instance
             file_instance.save()            
-            
-            #return render(response, 'mc_and_datasheet/section.html', context)
-            
-            #print('YOU ARE HERE')
-            url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+
+            url = reverse('mc_and_datasheet:section', args=[id]) # Don't forget to add the app name as well!
             return HttpResponseRedirect(url)
 
     else:
@@ -129,20 +130,13 @@ def upload_file(response, id):
     context = {"section":section_instance,
     "section_list":section_list,
     'current_section_id': section_instance.id,
-    #"field_answers":section_instance.field_answer
     "form":form
     }
-    #print('YOU ARE HERE')
     return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
 
 def upload_json(response, id):
     
-    session_key = response.session.session_key
-    
-    
-    model_card_output_path = os.getcwd() 
-
-    mct = mctlib.ModelCardToolkit(model_card_output_path)
+    session_key = response.session.session_key # Trigger it in case user does not have session key 
     
     if response.method == 'POST' and 'json_file' in response.FILES:
         json_file = response.FILES['json_file']
@@ -160,15 +154,11 @@ def upload_json(response, id):
         # Store the model_card_json in session
         response.session['model_card_json'] = model_card_json
         os.remove(saved_file_path)
-
-    #CardData.objects.create(carddata_session = session_key,
-    #                        card_data = section2beadded,
-    #                        created_at = timezone.now())
     
-    
-    url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+    url = reverse('mc_and_datasheet:section', args=[id]) # Don't forget to add the app name as well!
     return HttpResponseRedirect(url)   
 
+# This is the delete command that user activates from the front end
 def delete(request,id):
 
     session_key = request.session.session_key
@@ -188,9 +178,6 @@ def delete(request,id):
 
         # Get all sections with id greater than 36
         MC_section.objects.filter(id__gt=36, mc_section_session=session_key).delete()
-        
-        # Delete the sections
-        #num_deleted, _ = sections_to_delete.delete()
 
         # Delete the field values
         Field.objects.filter(field_session=session_key).all().update(field_answer="")
@@ -198,12 +185,10 @@ def delete(request,id):
         # Reset the click count
         MC_section.objects.filter(mc_section_session=session_key).update(click_count=0)
 
-        #print(f"{num_deleted} section has been deleted.")
-
+        # Delete the file objects
         File.objects.all().delete()
 
         # Delete all the files as well
-
         file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads', session_key)
 
         # Check if the directory exists
@@ -214,7 +199,7 @@ def delete(request,id):
                 os.remove(file_path)
             os.rmdir(file_directory)
                 
-        url = reverse('mc_and_datasheet:section', args=[28]) # You defined an app name so that should go in as well!
+        url = reverse('mc_and_datasheet:section', args=[28]) # Don't forget to add the app name as well!
 
     if 'delete_dt_section' in request.GET:
         CardDataDatasheet.objects.all().delete()
@@ -225,13 +210,10 @@ def delete(request,id):
         dt_Field.objects.filter(dt_section__id=5, id__gt=38,field_session = session_key).delete()
         dt_Field.objects.filter(dt_section__id=6, id__gt=44,field_session = session_key).delete()
         dt_Field.objects.filter(dt_section__id=7, id__gt=51,field_session = session_key).delete()
-        url = reverse('mc_and_datasheet:dt_section', args=[1]) # You defined an app name so that should go in as well!
+        url = reverse('mc_and_datasheet:dt_section', args=[1]) # Don't forget to add the app name as well!
         # Delete the field values
         dt_Field.objects.filter(field_session=session_key).all().update(field_answer="")
     
-    #request.session.flush() # Send the session to the depth of toilet
-    
-    #session_key = request.session.session_key # just invoke session id from database to the cookies again
     return HttpResponseRedirect(url)
 
 
@@ -251,15 +233,19 @@ def section(response, id):
     # Get the session key
     session_key = response.session.session_key
 
-    # Print the session key
-    print(f"Session key: {session_key}")
+    # Print the session key in yellow
+    print(f"\033[93mSession key in section view: {session_key}\033[0m")
+
+    model_card_json = response.session.get('model_card_json', None)  
+
+    # checking if the from_createoutput query parameter is present in the URL and if its value is set to true.
     
+    from_createoutput = response.GET.get('from_createoutput', 'false') == 'true' # If from_createoutput is not present, it defaults to 'false'.
+       
     
-    model_card_json = response.session.get('model_card_json', None)      
-    
-    
-    
-    print('Session ID in Section:', session_key)
+    show_warning = response.GET.get('from_inner', 'false') == 'true' # If from_inner is not present, it defaults to 'false'.
+
+    # Query the database with the session id
     section_instance = get_object_or_404(
     MC_section.objects.filter(
         Q(mc_section_session=response.session.session_key) | Q(mc_section_session='')
@@ -271,17 +257,14 @@ def section(response, id):
         Q(mc_section_session=response.session.session_key) | Q(mc_section_session='')
     )
     )
-    #{"save":["save"],"c1":["clicked"]}
+
        
     if response.method == 'POST':
         
         form = FileForm()
-        file_objects = File.objects.filter(file_session = session_key).exists()
+
         # Get it from backend to use in front end
         file_objects = File.objects.filter(file_session = session_key).all()
-        
-        input_text = response.POST.get('input_text')
-        #print(input_text)
         
         if 'sectionsubmit' in response.POST:             
             
@@ -301,7 +284,7 @@ def section(response, id):
                 newly_added_id = MC_section.objects.filter(
                 Q(mc_section_session = session_key) | Q(mc_section_session='')).aggregate(Max('id'))['id__max'] or 0
 
-                url = reverse('mc_and_datasheet:section', args=[newly_added_id]) # You defined an app name so that should go in as well!
+                url = reverse('mc_and_datasheet:section', args=[newly_added_id]) # Don't forget to add the app name as well!
                 return HttpResponseRedirect(url)
 
             elif click_count == 2:
@@ -324,7 +307,7 @@ def section(response, id):
                 field.field_answer = ""
                 field.save()
 
-            url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+            url = reverse('mc_and_datasheet:section', args=[id]) # Don't forget to add the app name as well!
             return redirect(url)
             
             
@@ -340,8 +323,7 @@ def section(response, id):
                         field.field_answer = answer_instance # save to database
                         section_answers.append(answer_instance) # also append the list
 
-                    #print(answer_instance)
-                    #field.save()
+    
 
                 else: # This is the 'select the metrics you want to include' field
                     accuracy = response.POST.getlist('accuracy')
@@ -352,8 +334,6 @@ def section(response, id):
                     auc_score = response.POST.getlist('auc-score')
                     selected_metrics = {"selected metrics":[accuracy,precision,brier_score,recall,f1_score,auc_score]}
                     selected_metrics = json.dumps(selected_metrics)
-                    #print(selected_metrics)
-                    #field.field_answers = selected_metrics
                     section_answers.append(selected_metrics)
                 
                 
@@ -368,11 +348,7 @@ def section(response, id):
             # dump it back to json string
             section2beadded = json.dumps(section2beadded)
 
-
-            #previous_saved_sections = []
-            if CardData.objects.exists():
-                
-                #print(" IT SEEMS CARD DATA IS POPULATED ALREADY NEW SECTION DATA WILL BE ADDED")
+            if CardData.objects.exists(): # Card data is already populated we add another section data to it
                 
                 card_instance = CardData.objects.latest('id')
                 previous_saved_sections = card_instance.card_data
@@ -383,29 +359,24 @@ def section(response, id):
                 CardData.objects.create(carddata_session =  response.session.session_key,
                                         card_data = combined_json_string,
                                         created_at = timezone.now()) 
-            else:
-                #print(" IT SEEMS CARD DATA IS EMPTY POPULATING NOW")
-                #print(section2beadded)
+            else: # Card data is not populated we create a new one
+    
                 CardData.objects.create(carddata_session = response.session.session_key,
                                         card_data = section2beadded,
                                         created_at = timezone.now())
                 
             # After save answer redirect to the next section
             if id == 28:
-               id = 30
-            elif id < 36: 
+               id = 30 # Next section id is 30
+            elif id < 36: # If the section id is less than 36 then go to the next section
                id +=1
              
-            url = reverse('mc_and_datasheet:section', args=[id]) # You defined an app name so that should go in as well!
+            url = reverse('mc_and_datasheet:section', args=[id]) # # Don't forget to add the app name as well!
             return redirect(url)
-           # WITH CARDDATA YOU HAVE ALL THE INFORMATION TO CREATE THE MODEL CARD NEXT CREATE A BUTTON TO CREATE THE MODEL CARD 
-           # THEN FROM THIS BUTTON A NEW VIEW OPENS WITH OPTIONS ABOUT FORMAT AND SO ON
 
-        if response.POST.get("newfield"):
+        if response.POST.get("newfield"): # Create the new field
              
             txt = response.POST.get("newfieldtext")
-
-            print(f"The new field :{txt}")
 
             if not txt:
                 # Check if newfieldtext is in localStorage
@@ -419,28 +390,17 @@ def section(response, id):
                 
     else:
         form = FileForm()        
-        #print(form)
-        #radiobutton_form = RadioButtons()
-        print(" Method is not Post ")
-        
-    print(" YOU ARE RETURNED TO SECTION ")
-    
-      
+                
     file_exists = File.objects.exists()
+
     # Get it from backend to use in front end
     file_objects = File.objects.filter(file_session = session_key).all()
     
-    #print(f'{file_exists}')
     field_set = section_instance.field_set.filter(
         Q(field_session = session_key) | Q(field_session='')
         ).all()
     
-    #print(field_set)
-    #for field in field_set:
-        
-        #print(field.field_question)
-    
-    # Handle the user answers automaticly shown in the fields
+    # Handle the user answers automaticly shown in the fields ( this code also handles json upload )
     try:
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
         most_recent_entry_data = most_recent_entry.card_data
@@ -493,8 +453,6 @@ def section(response, id):
         while len(field_values) < len(field_set):
             field_values.append("")
 
-    #print(f'The field values are {field_values}')
-    #print(type(field_set))
     context = {"section":section_instance,
                "field_set":field_set,
                "field_values":field_values,
@@ -503,27 +461,19 @@ def section(response, id):
                'current_section_id': section_instance.id,
                "files": file_objects,
                "is_files": file_exists,
-               "form":form
-    }
-    return render(response , "mc_and_datasheet/section.html",context)# The third attributes are actually variables that you can pass inside the html
+               "form":form,
+               "show_warning": show_warning,
+               "warning_message" : "Warning: You did not click 'Save'. Please ensure you save your changes."
+                } 
+                
+    if from_createoutput:
+        print('User is coming from createoutput page. Warning will be shown.')
+        alert_script = '<script>alert("User is coming from createoutput page. Warning will be shown.");</script>'
+        
+        
+    return render(response , "mc_and_datasheet/section.html", context)# The third attributes are actually variables that you can pass inside the html!
 
-
-def create(response): 
-
-    if response.method == "POST":
-        form = CreateNewSection(response.POST)
-        if form.is_valid():
-            n = form.cleaned_data["name"]
-            #print('n')
-            t = MC_section(name=n)
-            t.save()
-        return HttpResponseRedirect("/mc_and_datasheet/%i"%t.id)
-    else: # get
-
-        form = CreateNewSection()
-
-    return render(response, "mc_and_datasheet/create.html", {"form":form})
-
+# A subroutine the retrieves the data from the database and returns it as a json string
 def retrievedata(section_name, field_questions, field_answers):
 
     name = section_name.givename()
@@ -560,35 +510,16 @@ def retrievedata(section_name, field_questions, field_answers):
         T = T[-1:] # Get the most recent section entry
 
     try:
-        
-        #print(T[0]['value'])
-        #print(type(T[0]['value']))
-
         t_return = T[0]['value']
     except TypeError:
-        #print(T)
-        #print(type(T))
-
         t_return = T
 
     # Delete existing CardSectionData object with the same key
     CardSectionData.objects.filter(key=name).delete()
     
-    return t_return # json string
-        
-def file_list(request,id):
+    return t_return # json string       
 
-
-    form = FileForm()
-    files = File.objects.all()
-    file_name = form.file.upload_to
-    files.name = file_name
-    #print(files)
-    section_instance = get_object_or_404(MC_section, id=id) # Actually this is get command you are doing QUERY
-    section_list = get_list_or_404(MC_section) # Actually this is get command you are doing QUERY
-               
-    return render(request, 'mc_and_datasheet/filelist.html', {"section":section_instance,"section_list":section_list,'form': form,'files': files})
-
+# Same as the model card section but for datasheet
 def datasheet_section(response,id):
     
      # Session key based on uuid library to trigger to session key creation for django (uuid is not really used in the tool)
@@ -619,15 +550,9 @@ def datasheet_section(response,id):
         Q(dt_section_session=response.session.session_key) | Q(dt_section_session='')
     )
     )
-    #{"save":["save"],"c1":["clicked"]}
-    #print(dtsection_instance.dt_field_set.all()) # this logging.infos all the field question as objects
+
     if response.method == "POST":
-        #print(" I am here you stooopid")
-        
         if response.POST.get("save"):
-
-            #print(response.POST)
-
             section_answers = []
             
             for field in dtsection_instance.dt_field_set.all():
@@ -650,10 +575,7 @@ def datasheet_section(response,id):
             # dump it back to json string
             section2beadded = json.dumps(section2beadded)
 
-
-            #print(section2beadded)
-            if CardDataDatasheet.objects.exists():
-                print(" IT SEEMS CARD DATA IS POPULATED ALREADY NEW SECTION DATA WILL BE ADDED")
+            if CardDataDatasheet.objects.exists(): # Card data is already populated we add another section data to it
                 
                 card_instance = CardDataDatasheet.objects.latest('id')
                 previous_saved_sections = card_instance.card_data
@@ -666,9 +588,7 @@ def datasheet_section(response,id):
                 CardDataDatasheet.objects.create(carddata_session =  response.session.session_key,
                                                 card_data = combined_json_string,
                                                 created_at = timezone.now()) 
-            else:
-                print(" IT SEEMS CARD DATA IS EMPTY POPULATING NOW")
-                #print(section2beadded)
+            else: # Card data is not populated we create a new one
 
                 CardDataDatasheet.objects.create(carddata_session = response.session.session_key,
                 card_data = section2beadded,
@@ -699,23 +619,16 @@ def datasheet_section(response,id):
     
         # Second security layer that no user can access other users data
         if most_recent_entry_data["session_id"] == session_key:
-            print('The session key is the same')
-            
             try:
-            
                 field_dicts = most_recent_entry_data[f'Section_Data_{dtsection_instance.id}']
                 field_values = [''.join(dict.values()) for dict in field_dicts]
-                
             except:
-    
                 length = len(field_set)
                 field_values = ["" for _ in range(length)]
     
     except:
-        
         length = len(field_set)
         field_values = ["" for _ in range(length)]  
-    print(" YOU ARE RETURNED TO DATASHEET SECTION ")
 
     context = {"section_questions": dtsection_instance.dt_field_set.all(),
                "section":dtsection_instance,
@@ -725,13 +638,12 @@ def datasheet_section(response,id):
                "section_list":dtsection_list}
     return render(response , "mc_and_datasheet/dt_section.html",context)# The third attributes are actually variables that you can pass inside the html
 
-
+# Triggered when exporting the model card
 def createoutput(request,id):
     
     session_key = request.session.session_key
     export_format = request.POST.get("format")
 
-    #print("in the create output function")
     if CardData.objects.exists():
         most_recent_entry = CardData.objects.filter(carddata_session = session_key).latest('created_at')
         message_text = ""
@@ -755,8 +667,6 @@ def createoutput(request,id):
         with open("section_names.json", "w") as outfile:
             json.dump(section_names, outfile)
         
-                
-        #print(fil_dict)
         files = File.objects.filter(file_session = session_key ).all()
 
         model_files = []
@@ -764,7 +674,6 @@ def createoutput(request,id):
         custom_metric_files = []
         custom_dataset_files = []
     
-
         for file in files:
             section_id = file.uploaded_section_id
 
@@ -785,7 +694,6 @@ def createoutput(request,id):
         print(f'Custom metric : {custom_metric_files}')
         
         
-        #try:
         if len(model_files) > 0:
             model_file = 'media/uploads' + f'/{session_key}/' + model_files[-1]
         else:
@@ -802,11 +710,13 @@ def createoutput(request,id):
             vis_dataset_files = 'media/uploads' + f'/{session_key}/' + custom_dataset_files[-1]
         else:
             vis_dataset_files = None
-       # except Exception as e:
-           # print(f"An error occurred: {e}")
 
-        #vis_dataset_files = 'media/uploads' + '/' + custom_dataset_files[-1] 
-        print('model file: {} dataset file: {} graph file/s {}'.format(model_file, dataset_file, [vis_metric_files,vis_dataset_files]))
+        # Print the file names
+        print('\033[92mmodel file: {}\n'
+              'dataset file: {}\n'
+              'graph file/s: {}\033[0m'
+              .format(model_file, dataset_file, [vis_metric_files, vis_dataset_files]))
+        
         html_model_card, _, proto_model_card, json_model_card = mclib_v2.create_model_card(csv_file = dataset_file,
                                                 model_file = model_file,
                                                 vis_metric_files = vis_metric_files,
@@ -815,14 +725,12 @@ def createoutput(request,id):
                                                 section_names = section_names,
                                                 session_key = session_key)
         
-        #print(f"Export format {export_format}")
         if export_format == "html":
             # Get the HTML content as a string
             html_content = str(html_model_card)
             # Create an HttpResponse object with the HTML content
             response = HttpResponse(html_content, content_type="text/html")
 
-            
             # Set the Content-Disposition header to prompt the user to save the file
             response["Content-Disposition"] = "attachment; filename=filename.html"
            
@@ -847,13 +755,12 @@ def createoutput(request,id):
 
     else:
         # User has not filled the form
-        # Read the HTML content from the file
-        with open("mc_and_datasheet\error_text.html", "r") as file:
-            message_text = file.read()
-        
-        response = HttpResponse(message_text, content_type="text/html")
 
-    #print(response)
+        url = reverse('mc_and_datasheet:section', args=[id]) + "?from_createoutput=true"
+        return redirect(url)
+        
+
+    
     return response
 
 def datasheet_export(request,id):

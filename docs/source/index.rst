@@ -123,6 +123,7 @@ Through the documentation especially for the developer guide, it is recommended 
    backend/database
    backend/django_backend
    frontend/html_structure
+   frontend/views
    backend/session
 
 
