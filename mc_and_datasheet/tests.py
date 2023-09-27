@@ -143,6 +143,9 @@ class SectionViewTest(TestCase):
         with open("section_names.json", "w") as outfile:
             json.dump(section_names, outfile)
         
+        self.assertIsNotNone(fil_dict, "fil_dict should not be None")
+        self.assertIsNotNone(section_names, "section_names should not be None")
+        
         # open example pngs
         dataset_png_path = test_input + 'cifar10_class_distribution.png'
         metric_png_path = test_input + 'W&B_Chart_05_06_2023_11_08_11.png'

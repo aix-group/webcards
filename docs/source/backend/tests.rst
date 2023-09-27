@@ -31,4 +31,14 @@ Implemented Tests
 
 Tests can be found in `mc_and_datasheet/tests.py`. 
 
+- **test_model_card_creation:** Tests that whether model card can be created from the mock input.
+- **test_section_view_get_request:** Tests whether section view get the request and renders the template.
+- **test_with_session:** Tests that whether the adding section and new fields work.
+- **test_createoutput:** Creates a mock datacard entry and files and tests whether the inputs of the `create_model_card` are not empty.
+
+
+.. note::
+
+        Implemented tests are not enough to cover all the functionalities of the app. They are testing only the basic functions of the app. More tests should be implemented to cover the server-side functionalities of the app. As the bugs are fixed and improvements made, more tests should be implemented to cover the new functionalities.
+
 
