@@ -29,7 +29,7 @@ Return Value
 
 
 get_session_id
-==============
+--------------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Retrieves the user's session key from the received request object.
