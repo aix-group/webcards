@@ -11,7 +11,7 @@ In this page, the overview of the functions that are used in `views.py` is provi
 These functions have only one purpose: to render the corresponding HTML template. The other long view functions are listed in the order they appear in the file.
 
 home
-====
+----
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles requests directed to the home page of the application.
@@ -45,7 +45,7 @@ Return Value
 - Returns the `session_key` associated with the user's session.
 
 upload_file
-===========
+-----------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles file upload requests from the client.
@@ -63,7 +63,7 @@ Return Value
 - Redirects to a specific URL after processing the uploaded file and renders the `section.html` template.
 
 upload_json
-===========
+-----------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles JSON file upload requests.
@@ -81,7 +81,7 @@ Return Value
 - Redirects to a specific URL after processing the uploaded JSON file to the `section` view.
 
 delete
-======
+------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles data deletion requests.
@@ -99,7 +99,7 @@ Return Value
 - Redirects to the `section` view after performing deletion operations .
 
 section
-=======
+-------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles requests directed to specific sections.
@@ -116,7 +116,7 @@ Return Value
 - Renders and returns the `section.html` template with the provided context.
 
 retrievedata
-============
+------------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Processes and structures data related to sections for further usage.
@@ -135,7 +135,7 @@ Return Value
 - Returns a variable called T which is a json string to be used to save the data to database.
 
 createoutput
-============
+------------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles requests for creating output based on the user's session and selected format.
@@ -152,7 +152,7 @@ Return Value
 - (To be analyzed and documented further.)
 
 datasheet_export
-================
+----------------
 Purpose/Description
 ^^^^^^^^^^^^^^^^^^^
 - Handles requests for exporting datasheets.
