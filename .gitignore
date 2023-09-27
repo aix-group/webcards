@@ -10,7 +10,7 @@ _MACOXS/
 
 data
 media/uploads/*
-
+model_card_output
 # Distribution / packaging
 .Python
 env/
