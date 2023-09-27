@@ -109,7 +109,7 @@ class SectionViewTest(TestCase):
         new_section = MC_section.objects.get(name=post_data['newsectiontext'])
         self.assertIsNotNone(new_section)
 
-        created_new_section = new_section.field_set.create(field_session = response.session.session_key,
+        created_new_section = new_section.field_set.create(field_session = self.session_key,
                                                   field_question=post_data['newfieldtext'])
         self.assertIsNotNone(created_new_section)
     
