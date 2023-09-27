@@ -1,7 +1,8 @@
 Views
 =====
 
-In this page, the overview of the functions that are used in `views.py` is provided. There are view functions named 
+In this page, the overview of the functions that are used in `views.py` is provided. There are view functions named:
+
 - impressum
 - legal
 - about
