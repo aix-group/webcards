@@ -455,8 +455,6 @@ def section(response, id):
                "files": file_objects,
                "is_files": file_exists,
                "form":form,
-               "show_warning": show_warning,
-               "warning_message" : "Warning: You did not click 'Save'. Please ensure you save your changes."
                 } 
            
     return render(response , "mc_and_datasheet/section.html", context)# The third attributes are actually variables that you can pass inside the html!
@@ -705,6 +703,8 @@ def createoutput(request,id):
               'graph file/s: {}\033[0m'
               .format(model_file, dataset_file, [vis_metric_files, vis_dataset_files]))
         
+
+        # Send all information from the user to the model card generator
         html_model_card, _, proto_model_card, json_model_card = mclib_v2.create_model_card(csv_file = dataset_file,
                                                 model_file = model_file,
                                                 vis_metric_files = vis_metric_files,
@@ -741,13 +741,8 @@ def createoutput(request,id):
             response["Content-Disposition"] = f"attachment; filename=my_model_card.json"
            
 
-    else:
-        # User has not filled the form
-
-        url = reverse('mc_and_datasheet:section', args=[id]) + "?from_createoutput=true"
-        return redirect(url)
-        
-
+    else: # This means user did not save any answer yet and javascript code will produce an error message see "section.html"
+        pass
     
     return response
 
@@ -764,7 +759,7 @@ def datasheet_export(request,id):
         model_card_dict = json.loads(most_recent_entry.get())
 
         fil_dict = {key: value for key, value in model_card_dict.items() if key.startswith("Section_Data")}
-        #print(fil_dict)
+
 
         # Get the HTML content as a string
         html_content = dt.create_datasheet(fil_dict)
@@ -778,53 +773,7 @@ def datasheet_export(request,id):
         
         response = HttpResponse(error_text, content_type="text/html")
         
-    
-    #print(model_card)
 
     return response
 
-
-def clear_upon_day_end():
-        
-    print('Info: everything is deleted. ')    
-    CardSectionData.objects.all().delete()
-    
-    CardData.objects.all().delete()
-    Field.objects.filter(mc_section__id=28, id__gt=36).delete()
-    Field.objects.filter(mc_section__id=30, id__gt=19).delete()
-    Field.objects.filter(mc_section__id=31, id__gt=22).delete()
-    Field.objects.filter(mc_section__id=32, id__gt=25).delete()
-    Field.objects.filter(mc_section__id=33, id__gt=29).delete()
-    Field.objects.filter(mc_section__id=36, id__gt=35).delete()
-    # Get all sections with id greater than 36
-    MC_section.objects.filter(id__gt=36).delete()
-    
-    # Delete the sections
-    #num_deleted, _ = sections_to_delete.delete()
-    # Delete the field values
-    Field.objects.all().update(field_answer="")
-    # Reset the click count
-    MC_section.objects.update(click_count=0)
-    #print(f"{num_deleted} section has been deleted.")
-    File.objects.all().delete()
-    # Delete all the files as well
-    file_directory = os.path.join(settings.MEDIA_ROOT, 'uploads')
-    # Check if the directory exists
-    if os.path.exists(file_directory):
-        # Iterate over the files in the directory and delete them
-        for file_name in os.listdir(file_directory):
-            file_path = os.path.join(file_directory, file_name)
-            os.remove(file_path)
-        os.remove(file_directory)
-    
-    CardDataDatasheet.objects.all().delete()
-    dt_Field.objects.filter(dt_section__id=1, id__gt=3).delete()
-    dt_Field.objects.filter(dt_section__id=2, id__gt=19).delete()
-    dt_Field.objects.filter(dt_section__id=3, id__gt=30).delete()
-    dt_Field.objects.filter(dt_section__id=4, id__gt=33).delete()
-    dt_Field.objects.filter(dt_section__id=5, id__gt=38).delete()
-    dt_Field.objects.filter(dt_section__id=6, id__gt=44).delete()
-    dt_Field.objects.filter(dt_section__id=7, id__gt=51).delete()
-    # Delete the field values
-    dt_Field.objects.all().update(field_answer="")
     

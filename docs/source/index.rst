@@ -10,7 +10,7 @@ WebCards Documentation
    :maxdepth: 2
    :caption: Contents:
 
-Welcome to the documentation of the WebCards tool. Here you can find useful information about the app, its logic, and its use. WebCards is a tool for creating and sharing model cards and datasheets, which are documents that provide context and transparency for machine learning tasks. 
+Welcome to the documentation of the WebCards tool! Here you can find useful information about the app, its logic, and its use. WebCards is a tool for creating and sharing model cards and datasheets, which are documents that provide context and transparency for machine learning tasks. 
 The tool is under development and heavy testing. If you find any bugs or have any suggestions, please create an issue in `GitHub <https://github.com/mcmi-group/webcards>`_ page.
 
 Overview

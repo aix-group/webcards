@@ -111,11 +111,6 @@ Section
             </div>
             <div class="modal-body">
                <!-- Display warning if show_warning is True -->
-               {% if show_warning %}
-               <div class="alert alert-dark custom-dark-warning" role="alert">
-                  {{ warning_message }}
-               </div>
-               {% endif %}
                <label for="section-name" style="color:white">Select the desired output format:</label>
                <br>
                <br>
@@ -177,6 +172,14 @@ Section
    <br>
 
    <div id="main-content">
+
+   {% if messages %}
+   <ul class="messages">
+       {% for message in messages %}
+       <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+       {% endfor %}
+   </ul>
+   {% endif %}
 
    <!-- Form Area For Questions -->
    <div class="container survey .bg-secondary.bg-gradient text-white px-10 py-10" style=" z-index: 1; ">
@@ -459,66 +462,63 @@ Section
  </script>
  <script>
    document.addEventListener("DOMContentLoaded", function() {
-      // Get the buttons by their IDs
-      const htmlButton = document.getElementById("htmlButton");
-      const protoButton = document.getElementById("protoButton");
-      const jsonButton = document.getElementById("jsonButton");
-      
-      // Attach event listeners to the buttons
-      htmlButton.addEventListener("click", function() {
-          exportModelCard("html");
-          console.log("HTML button was clicked!");
-      });
-      
-      protoButton.addEventListener("click", function() {
-          exportModelCard("proto");
-      });
-      
-      jsonButton.addEventListener("click", function() {
-          exportModelCard("json");
-      });
-      
-      // Function to make the POST request based on the format
-      function exportModelCard(format) {
-          console.log("Attempting to export format:", format);  // Logging for debugging
-          
-          // Get CSRF token
-          const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-          const url = "{% url 'mc_and_datasheet:createoutput' section.id %}";  // Assuming this Django template tag resolves correctly
-          
-          fetch(url, {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/x-www-form-urlencoded",
-                  "X-CSRFToken": csrfToken,
-              },
-              body: `format=${format}`,
-          })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error(`HTTP error! Status: ${response.status}`);
-              }
-              
-              // Get the content-disposition header to extract the filename
-              const contentDisposition = response.headers.get('content-disposition');
-              const filename = contentDisposition.split('filename=')[1];
-              
-              // Create a blob from the response content
-              return response.blob().then(blob => {
-                  // Create a blob URL and trigger the download
-                  const blobUrl = URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = blobUrl;
-                  link.download = filename;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-              });
-          })
-          .catch(error => {
-              console.error('Error:', error);
-          });
-      }
+       // Get the buttons by their IDs
+       const htmlButton = document.getElementById("htmlButton");
+       const protoButton = document.getElementById("protoButton");
+       const jsonButton = document.getElementById("jsonButton");
+
+       // Attach event listeners to the buttons
+       htmlButton.addEventListener("click", function() {
+           exportModelCard("html");
+       });
+
+       protoButton.addEventListener("click", function() {
+           exportModelCard("proto");
+       });
+
+       jsonButton.addEventListener("click", function() {
+           exportModelCard("json");
+       });
+
+       // Function to make the POST request based on the format
+       function exportModelCard(format) {
+           console.log("Attempting to export format:", format);  // Logging for debugging
+
+           // Get CSRF token
+           const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+           const url = "{% url 'mc_and_datasheet:createoutput' section.id %}";  // Assuming this Django template tag resolves correctly
+
+           fetch(url, {
+               method: "POST",
+               headers: {
+                   "Content-Type": "application/x-www-form-urlencoded",
+                   "X-CSRFToken": csrfToken,
+               },
+               body: `format=${format}`,
+           })
+           .then(response => {
+
+               // Existing code for handling file download
+               const contentDisposition = response.headers.get('content-disposition');
+               if (!contentDisposition) {
+                   throw new Error('Please save the answers before exporting.'); // If it is missing, user did not save answers.
+               }
+               const filename = contentDisposition.split('filename=')[1];
+               return response.blob().then(blob => {
+                   const blobUrl = URL.createObjectURL(blob);
+                   const link = document.createElement('a');
+                   link.href = blobUrl;
+                   link.download = filename;
+                   document.body.appendChild(link);
+                   link.click();
+                   document.body.removeChild(link);
+               });
+           })
+           .catch(error => {
+               console.error('Error:', error);
+               alert(error);  // Display the error message to the user
+           });
+       }
    });
  </script>
 
