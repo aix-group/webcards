@@ -1,3 +1,9 @@
+# Author: Bahadir Eryilmaz 
+# Date: 30/09/2023
+# Documentation: https://webcards.readthedocs.io/en/latest/index.html
+# Desc: This file contains the tests of the application.
+
+
 from django.test import TestCase, Client
 from django.shortcuts import get_object_or_404, render, get_list_or_404, redirect
 from django.urls import reverse

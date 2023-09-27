@@ -1,3 +1,7 @@
+# Author: Bahadir Eryilmaz 
+# Date: 30/09/2023
+# Documentation: https://webcards.readthedocs.io/en/latest/index.html
+# Desc: This file contains the backend functions of the application.
 
 # Imports
 import os
@@ -15,15 +19,13 @@ import pandas as pd
 import logging
 
 from PIL import Image
-#import fitz  # For handling PDF files
 import matplotlib.pyplot as plt  # For handling SVG files
 from io import BytesIO
-#import pywmf  # For handling WMF files
+
 
 
 logging.basicConfig(filename='app.log', filemode='w', level=logging.INFO)
 
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 import model_card_toolkit as mctlib
 
@@ -53,10 +55,6 @@ def create_model_card(csv_file = None,
     Split_ratio  = Float (0,1)
     
     '''
-    #logging.info(get_answer(a_dict,41))
-    #data_type = str(type(df)) # Determine the datatype 
-    #split_ratio_per = [int(float(get_answer(a_dict,41))*100),int(1-float(get_answer(a_dict,41))*100)] # Percentages in list
-
     is_dataset_file = False
     is_model_file = False
     is_both_file = False
@@ -224,8 +222,6 @@ def create_model_card(csv_file = None,
 
     metric_answer = get_answer(a_dict,31)
 
-    #print("the metric answer is here {} ".format(metric_answer))
-
     ## TODO How are these metrics calculated does not work because logic is disabled. Implement a new logic for this.
     if get_answer(a_dict,31):
     
@@ -245,7 +241,7 @@ def create_model_card(csv_file = None,
         else:
             mean_error = None
         
-        ## TODO activate this ones once the logic is implemented.
+        ## TODO activate this one once the logic is implemented.
         # This is will be automatic filled if the metric is chosen for reporting
         #model_card.performance_details.how_metrics = [mctlib.HowMetrics(accuracy = accuracy_exp,
         #                                                                precision = precision_exp,
@@ -621,10 +617,9 @@ def create_model_card(csv_file = None,
     if html is not None:
         html_is_exported = True
 
-    #print("JSON and HTML files are created.")
-
     return html, html_is_exported, proto, json
-    
+
+# Helper functions to reduce the code   
 def one_entry(object,entry,question=None):
     if entry:
         entries = entry.split('\r\n')
@@ -781,40 +776,3 @@ def read_image_as_base64(image_path):
         base64str = base64.b64encode(image_data).decode('utf-8')
         return base64str  
              
-# UNNECESSARY FUNCTIONS DELETE BEFORE LAST RELEASE
-def get_info(df,ID):
-    index = df.index[df['ID'] == ID].tolist()[0]
-    answer = df.at[index,'Answers']
-    question = df.at[index,'Questions']
-    return question, answer       
-
-def check_user_input(input):
-    try:
-        # Convert it into float
-        val = float(input)
-    except ValueError:
-         val = input # it is already string 
-    return val           
-
-#def get_answer(my_dict, id_to_get):
-#    for sub_list in my_dict.values():
-#        #logging.info(sub_list)
-#        try:
-#            for sub_sub_dict in sub_list:
-#                #logging.info(sub_sub_dict)
-#                #logging.info(sub_sub_dict.items())
-#                for key, value in sub_sub_dict.items():
-#                    #if id_to_get == 32:
-#                    #logging.info(key)
-#                    #logging.info(value)
-#                    #logging.info('anan {}'.format(key))
-#                    if key.startswith('{}_'.format(id_to_get)):
-#                        return value
-#                    elif isinstance(value, dict):
-#                        result = get_answer(value, id_to_get)
-#                        if result is not None:
-#                            return result
-#        except AttributeError:
-#            pass
-#    return ''
-

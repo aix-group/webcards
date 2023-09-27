@@ -1,3 +1,10 @@
+# Author: Bahadir Eryilmaz 
+# Date: 30/09/2023
+# Documentation: https://webcards.readthedocs.io/en/latest/index.html
+# Desc: This file contains the models of the application. The models are the tables of the database.
+
+
+
 from django.db import models
 from django.contrib import admin
 from django.utils import timezone
