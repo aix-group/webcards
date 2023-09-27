@@ -122,9 +122,9 @@ Through the documentation especially for the developer guide, it is recommended 
    backend/customization
    backend/database
    backend/django_backend
+   backend/tests
    frontend/html_structure
    frontend/views
-   frontend/tests
    backend/session
 
 
