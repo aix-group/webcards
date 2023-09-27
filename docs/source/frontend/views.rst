@@ -41,7 +41,7 @@ Parameters
 - `request`: The HTTP request object received from the client.
 
 Return Value
-------------
+^^^^^^^^^^^^
 - Returns the `session_key` associated with the user's session.
 
 upload_file
