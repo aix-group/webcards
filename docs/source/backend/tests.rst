@@ -1,4 +1,4 @@
-TESTS
+Tests
 =====
 
 Testing Importance
