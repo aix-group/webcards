@@ -132,6 +132,6 @@ Through the documentation especially for the developer guide, it is recommended 
    :caption: User Guide
    :maxdepth: 2
 
-   model_card/usage
+   model_card/model_card_usage
    model_card/example_usage
-   datasheet/usage
+   datasheet/datasheet_card_usage
