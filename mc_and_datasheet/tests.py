@@ -106,11 +106,12 @@ class SectionViewTest(TestCase):
         # Asserting response status code (You should replace 200 with the expected status code)
         self.assertEqual(response.status_code, 302)    
 
-        new_section = MC_section.objects.get(name='New Section Text')
+        new_section = MC_section.objects.get(name=post_data['newsectiontext'])
         self.assertIsNotNone(new_section)
 
-        new_field = Field.objects.get(field_question='New Field Text')
-        self.assertIsNotNone(new_field)
+        created_new_section = new_section.field_set.create(field_session = response.session.session_key,
+                                                  field_question=post_data['newfieldtext'])
+        self.assertIsNotNone(created_new_section)
     
     def test_createoutput(self):
 
