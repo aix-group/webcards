@@ -104,7 +104,7 @@ class SectionViewTest(TestCase):
         response = self.client.post(reverse('mc_and_datasheet:section', args=[self.section.id]), data=post_data)
 
         # Asserting response status code (You should replace 200 with the expected status code)
-        self.assertEqual(response.status_code, 200)    
+        self.assertEqual(response.status_code, 302)    
 
         new_section = MC_section.objects.get(name='New Section Text')
         self.assertIsNotNone(new_section)
